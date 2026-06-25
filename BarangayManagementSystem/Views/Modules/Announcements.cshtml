@@ -1,0 +1,125 @@
+﻿@model BarangayManagementSystem.Models.AnnouncementsPageViewModel
+@{
+    ViewData["Title"] = "Announcements and Notifications";
+}
+
+<section class="hero-section text-white py-5 px-4 mb-4 shadow-sm">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25 text-white">
+                <i class="bi bi-bell fs-2"></i>
+            </div>
+            <div>
+                <span class="badge bg-emerald text-white rounded-pill mb-1 px-3 py-1.5 fw-bold text-uppercase tracking-wider small-title-label">Module 4</span>
+                <h1 class="h2 fw-bold mb-1">Announcements and Notifications</h1>
+                <p class="text-white-50 mb-0">Fast and efficient dissemination of information and emergency alerts to residents.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-megaphone-fill text-dark-blue fs-5"></i>
+                <h6 class="fw-bold text-dark-blue mb-0">Latest Announcements</h6>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                @foreach (var announcement in Model.Announcements)
+                {
+                    string badgeColor = announcement.Category switch
+                    {
+                        "Event" => "bg-primary text-primary",
+                        "Program" => "bg-success text-success",
+                        "Reminder" => "bg-warning text-warning",
+                        "Emergency" => "bg-danger text-danger",
+                        "Health" => "bg-info text-info",
+                        _ => "bg-secondary text-secondary"
+                    };
+
+                    <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge @badgeColor bg-opacity-10 rounded-pill px-2.5 py-1 fs-8 fw-bold">@announcement.Category</span>
+                                <h5 class="h6 fw-bold text-dark mb-0">@announcement.Title</h5>
+                            </div>
+                            <span class="text-muted fs-8 text-nowrap">@announcement.DatePosted</span>
+                        </div>
+                        <p class="text-secondary small mb-0 lh-base">@announcement.Description</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4 scroll-mt-4" id="emergency-section" style="scroll-margin-top: 100px;">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-telephone-outbound-fill text-dark-blue fs-5"></i>
+                <h6 class="fw-bold text-dark-blue mb-0">Emergency Hotlines</h6>
+            </div>
+
+            <div class="d-flex flex-column gap-3 mb-4">
+                @foreach (var hotline in Model.Hotlines)
+                {
+                    <div class="card border-0 shadow-sm p-3 rounded-3 bg-white d-flex flex-row align-items-center gap-3">
+                        <div class="p-2.5 bg-danger bg-opacity-10 text-danger rounded-3">
+                            <i class="bi bi-telephone-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <span class="d-block text-muted small-title-label fs-9 text-uppercase">@hotline.Label</span>
+                            <span class="fw-bold text-dark-blue fs-6">@hotline.Number</span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3 border-b pb-2">
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-6"></i>
+                    <h6 class="fw-bold text-dark-blue mb-0 fs-6">Report Active Emergency</h6>
+                </div>
+
+                <form method="post" asp-action="ReportIncident" class="d-flex flex-column gap-2.5 text-secondary fs-8">
+                    <div class="form-group">
+                        <label class="fw-semibold text-dark mb-1">Reporter Full Name</label>
+                        <input type="text" class="form-control form-control-sm bg-light border-0 px-3 py-2 text-dark fs-8" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="fw-semibold text-dark mb-1">Contact Handset Number</label>
+                        <input type="text" class="form-control form-control-sm bg-light border-0 px-3 py-2 text-dark fs-8" placeholder="09XX-XXX-XXXX" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="fw-semibold text-dark mb-1">Incident Emergency Scope</label>
+                        <select class="form-select form-select-sm bg-light border-0 px-3 py-2 text-secondary fs-8" required>
+                            <option value="">Choose classification...</option>
+                            <option>Medical Crisis Rescue</option>
+                            <option>Active Fire Callout</option>
+                            <option>Crime / Incident Outbreak</option>
+                            <option>Natural Calamity Dispatch</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="fw-semibold text-dark mb-1">Location Details & Context</label>
+                        <textarea class="form-control form-control-sm bg-light border-0 px-3 py-2 text-dark fs-8" rows="3" placeholder="Provide visible tracking identifiers..." style="resize: none;" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn text-white font-semibold py-2 w-100 mt-2 border-0 text-uppercase tracking-wider fs-9" style="background-color: #0b1936;">
+                        Send Emergency Dispatch
+                    </button>
+                </form>
+            </div>
+
+            <div class="card border-0 shadow-sm p-3 rounded-3 bg-danger bg-opacity-10 border-start border-3 border-danger">
+                <p class="text-danger small mb-0 fw-semibold lh-sm">
+                    In case of emergency, call the nearest hotline immediately. Do not delay.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>

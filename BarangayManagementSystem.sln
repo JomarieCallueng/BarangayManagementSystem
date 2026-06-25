@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37111.16 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarangayManagementSystem", "BarangayManagementSystem\BarangayManagementSystem.csproj", "{F2B06679-3982-435A-8E9F-4EAAC23F3832}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2B06679-3982-435A-8E9F-4EAAC23F3832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2B06679-3982-435A-8E9F-4EAAC23F3832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2B06679-3982-435A-8E9F-4EAAC23F3832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2B06679-3982-435A-8E9F-4EAAC23F3832}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CDF96B0-5E2B-42C3-8D63-6A06E45DEB81}
+	EndGlobalSection
+EndGlobal

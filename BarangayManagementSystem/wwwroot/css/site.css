@@ -1,0 +1,50 @@
+/* Branding Color Blocks */
+.bg-dark-blue {
+    background-color: #0d1e3d !important;
+}
+
+.bg-emerald {
+    background-color: #16a34a !important;
+    border-color: #16a34a !important;
+}
+
+.text-dark-blue {
+    color: #0d1e3d;
+}
+
+/* Hero Section Gradients */
+.hero-section {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0d1e3d 100%);
+}
+
+.modern-max-width {
+    max-width: 700px;
+}
+
+/* Core Module Cards UI */
+.backend-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .backend-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
+    }
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.bg-purple {
+    background-color: #f3e8ff;
+    color: #9333ea;
+}
+
+.text-purple {
+    color: #9333ea;
+}

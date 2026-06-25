@@ -1,0 +1,140 @@
+﻿@model IEnumerable<BarangayManagementSystem.Models.ResidentViewModel>
+@{
+    ViewData["Title"] = "Resident Information Management";
+}
+
+<section class="hero-section text-white py-5 px-4 mb-4 shadow-sm">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25 text-white">
+                <i class="bi bi-people fs-2"></i>
+            </div>
+            <div>
+                <span class="badge bg-emerald text-white rounded-pill mb-1 px-3 py-1.5 fw-bold text-uppercase tracing-wider small-title-label">Module 1</span>
+                <h1 class="h2 fw-bold mb-1">Resident Information Management</h1>
+                <p class="text-white-50 mb-0">Manages and stores complete information of residents and families within the barangay.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3"><i class="bi bi-person-vcard fs-3"></i></div>
+                <div>
+                    <h3 class="fw-bold text-dark-blue mb-0">1,250</h3>
+                    <small class="text-secondary fw-semibold">Total Residents</small>
+                    <span class="d-block text-success small-title-label mt-1">● Registered</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                <div class="p-3 bg-success bg-opacity-10 text-success rounded-3"><i class="bi bi-gender-ambiguous fs-3"></i></div>
+                <div>
+                    <h3 class="fw-bold text-dark-blue mb-0">620 / 630</h3>
+                    <small class="text-secondary fw-semibold">Male / Female</small>
+                    <span class="d-block text-muted small-title-label mt-1">Ratio Balance</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                <div class="p-3 bg-info bg-opacity-10 text-info rounded-3"><i class="bi bi-person-workspace fs-3"></i></div>
+                <div>
+                    <h3 class="fw-bold text-dark-blue mb-0">380</h3>
+                    <small class="text-secondary fw-semibold">Youth (15–30)</small>
+                    <span class="d-block text-muted small-title-label mt-1">Population Segment</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 d-flex flex-row align-items-center gap-3">
+                <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3"><i class="bi bi-heart-pulse fs-3"></i></div>
+                <div>
+                    <h3 class="fw-bold text-dark-blue mb-0">42</h3>
+                    <small class="text-secondary fw-semibold">PWD Residents</small>
+                    <span class="d-block text-danger small-title-label mt-1">Monitored Status</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-4">
+        <h6 class="fw-bold text-dark-blue mb-4 pb-1 border-bottom border-light">Resident Data Fields</h6>
+        <div class="row g-3 row-cols-1 row-cols-md-2 text-secondary">
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Full Name</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Address</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Contact Number</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Birthdate</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Occupation</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Civil Status</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>PWD Monitoring</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Senior Citizen Records</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Family Records</span></div>
+            <div class="col d-flex align-items-center gap-2 mb-1"><i class="bi bi-check-circle-fill text-success"></i> <span>Population Statistics</span></div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3 bg-white overflow-hidden">
+        <div class="p-3 border-bottom border-light">
+            <div class="input-group input-group-flat border rounded-2 max-width-search px-2 py-1">
+                <span class="input-group-text border-0 bg-transparent text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control border-0 shadow-none small text-dark ps-1" placeholder="Search resident here..." id="residentSearch" />
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle text-secondary mb-0 table-hover-custom" id="residentTable">
+                <thead class="bg-light text-dark fw-bold border-bottom">
+                    <tr>
+                        <th class="ps-4 py-3 fw-bold text-dark fs-7">Resident Name</th>
+                        <th class="py-3 fw-bold text-dark fs-7">Address</th>
+                        <th class="pe-4 py-3 fw-bold text-dark fs-7 text-center w-150">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    @foreach (var resident in Model)
+                    {
+                        <tr class="resident-row">
+                            <td class="ps-4 py-3 text-dark fw-semibold resident-name">@resident.Name</td>
+                            <td class="py-3 text-muted">@resident.Address</td>
+                            <td class="pe-4 py-3 text-center">
+                                @if (resident.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1.5 fs-8">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-1.5 fs-8">Inactive</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Real-Time UI Search Filter Utility
+        document.getElementById('residentSearch').addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#residentTable .resident-row');
+
+            rows.forEach(row => {
+                const nameText = row.querySelector('.resident-name').textContent.toLowerCase();
+                if (nameText.includes(searchValue)) {
+                    row.removeAttribute('style');
+                } else {
+                    row.setAttribute('style', 'display: none !important;');
+                }
+            });
+        });
+    </script>
+}
