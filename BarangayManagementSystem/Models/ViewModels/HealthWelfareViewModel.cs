@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BarangayManagementSystem.Models
+namespace BarangayManagementSystem.Models.ViewModels
 {
     public class HealthInventoryItem
     {

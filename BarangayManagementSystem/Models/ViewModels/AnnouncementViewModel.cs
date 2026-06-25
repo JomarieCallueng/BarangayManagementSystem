@@ -1,4 +1,4 @@
-﻿namespace BarangayManagementSystem.Models
+﻿namespace BarangayManagementSystem.Models.ViewModels
 {
     public class AnnouncementItemViewModel
     {

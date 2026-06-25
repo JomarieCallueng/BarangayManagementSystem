@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BarangayManagementSystem.Models;
 using System.Collections.Generic;
+using BarangayManagementSystem.Models.ViewModels;
 
 namespace BarangayManagementSystem.Controllers
 {

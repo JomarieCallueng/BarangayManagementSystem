@@ -33,13 +33,13 @@ namespace BarangayManagementSystem.Areas.Admin.Controllers
             return View();
         }
 
-        // GET/POST: /Admin/Account/Logout
+        // ====== ETO ANG IDINAGDAG NATIN NA SECTION ======
+        // GET: /Admin/Account/Logout
+        // Idagdag ito sa loob ng iyong AccountController kung wala pa
+        [HttpGet]
         public IActionResult Logout()
         {
-            // TODO: Kung gagamit ka na ng authentication sa susunod, i-clear ang session o cookies dito:
-            // HttpContext.SignOutAsync();
-
-            // Pagka-logout, ibabalik ang user sa login screen ng Admin portal
+            // Kapag pinindot ito, itatapon nito ang user sa Login action sa itaas nito
             return RedirectToAction("Login", "Account", new { area = "Admin" });
         }
     }

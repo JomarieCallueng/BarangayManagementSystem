@@ -1,0 +1,252 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certificates Management - Barangay Admin Panel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            background-color: #1e3a8a;
+            min-height: 100vh;
+            color: #ffffff;
+            width: 240px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+            .sidebar .nav-link {
+                color: #93c5fd;
+                font-size: 0.9rem;
+                padding: 10px 20px;
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+
+                .sidebar .nav-link i {
+                    font-size: 1.1rem;
+                    width: 25px;
+                }
+
+                .sidebar .nav-link:hover {
+                    color: #ffffff;
+                    background-color: rgba(255, 255, 255, 0.05);
+                }
+
+                .sidebar .nav-link.active {
+                    color: #ffffff;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    font-weight: 600;
+                    border-left: 4px solid #ffffff;
+                }
+
+        .main-content {
+            margin-left: 240px;
+            min-height: 100vh;
+        }
+
+        .stat-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+
+        .table-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar d-flex flex-column justify-content-between pb-3">
+        <div>
+            <div class="p-3 border-bottom border-white border-opacity-10 d-flex align-items-center gap-2">
+                <i class="bi bi-shield-check fs-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-0 lh-1">Barangay</h6>
+                    <small class="text-white-50" style="font-size: 0.75rem;">Admin Panel</small>
+                </div>
+            </div>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard/Index"><i class="bi bi-grid-fill me-2"></i> Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard/Residents"><i class="bi bi-people me-2"></i> Residents</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/Admin/Dashboard/Certificates"><i class="bi bi-file-earmark-text me-2"></i> Certificates</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard/Complaints"><i class="bi bi-chat-left-text me-2"></i> Complaints</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-kanban me-2"></i> Projects</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-exclamation-triangle me-2"></i> Disaster</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-heart-pulse me-2"></i> Health</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-leaf me-2"></i> Environment</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-graph-up me-2"></i> Reports</a></li>
+            </ul>
+        </div>
+        <div class="px-3 text-white-50" style="font-size: 0.7rem;">&copy; 2026 Barangay MIS</div>
+    </div>
+
+    <div class="main-content">
+        <div class="bg-white border-bottom px-4 py-2 d-flex justify-content-between align-items-center shadow-sm">
+            <h6 class="fw-bold text-dark mb-0">Certificate Management</h6>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn position-relative p-1 text-secondary">
+                    <i class="bi bi-bell fs-5"></i>
+                </button>
+                <div class="d-flex align-items-center gap-2 border-start ps-3">
+                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-person text-secondary"></i>
+                    </div>
+                    <span class="small fw-semibold text-secondary">Administrator</span>
+                </div>
+                <a href="/Admin/Account/Logout" class="btn btn-outline-danger btn-sm rounded px-2 py-1 ms-2">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold text-dark mb-1">Certificates and Permits Management</h4>
+                    <p class="text-muted small mb-0">Process certificate requests and track payments.</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-1" style="background-color: #1e3a8a;"><i class="bi bi-plus-lg"></i> New Request</button>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card d-flex align-items-center gap-3">
+                        <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3"><i class="bi bi-clock fs-4"></i></div>
+                        <div>
+                            <span class="fw-bold fs-5 text-dark">32</span>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">Pending<br><span style="font-size: 0.75rem;">Awaiting</span></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card d-flex align-items-center gap-3">
+                        <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3"><i class="bi bi-file-earmark-text fs-4"></i></div>
+                        <div>
+                            <span class="fw-bold fs-5 text-dark">8</span>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">Processing<br><span style="font-size: 0.75rem;">In progress</span></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card d-flex align-items-center gap-3">
+                        <div class="p-2 bg-success bg-opacity-10 text-success rounded-3"><i class="bi bi-check2-circle fs-4"></i></div>
+                        <div>
+                            <span class="fw-bold fs-5 text-dark">35</span>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">Released Today<br><span style="font-size: 0.75rem;">Certificates</span></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card d-flex align-items-center gap-3">
+                        <div class="p-2 bg-success bg-opacity-10 text-success rounded-3"><i class="bi bi-currency-dollar fs-4"></i></div>
+                        <div>
+                            <span class="fw-bold fs-5 text-dark">₱1,750</span>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">Revenue Today<br><span style="font-size: 0.75rem;">Collected</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-card shadow-sm mb-4">
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark mb-0">Certificate Status Overview</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0 small">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th>Certificate Type</th>
+                                <th>Pending</th>
+                                <th>Released</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Barangay Clearance</td><td><span class="badge bg-warning text-warning bg-opacity-10">12</span></td><td><span class="badge bg-success text-success bg-opacity-10">30</span></td></tr>
+                            <tr><td>Residency Certificate</td><td><span class="badge bg-warning text-warning bg-opacity-10">8</span></td><td><span class="badge bg-success text-success bg-opacity-10">15</span></td></tr>
+                            <tr><td>Business Permit</td><td><span class="badge bg-warning text-warning bg-opacity-10">4</span></td><td><span class="badge bg-success text-success bg-opacity-10">9</span></td></tr>
+                            <tr><td>Good Moral Certificate</td><td><span class="badge bg-warning text-warning bg-opacity-10">6</span></td><td><span class="badge bg-success text-success bg-opacity-10">22</span></td></tr>
+                            <tr><td>Facility Use Permit</td><td><span class="badge bg-warning text-warning bg-opacity-10">2</span></td><td><span class="badge bg-success text-success bg-opacity-10">5</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-card shadow-sm">
+                <div class="mb-3">
+                    <h6 class="fw-bold text-dark mb-0">Certificate Requests</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Purpose</th>
+                                <th>Fee</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.CertificateRequests != null)
+                            {
+                                foreach (var r in ViewBag.CertificateRequests)
+                                {
+                                    <tr>
+                                        <td class="text-muted">@r.RequestId</td>
+                                        <td class="fw-semibold text-dark">@r.Name</td>
+                                        <td>@r.Type</td>
+                                        <td>@r.Purpose</td>
+                                        <td>@r.Fee</td>
+                                        <td>
+                                            <span class="badge @(r.Payment == "Paid" ? "bg-success text-success" : "bg-warning text-warning") bg-opacity-10 px-2 py-1">@r.Payment</span>
+                                        </td>
+                                        <td>
+                                            @{
+                                                string cls = "bg-warning text-warning";
+                                                if (r.Status == "Processing") cls = "bg-primary text-primary";
+                                                if (r.Status == "Ready for Release") cls = "bg-success text-success";
+                                                if (r.Status == "Released") cls = "bg-success text-success";
+                                            }
+                                            <span class="badge @cls bg-opacity-10 px-2 py-1">@r.Status</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button class="btn btn-link btn-sm text-dark p-0 text-decoration-none d-flex align-items-center gap-1 mx-auto"><i class="bi bi-printer"></i> Print</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

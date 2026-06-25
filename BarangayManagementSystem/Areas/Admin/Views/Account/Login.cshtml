@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = null; // Tinatanggal ang global layout para sa malinis na fullscreen authentication background
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -7,14 +7,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administrator Login - Barangay Management System</title>
+    <title>Admin Login - Barangay Management System</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
         body {
-            /* Magandang smooth gradient background mula sa iyong template image */
-            background: linear-gradient(135deg, #10326b 0%, #1a4d96 50%, #256bb8 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,143 +21,89 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .login-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 15px;
-        }
-
-        .brand-logo-box {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px auto;
-        }
-
         .login-card {
-            background-color: #ffffff;
-            border: none;
+            background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            padding: 35px 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
         }
 
-        .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 6px;
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #2563eb;
         }
-
-        .input-group-text {
-            background-color: #f8fafc;
-            border-color: #e2e8f0;
-            color: #94a3b8;
-            padding-left: 12px;
-            padding-right: 12px;
-        }
-
-        .form-control {
-            border-color: #e2e8f0;
-            background-color: #f8fafc;
-            font-size: 0.9rem;
-            padding: 10px 12px;
-            color: #334155;
-        }
-
-            .form-control:focus {
-                background-color: #ffffff;
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-            }
 
         .btn-login {
-            background-color: #0f2d5c;
-            color: #ffffff;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            text-uppercase: uppercase;
-            transition: all 0.2s ease;
+            background-color: #1e3a8a;
+            color: white;
+            font-weight: 600;
         }
 
             .btn-login:hover {
-                background-color: #0b1f42;
-                color: #ffffff;
-                transform: translateY(-1px);
-            }
-
-        .demo-credentials {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-            .demo-credentials strong {
-                color: #334155;
+                background-color: #1d4ed8;
+                color: white;
             }
     </style>
 </head>
 <body>
 
-    <div class="login-container">
-        <div class="text-center text-white mb-4">
-            <div class="brand-logo-box rounded-3">
-                <i class="bi bi-shield-check fs-2 text-white"></i>
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <div class="text-primary mb-2">
+                <i class="bi bi-shield-check fs-1"></i>
             </div>
-            <h5 class="fw-bold mb-1" style="letter-spacing: 0.5px;">Comprehensive Barangay</h5>
-            <p class="small text-white-50 mb-0">Management System</p>
+            <h4 class="fw-bold text-dark mb-1">Barangay MIS</h4>
+            <p class="text-muted small">Admin Portal Login</p>
         </div>
 
-        <div class="card login-card">
-            <div class="text-center mb-4">
-                <h6 class="fw-bold text-dark mb-1" style="font-size: 1.05rem;">Administrator Login</h6>
-                <p class="text-muted small mb-0">Sign in to access the admin panel</p>
+        <form action="/Admin/Account/Login" method="post">
+            <div class="text-danger small mb-3">
+                @Html.ValidationSummary(true)
             </div>
 
-            <form asp-area="Admin" asp-controller="Account" asp-action="Login" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label small fw-semibold text-secondary">Username</label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Ipasok ang username" required autocomplete="off" />
+            </div>
 
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="alert alert-danger py-2 px-3 small border-0 mb-3" role="alert" style="font-size: 0.8rem;">
-                        <i class="bi bi-exclamation-circle-fill me-1"></i> Maling username o password.
-                    </div>
-                }
-
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input type="text" name="username" class="form-control" placeholder="Enter username" autocomplete="off" required />
-                    </div>
+            <div class="mb-4">
+                <label for="passwordInput" class="form-label small fw-semibold text-secondary">Password</label>
+                <div class="input-group">
+                    <input type="password" name="password" id="passwordInput" class="form-control" placeholder="Ipasok ang password" required />
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border-left: none;">
+                        <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                    </button>
                 </div>
+            </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input type="password" name="password" class="form-control" placeholder="Enter password" required />
-                        <span class="input-group-text bg-light cursor-pointer" style="border-left: 0;"><i class="bi bi-eye-slash small"></i></span>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-login w-100 mb-3">
-                    LOGIN
-                </button>
-
-                <div class="text-center demo-credentials border-top pt-3 mt-2">
-                    Demo credentials: <strong>admin</strong> / <strong>admin123</strong>
-                </div>
-            </form>
-        </div>
+            <button type="submit" class="btn btn-login w-100 py-2 rounded-3 mb-2">
+                Login <i class="bi bi-box-arrow-in-right ms-1"></i>
+            </button>
+        </form>
     </div>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#passwordInput');
+        const toggleIcon = document.querySelector('#toggleIcon');
+
+        togglePassword.addEventListener('click', function () {
+            // Palitan ang type (text <-> password)
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Palitan ang hitsura ng icon (may guhit o walang guhit)
+            if (type === 'text') {
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            } else {
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            }
+        });
+    </script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BarangayManagementSystem.Models
+namespace BarangayManagementSystem.Models.ViewModels
 {
     public class ComplaintFormModel
     {

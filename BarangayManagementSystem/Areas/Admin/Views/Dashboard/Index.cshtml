@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = null; // Hiwalay na layout para sa Admin Panel boundary
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -17,7 +17,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             background-color: #1e3a8a;
             min-height: 100vh;
@@ -36,6 +35,7 @@
                 display: flex;
                 align-items: center;
                 border-radius: 0px;
+                text-decoration: none;
                 transition: all 0.2s;
             }
 
@@ -56,13 +56,11 @@
                     border-left: 4px solid #ffffff;
                 }
 
-        /* Main Content wrapper */
         .main-content {
             margin-left: 240px;
             min-height: 100vh;
         }
 
-        /* Hero Header banner */
         .welcome-banner {
             background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
             border-radius: 12px;
@@ -70,7 +68,6 @@
             padding: 24px;
         }
 
-        /* Custom Cards styling */
         .stat-card {
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
@@ -96,7 +93,6 @@
             padding: 20px;
         }
 
-        /* Bottom shortcut buttons */
         .shortcut-btn {
             border: none;
             border-radius: 8px;
@@ -128,10 +124,10 @@
             </div>
 
             <ul class="nav flex-column mt-3">
-                <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-grid-fill me-2"></i> Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people me-2"></i> Residents</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-file-earmark-text me-2"></i> Certificates</a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-chat-left-text me-2"></i> Complaints</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/Admin/Dashboard/Index"><i class="bi bi-grid-fill me-2"></i> Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard/Residents"><i class="bi bi-people me-2"></i> Residents</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard/Certificates"><i class="bi bi-file-earmark-text me-2"></i> Certificates</a></li>
+                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard/Complaints"><i class="bi bi-chat-left-text me-2"></i> Complaints</a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-kanban me-2"></i> Projects</a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-exclamation-triangle me-2"></i> Disaster</a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-heart-pulse me-2"></i> Health</a></li>
@@ -158,8 +154,9 @@
                     </div>
                     <span class="small fw-semibold text-secondary">Administrator</span>
                 </div>
-                <a asp-area="Admin" asp-controller="Account" asp-action="Logout" class="btn btn-outline-danger btn-sm rounded px-2 py-1">
-                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+
+                <a href="/Admin/Dashboard/Logout" class="btn btn-outline-danger btn-sm rounded px-2 py-1 ms-2 d-flex align-items-center gap-1">
+                    <i class="bi bi-box-arrow-right"></i> Logout
                 </a>
             </div>
         </div>
@@ -173,7 +170,7 @@
                 </div>
                 <div class="bg-white bg-opacity-10 rounded p-3 text-center border border-white border-opacity-10">
                     <small class="d-block text-white-50 small text-uppercase">Today</small>
-                    <span class="fw-bold small"><i class="bi bi-calendar3 me-1"></i> Thu, Jun 25, 2026</span>
+                    <span class="fw-bold small"><i class="bi bi-calendar3 me-1"></i> Fri, Jun 26, 2026</span>
                 </div>
             </div>
 
@@ -239,7 +236,7 @@
                     <div class="stat-card">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <span class="text-muted small fw-medium">Vaccinated</span>
-                            <div class="stat-icon-box bg-emerald bg-opacity-10 text-success"><i class="bi bi-heart-pulse"></i></div>
+                            <div class="stat-icon-box bg-success bg-opacity-10 text-success"><i class="bi bi-heart-pulse"></i></div>
                         </div>
                         <h4 class="fw-bold mb-1 text-dark">4,100</h4>
                         <small class="text-muted small" style="font-size: 0.75rem;">Residents</small>
@@ -252,30 +249,27 @@
                     <div class="data-card h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="fw-bold mb-0 text-dark">Recent Complaints</h6>
-                            <a href="#" class="text-primary small text-decoration-none">View All</a>
+                            <a href="/Admin/Dashboard/Complaints" class="text-primary small text-decoration-none">View All</a>
                         </div>
                         <div class="d-flex flex-column gap-3">
-                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                <div>
-                                    <p class="mb-0 fw-semibold small text-dark">Noise Complaint</p>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Juan Dela Cruz</small>
-                                </div>
-                                <span class="badge bg-warning bg-opacity-10 text-warning px-2 py-1 rounded small" style="font-size: 0.7rem;">Pending</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                                <div>
-                                    <p class="mb-0 fw-semibold small text-dark">Property Dispute</p>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Maria Santos</small>
-                                </div>
-                                <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded small" style="font-size: 0.7rem;">Ongoing</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <p class="mb-0 fw-semibold small text-dark">Illegal Dumping</p>
-                                    <small class="text-muted d-block" style="font-size: 0.75rem;">Pedro Reyes</small>
-                                </div>
-                                <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded small" style="font-size: 0.7rem;">Resolved</span>
-                            </div>
+                            @if (ViewBag.RecentComplaintsList != null)
+                            {
+                                foreach (var item in ViewBag.RecentComplaintsList)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                        <div>
+                                            <p class="mb-0 fw-semibold small text-dark">@item.Title</p>
+                                            <small class="text-muted d-block" style="font-size: 0.75rem;">@item.Resident</small>
+                                        </div>
+                                        @{
+                                            string badgeClass = "bg-warning text-warning";
+                                            if (item.Status == "Ongoing") badgeClass = "bg-primary text-primary";
+                                            if (item.Status == "Resolved") badgeClass = "bg-success text-success";
+                                        }
+                                        <span class="badge @badgeClass bg-opacity-10 px-2 py-1 rounded small" style="font-size: 0.7rem;">@item.Status</span>
+                                    </div>
+                                }
+                            }
                         </div>
                     </div>
                 </div>
@@ -284,11 +278,11 @@
                     <div class="data-card h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="fw-bold mb-0 text-dark">Certificates Issued Today</h6>
-                            <a href="#" class="text-primary small text-decoration-none">View All</a>
+                            <a href="/Admin/Dashboard/Certificates" class="text-primary small text-decoration-none">View All</a>
                         </div>
                         <div class="d-flex flex-column gap-2 small">
                             <div class="d-flex justify-content-between py-2 border-bottom">
-                                <div><span class="fw-medium text-dark">Ana Garcia</span> <small class="text-muted d-block" style="font-size: 0.7rem;">Barangay Clearance</small></div>
+                                <div><span class="fw-medium text-dark">Ana Garcia</span> <small class="text-muted d-block" style="font-size: 0.75rem;">Barangay Clearance</small></div>
                                 <span class="text-muted" style="font-size: 0.75rem;">9:15 AM</span>
                             </div>
                             <div class="d-flex justify-content-between py-2 border-bottom">
@@ -345,13 +339,13 @@
 
             <div class="row g-3">
                 <div class="col-md-3">
-                    <button class="shortcut-btn w-100 bg-primary bg-opacity-10 text-primary py-3"><i class="bi bi-person-plus-fill"></i> Manage Residents</button>
+                    <a href="/Admin/Dashboard/Residents" class="shortcut-btn w-100 bg-primary bg-opacity-10 text-primary py-3 text-decoration-none"><i class="bi bi-person-plus-fill"></i> Manage Residents</a>
                 </div>
                 <div class="col-md-3">
-                    <button class="shortcut-btn w-100 bg-purple bg-opacity-10 text-purple py-3" style="background-color: #f3e8ff; color: #7c3aed;"><i class="bi bi-file-earmark-text-fill"></i> Process Certificates</button>
+                    <a href="/Admin/Dashboard/Certificates" class="shortcut-btn w-100 py-3 text-decoration-none" style="background-color: #e0f2fe; color: #0369a1;"><i class="bi bi-file-earmark-text-fill"></i> View Certificates</a>
                 </div>
                 <div class="col-md-3">
-                    <button class="shortcut-btn w-100 bg-success bg-opacity-10 text-success py-3" style="background-color: #dcfce7; color: #16a34a;"><i class="bi bi-file-bar-graph-fill"></i> View Reports</button>
+                    <a href="/Admin/Dashboard/Complaints" class="shortcut-btn w-100 py-3 text-decoration-none" style="background-color: #f3e8ff; color: #7c3aed;"><i class="bi bi-chat-left-text-fill"></i> View Complaints</a>
                 </div>
                 <div class="col-md-3">
                     <button class="shortcut-btn w-100 bg-danger bg-opacity-10 text-danger py-3" style="background-color: #fee2e2; color: #dc2626;"><i class="bi bi-shield-fire"></i> Disaster Response</button>
