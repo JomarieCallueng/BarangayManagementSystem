@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "User Permissions";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0"><i class="bi bi-key-fill"></i> Module Access Control Permissions</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">I-set up ang mga screen/views na pwedeng ma-access o mabago ng account na ito:</p>
+
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="p1" checked disabled>
+                <label class="form-check-input-label" for="p1">View Executive Reports (Report Dashboard)</label>
+            </div>
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="p2" checked>
+                <label class="form-check-input-label" for="p2">Manage Environment & Health Records</label>
+            </div>
+            <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="p3">
+                <label class="form-check-input-label" for="p3">Modify Barangay System Settings</label>
+            </div>
+
+            <div class="text-end mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Bumalik</a>
+                <button onclick="alert('Nai-save ang mga bagong permissions!')" class="btn btn-success btn-sm">I-save Permissions</button>
+            </div>
+        </div>
+    </div>
+</div>

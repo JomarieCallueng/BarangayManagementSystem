@@ -1,0 +1,40 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.CertificateViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Request Details</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5" style="max-width: 650px;">
+        <div class="card border-0 shadow-sm p-4 rounded-3 mb-3">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-info-circle-fill text-info"></i> Log Overview</h5>
+            <div class="row g-3 small">
+                <div class="col-6"><span class="text-muted d-block">Resident</span> <strong>@Model.ResidentName</strong></div>
+                <div class="col-6"><span class="text-muted d-block">Document Requested</span> <strong>@Model.CertificateType</strong></div>
+                <div class="col-6"><span class="text-muted d-block">Date Logged</span> <span class="text-secondary">@Model.DateRequested.ToString("f")</span></div>
+                <div class="col-6">
+                    <span class="text-muted d-block">Status</span>
+                    <span class="badge @(Model.Status == "Issued" ? "bg-success" : "bg-warning")">@Model.Status</span>
+                </div>
+                @if (Model.DateIssued != null)
+                {
+                    <div class="col-12 border-top pt-2"><span class="text-muted d-block">Release Date</span> <span class="text-success fw-bold">@Model.DateIssued?.ToString("f")</span></div>
+                }
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-sm btn-light border px-3"><i class="bi bi-arrow-left"></i> Back</a>
+            @if (Model.Status == "Issued")
+            {
+                <a asp-action="Print" asp-route-id="@Model.CertificateId" class="btn btn-sm btn-dark px-4" target="_blank"><i class="bi bi-printer"></i> Print Document</a>
+            }
+        </div>
+    </div>
+</body>
+</html>

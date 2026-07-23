@@ -1,0 +1,67 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.HealthViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Health Center Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-heart-pulse text-success me-2"></i>Health Center Records</h2>
+        <p class="text-muted small mb-0">Track local patient consultations, prenatal logs, and immunization records schedules.</p>
+    </div>
+    <a href="/Admin/Health/Create" class="btn btn-success shadow-sm fw-semibold">
+        <i class="bi bi-plus-lg me-1"></i> Log Patient Check-up
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Medical Condition / Diagnosis</th>
+                    <th>Notes & Remarks</th>
+                    <th>Date Recorded</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-dark">
+                                <i class="bi bi-person-heart text-primary me-1"></i> @item.ResidentName
+                            </td>
+                            <td>
+                                <span class="badge bg-danger-subtle text-danger fw-semibold">@item.MedicalCondition</span>
+                            </td>
+                            <td>
+                                <span class="text-secondary small">@(string.IsNullOrEmpty(item.Remarks) ? "No additional notes." : item.Remarks)</span>
+                            </td>
+                            <td>
+                                <i class="bi bi-calendar3 me-1"></i> @item.DateRecorded.ToString("MM/dd/yyyy")
+                            </td>
+                            <td class="text-end">
+                                <a href="/Admin/Health/Edit/@item.Id" class="btn btn-sm btn-outline-primary me-1" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a href="/Admin/Health/Delete/@item.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-heart-pulse display-6 d-block mb-2 text-danger opacity-50"></i>
+                            <span>No patient records or clinic transactions logged today.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

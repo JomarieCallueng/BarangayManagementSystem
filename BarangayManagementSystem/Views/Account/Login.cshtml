@@ -1,0 +1,97 @@
+﻿@model BarangayCMS.Web.Models.LoginViewModel
+@{
+    Layout = null; // Tinanggal natin ang main navbar at footer para malinis ang login screen
+    ViewData["Title"] = "Sign In - Barangay Management System";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+            body {
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+            }
+
+            .login-card {
+                border: none;
+                border-radius: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+
+                <div class="text-center mb-4 text-white">
+                    <i class="bi bi-shield-lock display-4 text-success mb-2"></i>
+                    <h3 class="fw-bold">BMS Portal</h3>
+                    <p class="text-muted small">Authorized Personnel & Administrator Access Only</p>
+                </div>
+
+                <div class="card login-card p-4 bg-white">
+                    <div class="card-body">
+                        <h5 class="fw-bold text-dark mb-3 text-center">Sign In</h5>
+
+                        <!-- Idinagdag ang antiauthentication token at tahasang method -->
+                        <form asp-controller="Account" asp-action="Login" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <!-- Dito lalabas ang mensahe kapag mali ang password mula sa Controller -->
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger small p-2 mb-3"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label text-secondary small fw-semibold">Email Address</label>
+                                <!-- Idinagdag ang id at name para sa siguradong binding sa backend -->
+                                <input asp-for="Email" id="Email" name="Email" type="email" class="form-control form-control-sm py-2" placeholder="name@barangay.gov.ph" required />
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label text-secondary small fw-semibold">Password</label>
+                                <!-- Idinagdag ang id at name para sa siguradong binding sa backend -->
+                                <input asp-for="Password" id="Password" name="Password" type="password" class="form-control form-control-sm py-2" placeholder="••••••••" required />
+                                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="mb-3 form-check d-flex justify-content-between align-items-center">
+                                <div>
+                                    <input asp-for="RememberMe" id="RememberMe" name="RememberMe" type="checkbox" class="form-check-input" />
+                                    <label asp-for="RememberMe" class="form-check-label text-secondary small">Remember Me</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark w-100 py-2 fw-semibold small shadow-sm">
+                                Authenticate Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="text-white-50 text-decoration-none small">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Public Portal
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Validation scripts para sa real-time checking -->
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+</body>
+</html>

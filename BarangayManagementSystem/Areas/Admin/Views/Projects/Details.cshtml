@@ -1,0 +1,61 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ProjectViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Impormasyon ng Proyekto";
+}
+
+<div class="container mt-4" style="max-width: 750px;">
+    <div class="card shadow-sm border-0">
+        <!-- Header -->
+        <div class="card-header bg-info text-white py-3" style="background-color: #17a2b8 !important;">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Buong Impormasyon ng Proyekto</h4>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4">
+            <h2 class="text-primary fw-bold mb-3">@Model.ProjectName</h2>
+            <hr />
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p class="mb-1 text-muted small fw-bold">Laang Budget:</p>
+                    <h4 class="text-success fw-bold">₱@Model.Budget.ToString("N2")</h4>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-1 text-muted small fw-bold">Kasalukuyang Status:</p>
+                    <span class="badge bg-dark px-3 py-2 fs-6">@Model.Status</span>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p class="mb-1 text-muted small fw-bold">Araw ng Simula:</p>
+                    <p class="fw-semibold text-secondary">@Model.StartDate.ToString("MMMM dd, yyyy")</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-1 text-muted small fw-bold">Inaasahang Tapos:</p>
+                    <p class="fw-semibold text-secondary">@(Model.EndDate != DateTime.MinValue ? Model.EndDate.ToString("MMMM dd, yyyy") : "N/A")</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <p class="mb-2 text-muted small fw-bold">Deskripsyon / Sakop:</p>
+                <div class="p-3 bg-light rounded border" style="min-height: 100px;">
+                    <p class="mb-0 text-dark">@Model.Description</p>
+                </div>
+            </div>
+
+            <!-- 🔑 MGA BUTON (INAYOS DITO) -->
+            <div class="d-flex justify-content-between mt-4">
+                <!-- Bumalik papuntang Index list -->
+                <a asp-area="Admin" asp-controller="Projects" asp-action="Index" class="btn btn-secondary px-4">Bumalik</a>
+
+                <!-- I-modify papuntang Edit screen bitbit ang Id ng project -->
+                <a asp-area="Admin" asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-dark fw-semibold px-4">I-modify</a>
+            </div>
+
+        </div>
+    </div>
+</div>

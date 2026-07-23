@@ -1,0 +1,35 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ProjectViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Burahin ang Proyekto";
+}
+
+<div class="container mt-4" style="max-width: 500px;">
+    <div class="card border-danger shadow">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Kumpirmahin ang Pagbura</h4>
+        </div>
+        <div class="card-body p-4 text-center">
+            <p class="fs-5 text-dark">Sigurado ka ba na gusto mong burahin ang proyektong ito?</p>
+            <h3 class="text-danger fw-bold my-3">@Model.ProjectName</h3>
+
+            <p class="text-muted small">Ang aksyong ito ay permanenteng hindi na mababawi.</p>
+            <hr class="my-4" />
+
+            <!-- 🔑 INAYOS DITO: May area, controller, method="post", at Anti-Forgery Token -->
+            <form asp-area="Admin" asp-controller="Projects" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- Napakahalaga nito para malaman ng controller kung aling id ang buburahin -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-area="Admin" asp-controller="Projects" asp-action="Index" class="btn btn-secondary px-4">Hindi, Bumalik</a>
+                    <button type="submit" class="btn btn-danger px-4 shadow-sm">Oo, Burahin Ito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

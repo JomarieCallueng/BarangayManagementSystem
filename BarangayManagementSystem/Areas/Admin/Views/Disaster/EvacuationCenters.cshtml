@@ -1,0 +1,50 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Evacuation Centers";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-house-door text-dark"></i> Evacuation Centers Status</h2>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Bumalik sa Monitor</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Center 1 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body">
+                    <h5 class="card-title text-danger fw-bold">Barangay Gym</h5>
+                    <p class="text-muted small">Location: Phase 1 Main Road</p>
+                    <hr />
+                    <p class="mb-1"><strong>Kapasidad:</strong> 150/200 Pamilya</p>
+                    <p class="mb-0"><strong>Status:</strong> <span class="badge bg-danger">Halos Puno</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Center 2 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body">
+                    <h5 class="card-title text-success fw-bold">Elementary School Hall</h5>
+                    <p class="text-muted small">Location: Purok 2, Ilaya</p>
+                    <hr />
+                    <p class="mb-1"><strong>Kapasidad:</strong> 25/300 Pamilya</p>
+                    <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Maraming Bakante</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Center 3 -->
+        <div class="col">
+            <div class="card h-100 shadow-sm border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title text-secondary fw-bold">Barangay Day Care</h5>
+                    <p class="text-muted small">Location: Sitio Central</p>
+                    <hr />
+                    <p class="mb-1"><strong>Kapasidad:</strong> 0/50 Pamilya</p>
+                    <p class="mb-0"><strong>Status:</strong> <span class="badge bg-secondary">Bakante / Standby</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.ProjectViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Projects Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-kanban text-primary me-2"></i>Barangay Projects</h2>
+        <p class="text-muted small mb-0">Monitor infrastructure, community services, and development project pipelines.</p>
+    </div>
+    <a href="/Admin/Projects/Create" class="btn btn-primary shadow-sm fw-semibold">
+        <i class="bi bi-plus-lg me-1"></i> Add New Project
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Project Title & Description</th>
+                    <th>Budget Allocation</th>
+                    <th>Timeline Duration</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        var statusClean = item.Status?.Trim().ToLower() ?? "planned";
+                        <tr>
+                            <td style="max-width: 300px;">
+                                <span class="fw-semibold text-dark d-block">@item.ProjectName</span>
+                                <small class="text-muted text-truncate d-block">@item.Description</small>
+                            </td>
+                            <td class="text-success fw-bold">₱@item.Budget.ToString("N2")</td>
+                            <td>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-range me-1"></i>
+                                    @item.StartDate.ToString("MM/dd/yyyy") - @item.EndDate.ToString("MM/dd/yyyy")
+                                </small>
+                            </td>
+                            <td>
+                                @if (statusClean == "planning" || statusClean == "planned")
+                                {
+                                    <span class="badge bg-info-subtle text-info fw-semibold px-2 py-1">Planned / Planning</span>
+                                }
+                                else if (statusClean == "ongoing")
+                                {
+                                    <span class="badge bg-warning-subtle text-warning-emphasis fw-semibold px-2 py-1">Ongoing</span>
+                                }
+                                else if (statusClean == "completed" || statusClean == "done")
+                                {
+                                    <span class="badge bg-success-subtle text-success fw-semibold px-2 py-1">Completed</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary fw-semibold px-2 py-1">@item.Status</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a href="/Admin/Projects/Details/@item.Id" class="btn btn-sm btn-outline-info" title="View Details"><i class="bi bi-info-circle"></i></a>
+                                    <a href="/Admin/Projects/Edit/@item.Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="/Admin/Projects/Delete/@item.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-kanban display-6 d-block mb-2 text-primary opacity-50"></i>
+                            <span>No projects logged into the roster yet.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

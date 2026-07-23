@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Barangay Staff</title>
+
+    <!-- 🎨 Bootstrap 5 CSS at Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+    <!-- Google Font para sa modernong hitsura ng Admin Dashboard -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                background-color: #f3f4f6; /* Banayad na gray na background */
+                margin: 0;
+                padding: 0;
+            }
+
+            /* 🔵 SIDEBAR STYLES */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 100;
+                width: 250px;
+                background-color: #122240; /* Eksaktong deep navy blue */
+                padding-top: 1.5rem;
+                overflow-y: auto;
+                display: flex; /* GINAWANG FLEXBOX: Para maitulak ang log-out link sa pinakailalim */
+                flex-column: wrap;
+                flex-direction: column;
+            }
+
+            /* Branding Header */
+            .sidebar-brand {
+                padding: 0 1.5rem 1.5rem 1.5rem;
+                color: #ffffff;
+            }
+
+                .sidebar-brand .title {
+                    font-size: 1.05rem;
+                    font-weight: 700;
+                    margin: 0;
+                }
+
+                .sidebar-brand .subtitle {
+                    font-size: 0.75rem;
+                    color: #a0aec0;
+                }
+
+            /* Sidebar Navigation Links */
+            .sidebar .nav-link {
+                font-size: 0.9rem;
+                font-weight: 400;
+                color: #cbd5e1;
+                padding: 0.65rem 1.5rem;
+                display: flex;
+                align-items: center;
+                transition: all 0.2s ease;
+                text-decoration: none;
+            }
+
+                .sidebar .nav-link i {
+                    font-size: 1.1rem;
+                    margin-right: 0.75rem;
+                    width: 20px;
+                    text-align: center;
+                }
+
+                .sidebar .nav-link:hover {
+                    color: #ffffff;
+                    background-color: rgba(255, 255, 255, 0.05);
+                }
+
+                /* Active Link Highlight */
+                .sidebar .nav-link.active {
+                    color: #ffffff;
+                    background-color: rgba(255, 255, 255, 0.08);
+                    font-weight: 500;
+                }
+
+            /* 💻 MAIN CONTENT WRAPPER */
+            .main-content {
+                margin-left: 250px;
+                padding: 1.5rem;
+                min-height: 100vh;
+            }
+
+            /* 🖨️ PRINT GUARD EXCLUSION */
+            @@media print {
+                .no-print, .modal, .modal-backdrop {
+                    display: none !important;
+                }
+
+                .main-content {
+                    margin-left: 0 !important;
+                    padding: 0 !important;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <!-- 🔵 SIDEBAR WRAPPER -->
+    <div class="sidebar">
+        <!-- Sidebar Brand Header -->
+        <div class="sidebar-brand p-3 d-flex align-items-center gap-2 border-bottom border-secondary border-opacity-10">
+            <i class="bi bi-person-badge-fill text-info fs-3"></i>
+            <div>
+                <h6 class="m-0 fw-bold text-white">Barangay Staff</h6>
+                <small class="text-muted" style="font-size: 0.7rem;">Encoder Portal</small>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="nav flex-column mt-3 flex-grow-1">
+            <a asp-area="Staff" asp-controller="StaffDashboard" asp-action="Index" class="nav-link" id="link-dashboard">
+                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+            <a asp-area="Staff" asp-controller="Residents" asp-action="Index" class="nav-link" id="link-residents">
+                <i class="bi bi-people-fill"></i> Residents
+            </a>
+            <a asp-area="Staff" asp-controller="Certificates" asp-action="Index" class="nav-link" id="link-certificates">
+                <i class="bi bi-file-earmark-text-fill"></i> Certificates
+            </a>
+            <a asp-area="Staff" asp-controller="Complaints" asp-action="Index" class="nav-link" id="link-complaint">
+                <i class="bi bi-chat-left-text-fill"></i> Complaints
+            </a>
+            <a asp-area="Staff" asp-controller="Disasters" asp-action="Index" class="nav-link" id="link-disaster">
+                <i class="bi bi-exclamation-triangle-fill"></i> Disaster Risk
+            </a>
+            <a asp-area="Staff" asp-controller="Environments" asp-action="Index" class="nav-link" id="link-environment">
+                <i class="bi bi-tree-fill"></i> Environment
+            </a>
+            <a asp-area="Staff" asp-controller="Health" asp-action="Index" class="nav-link" id="link-health">
+                <i class="bi bi-heart-pulse-fill"></i> Health Center
+            </a>
+            <a asp-area="Staff" asp-controller="Announcements" asp-action="Index" class="nav-link" id="link-announcement">
+                <i class="bi bi-megaphone-fill"></i> Announcements
+            </a>
+            <a asp-area="Staff" asp-controller="Reports" asp-action="Index" class="nav-link" id="link-report">
+                <i class="bi bi-graph-up"></i> Reports
+            </a>
+        </div>
+
+        <!-- 🚪 LOGOUT LINK CONTAINER (Naka-pwesto sa pinakailalim) -->
+        <div class="mt-auto p-3 no-print border-top border-secondary border-opacity-10">
+            <button type="button" class="btn btn-outline-danger w-100 btn-sm fw-semibold d-flex align-items-center justify-content-center gap-2 py-2 rounded-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="bi bi-box-arrow-left fs-5"></i> Log Out
+            </button>
+        </div>
+    </div> <!-- END OF SIDEBAR -->
+    <!-- 💻 MAIN DYNAMIC CONTENT CONTAINER -->
+    <main class="main-content">
+        <!-- 🎛️ DYNAMIC PAGE BODY -->
+        <div class="content-body">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- 🔔 CONFIRMATION MODAL (Popup Window para sa Log Out) -->
+    <div class="modal fade no-print" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-box-arrow-left text-danger display-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2" id="logoutModalLabel">Confirm Log Out</h5>
+                    <p class="text-muted small mb-4">Are you sure you want to log out from the Encoder Portal? Unsaved changes might not be saved.</p>
+
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-light w-50 py-2 fw-semibold border rounded-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger w-50 py-2 fw-semibold rounded-3">Yes, Log Out</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ⚡ AUTOMATIC SIDEBAR ACTIVE HIGHLIGHTER -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const path = window.location.pathname.toLowerCase();
+
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
+
+        if (path.includes("/residents")) document.getElementById("link-residents")?.classList.add("active");
+        else if (path.includes("/certificates")) document.getElementById("link-certificates")?.classList.add("active");
+        else if (path.includes("/complaints") || path.includes("/complaint")) document.getElementById("link-complaint")?.classList.add("active");
+        else if (path.includes("/disasters") || path.includes("/disaster")) document.getElementById("link-disaster")?.classList.add("active");
+        else if (path.includes("/environments") || path.includes("/environment")) document.getElementById("link-environment")?.classList.add("active");
+        else if (path.includes("/healths") || path.includes("/health")) document.getElementById("link-health")?.classList.add("active");
+        else if (path.includes("/announcements") || path.includes("/announcement")) document.getElementById("link-announcement")?.classList.add("active");
+        else if (path.includes("/reports") || path.includes("/report")) document.getElementById("link-report")?.classList.add("active");
+        else if (path.includes("/staffdashboard") || path === "/staff" || path === "/staff/") document.getElementById("link-dashboard")?.classList.add("active");
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

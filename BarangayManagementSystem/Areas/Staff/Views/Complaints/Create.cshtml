@@ -1,0 +1,70 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.ComplaintViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "New Incident Intake Form";
+}
+
+<div class="container-fluid p-0">
+    <!-- Header Page Section -->
+    <div class="mb-4">
+        <span class="text-muted small">Dashboard / Complaints</span>
+        <h2 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">Incident Intake Portal</h2>
+    </div>
+
+    <!-- Centered Form Card Layout -->
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-7">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4 p-md-5">
+
+                <div class="mb-4">
+                    <h4 class="fw-bold text-dark m-0">New Incident Intake Form</h4>
+                    <p class="text-muted small">I-rekord ang pormal na reklamo mula sa isang residente ng barangay.</p>
+                </div>
+
+                <form asp-area="Staff" asp-controller="Complaints" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <!-- Complainant Dropdown Field -->
+                    <div class="mb-3">
+                        <label asp-for="ResidentId" class="form-label fw-semibold text-secondary small">Complainant Name</label>
+                        <select asp-for="ResidentId" asp-items="ViewBag.ResidentsList" class="form-select border-light-subtle shadow-sm py-2">
+                            <option value="">-- Pumili ng Residente --</option>
+                        </select>
+                        <span asp-validation-for="ResidentId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Subject Field -->
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label fw-semibold text-secondary small">Case Subject / Nature of Complaint</label>
+                        <input asp-for="Subject" class="form-control border-light-subtle shadow-sm py-2" placeholder="e.g., Land Dispute, Public Disturbance" />
+                        <span asp-validation-for="Subject" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="mb-4">
+                        <label asp-for="Description" class="form-label fw-semibold text-secondary small">Detailed Incident Narrative</label>
+                        <textarea asp-for="Description" rows="5" class="form-control border-light-subtle shadow-sm" placeholder="Isulat ang kronolohikal na detalye ng pangyayari..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Hidden Status Default for New Logs -->
+                    <input type="hidden" asp-for="Status" value="Pending" />
+
+                    <!-- Action Control Buttons -->
+                    <div class="d-flex justify-content-end gap-2 border-top pt-4">
+                        <a asp-area="Staff" asp-controller="Complaints" asp-action="Index" class="btn btn-light px-4 border text-secondary fw-semibold">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-danger px-4 fw-bold shadow-sm">
+                            Log Complaint
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.DisasterViewModel
+@{
+    // 🛠️ Ikinabit natin uli sa orihinal mong Layout para bumalik ang Sidebar at Styles!
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Log Incident Report";
+}
+
+<!-- Tinanggal natin ang hiwalay na container/py-5 para sumunod sa alignment ng Dashboard mo -->
+<div class="card border-0 shadow-sm p-4 rounded-3" style="max-width: 650px; margin: 0 auto;">
+    <h5 class="fw-bold text-dark mb-1">Crisis Response Logging Form</h5>
+    <p class="text-muted small mb-4">I-tala ang impormasyon tungkol sa sakuna o emergency sa barangay.</p>
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label asp-for="IncidentName" class="form-label small fw-bold text-secondary"></label>
+            <input asp-for="IncidentName" class="form-control form-control-sm" placeholder="e.g., Bagyong Egay Flooding, Sunog sa Purok 5" />
+            <span asp-validation-for="IncidentName" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DisasterType" class="form-label small fw-bold text-secondary"></label>
+            <input asp-for="DisasterType" class="form-control form-control-sm" placeholder="e.g., Flash Flood, Earthquake, Structural Collapse" />
+            <span asp-validation-for="DisasterType" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label small fw-bold text-secondary"></label>
+            <input asp-for="Location" class="form-control form-control-sm" placeholder="Saan partikular na lugar o purok nangyari..." />
+            <span asp-validation-for="Location" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="OccurrenceDate" class="form-label small fw-bold text-secondary"></label>
+            <input asp-for="OccurrenceDate" class="form-control form-control-sm" type="datetime-local" />
+            <span asp-validation-for="OccurrenceDate" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Description" class="form-label small fw-bold text-secondary"></label>
+            <textarea asp-for="Description" class="form-control form-control-sm" rows="4" placeholder="Ilarawan ang kasalukuyang sitwasyon o lawak ng pinsala..."></textarea>
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-sm btn-light border px-3">Cancel</a>
+            <button type="submit" class="btn btn-sm btn-warning px-4 fw-bold">Submit Crisis Log</button>
+        </div>
+    </form>
+</div>

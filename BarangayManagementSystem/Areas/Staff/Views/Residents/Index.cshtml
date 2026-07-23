@@ -1,0 +1,84 @@
+﻿@model IEnumerable<BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Resident Demographic Registry";
+}
+
+<div class="container-fluid p-0">
+    <!-- Top Action Row -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="text-muted small">Dashboard</span>
+            <h2 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">Resident Demographic Registry</h2>
+        </div>
+        <div>
+            <a asp-area="Staff" asp-controller="Residents" asp-action="Create" class="btn btn-primary fw-semibold px-4 shadow-sm">
+                Register Citizen
+            </a>
+        </div>
+    </div>
+
+    <!-- Data Table Container Wrapped in Clean White Card Look -->
+    <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr class="text-uppercase tracking-wider text-secondary" style="font-size: 0.75rem; font-weight: 600;">
+                        <th>Full Name</th>
+                        <th>Gender</th>
+                        <th>Civil Status</th>
+                        <th>Contact</th>
+                        <th>Voter Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold text-dark">
+                                    @item.LastName, @item.FirstName @item.MiddleName
+                                </td>
+                                <td>@item.Gender</td>
+                                <td>@item.CivilStatus</td>
+                                <td class="text-muted">@item.ContactNumber</td>
+                                <td>
+                                    @if (item.IsVoter)
+                                    {
+                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded">Voter</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded">Non-Voter</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <!-- 🔑 GUMAGANA NA AT NAKA-ROUTE SA DETAILS NG RESIDENT ID -->
+                                    <a asp-area="Staff"
+                                       asp-controller="Residents"
+                                       asp-action="Details"
+                                       asp-route-id="@item.ResidentId"
+                                       class="btn btn-sm btn-outline-secondary px-3">
+                                        View Profile
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted small">
+                                <i class="bi bi-folder-x fs-3 block mb-2"></i><br>
+                                Walang nakitang record ng mga residente.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Bagong Alokasyon ng Pondo";
+}
+
+<div class="container mt-4" style="max-width: 750px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white py-3" style="background-color: #198754 !important;">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-plus-circle me-2"></i>Bagong Alokasyon ng Pondo</h4>
+        </div>
+        <div class="card-body p-4">
+
+            <!-- 🔑 KUMPUNI NG FORM: Idinagdag ang method="post" at routing parameters -->
+            <form asp-area="Admin" asp-controller="Budget" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- Kategorya (Ang mahabang box sa itaas sa iyong screenshot) -->
+                <div class="mb-3">
+                    <label asp-for="Category" class="form-label fw-bold">Kategorya (Category)</label>
+                    <input asp-for="Category" class="form-control" placeholder="Halimbawa: Clean and Green, Health Services" />
+                    <span asp-validation-for="Category" class="text-danger small"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- Inilaang Pondo (Ang may sign na ₱ sa kaliwa sa iyong screenshot) -->
+                    <div class="col-md-6">
+                        <label asp-for="AllocatedAmount" class="form-label fw-bold">Inilaang Pondo</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₱</span>
+                            <input asp-for="AllocatedAmount" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="AllocatedAmount" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Taon ng Pananalapi (Ang katabing box sa kanan sa iyong screenshot) -->
+                    <div class="col-md-6">
+                        <label asp-for="FiscalYear" class="form-label fw-bold">Taon ng Pananalapi</label>
+                        <input asp-for="FiscalYear" class="form-control" type="number" />
+                        <span asp-validation-for="FiscalYear" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Hidden Input para sa UsedAmount (Dahil Required ito sa model mo pero karaniwang 0 pa kapag bago) -->
+                <input type="hidden" asp-for="UsedAmount" value="0" />
+
+                <!-- Mga Tala / Remarks (Ang textarea sa ibaba sa iyong screenshot) -->
+                <div class="mb-4">
+                    <label asp-for="Remarks" class="form-label fw-bold">Mga Karagdagang Detalye / Remarks</label>
+                    <textarea asp-for="Remarks" class="form-control" rows="4" placeholder="Mga karagdagang detalye o memo ukol sa pondo..."></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger small"></span>
+                </div>
+
+                <hr />
+
+                <!-- 🔑 MGA BUTTONS -->
+                <div class="d-flex justify-content-between mt-3">
+                    <a asp-area="Admin" asp-controller="Budget" asp-action="Index" class="btn btn-secondary px-4">Bumalik</a>
+                    <button type="submit" class="btn btn-success px-4 fw-bold">I-save Alokasyon</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

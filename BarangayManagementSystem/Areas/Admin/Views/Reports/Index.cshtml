@@ -1,0 +1,274 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ReportsDashboardViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "System Analytical Reports";
+}
+
+<!-- CDN FOR CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .btn-export-pdf {
+        background-color: #212529;
+        color: #ffffff;
+        border: 1px solid #212529;
+        transition: all 0.3s ease;
+    }
+
+        .btn-export-pdf:hover {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.35);
+        }
+
+    .trend-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+</style>
+
+<!-- BANNER AT EXPORT NAVIGATION -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-graph-up-arrow me-2" style="color: #6b46c1;"></i>Reports Engine
+        </h2>
+        <p class="text-muted small mb-0">Compile demographic, safety incidents, and general transaction report datasets.</p>
+    </div>
+
+    <a asp-area="Admin" asp-controller="Reports" asp-action="Export" class="btn btn-export-pdf shadow-sm">
+        <i class="bi bi-download me-1"></i> Export PDF Summary
+    </a>
+</div>
+
+<!-- MGA ANALYTICAL COUNTERS -->
+<div class="row g-3 mb-4">
+    <!-- Residents -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Total Residents</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.TotalResidents</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-primary">
+                    <i class="bi bi-people-fill fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <span class="badge bg-primary-subtle text-primary trend-badge">
+                    <i class="bi bi-person-plus-fill me-1"></i>@Model.ResidentTrendStatus
+                </span>
+            </div>
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Residents" class="text-decoration-none small text-primary mt-3 d-block fw-semibold">
+                View Dataset <i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Complaints -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Blotter Cases</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.TotalComplaints</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-danger">
+                    <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <span class="badge bg-warning-subtle text-dark trend-badge">
+                    <i class="bi bi-activity me-1"></i>@Model.ComplaintTrendStatus
+                </span>
+            </div>
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Complaints" class="text-decoration-none small text-danger mt-3 d-block fw-semibold">
+                View Dataset <i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Budget -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Total Budget Allocated</h6>
+                    <h3 class="fw-bold text-dark mb-0">₱@Model.TotalBudget.ToString("N2")</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-success">
+                    <i class="bi bi-cash-stack fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <span class="badge bg-success-subtle text-success trend-badge">
+                    <i class="bi bi-check-circle me-1"></i>Active Allocation
+                </span>
+            </div>
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Budget" class="text-decoration-none small text-success mt-3 d-block fw-semibold">
+                View Dataset <i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Certificates -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Certificates Issued</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.TotalCertificatesIssued</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-info">
+                    <i class="bi bi-file-earmark-text-fill fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2">
+                <span class="badge bg-info-subtle text-info trend-badge">
+                    <i class="bi bi-calendar-check me-1"></i>@Model.CertificatesIssuedThisMonth ngayong buwan
+                </span>
+            </div>
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Certificates" class="text-decoration-none small text-info mt-3 d-block fw-semibold">
+                View Dataset <i class="bi bi-arrow-right-short"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 📊 VISUAL CHARTS SECTION (MONTHLY TRENDS) -->
+<div class="row g-3 mb-4">
+    <!-- Line Graph: Monthly Complaints vs Resident Registration Growth -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-activity text-danger me-2"></i>Monthly Incident & Resident Growth Trend
+                </h6>
+                <span class="badge bg-light text-dark small">Year @DateTime.Now.Year</span>
+            </div>
+            <div style="min-height: 260px; height: 260px;">
+                <canvas id="monthlyTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bar Chart: Monthly Certificates Issued -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-file-earmark-bar-graph text-info me-2"></i>Monthly Certificates Issued
+                </h6>
+                <span class="badge bg-light text-dark small">Monthly Breakdown</span>
+            </div>
+            <div style="min-height: 260px; height: 260px;">
+                <canvas id="certificatesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SUB-MODULE LINKS -->
+<div class="card border-0 shadow-sm rounded p-4 mb-4">
+    <h5 class="fw-bold text-dark mb-3">Analytical Matrix Datasets</h5>
+    <div class="row row-cols-1 row-cols-md-3 g-2">
+        <div class="col">
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Projects" class="btn btn-outline-secondary w-100 text-start py-2">
+                <i class="bi bi-building me-2"></i> Infrastructure Projects Monitored
+            </a>
+        </div>
+        <div class="col">
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Disaster" class="btn btn-outline-secondary w-100 text-start py-2">
+                <i class="bi bi-shield-exclamation me-2"></i> Disaster Evacuation Logs
+            </a>
+        </div>
+        <div class="col">
+            <a asp-area="Admin" asp-controller="Reports" asp-action="Health" class="btn btn-outline-secondary w-100 text-start py-2">
+                <i class="bi bi-heart-pulse me-2"></i> Health Center Summary Logs
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 📊 CHART.JS RENDERING SCRIPT -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const labelsArray = @Html.Raw(Json.Serialize(Model.Months));
+        const complaintsData = @Html.Raw(Json.Serialize(Model.MonthlyComplaints));
+        const certificatesData = @Html.Raw(Json.Serialize(Model.MonthlyCertificates));
+        const residentsData = @Html.Raw(Json.Serialize(Model.MonthlyResidents));
+
+        // 1. Line Chart para sa Complaints at Resident Growth
+        const ctxTrend = document.getElementById('monthlyTrendChart').getContext('2d');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: labelsArray,
+                datasets: [
+                    {
+                        label: 'Blotter Cases / Complaints',
+                        data: complaintsData,
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 4
+                    },
+                    {
+                        label: 'New Resident Registrations',
+                        data: residentsData,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.05)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+
+        // 2. Bar Chart para sa Certificates Issued
+        const ctxCert = document.getElementById('certificatesChart').getContext('2d');
+        new Chart(ctxCert, {
+            type: 'bar',
+            data: {
+                labels: labelsArray,
+                datasets: [{
+                    label: 'Certificates Issued',
+                    data: certificatesData,
+                    backgroundColor: '#0dcaf0',
+                    borderColor: '#0baccc',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+    });
+</script>

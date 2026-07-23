@@ -1,0 +1,47 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.HealthViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Burahin ang Tala";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow border-0">
+        <div class="card-header bg-danger text-white py-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-trash-fill me-2"></i>Sigurado ka bang nais mong burahin ito?</h4>
+        </div>
+        <div class="card-body p-4">
+            <p class="text-muted mb-4">Ang aksyong ito ay hindi na maaaring bawiin o ibalik kapag nakumpirma.</p>
+
+            <table class="table table-bordered bg-light">
+                <tr>
+                    <th class="w-40 bg-white">Pangalan ng Residente</th>
+                    <td>@Model.ResidentName</td>
+                </tr>
+                <tr>
+                    <th class="bg-white">Kondisyon / Diagnosis</th>
+                    <td>@Model.MedicalCondition</td>
+                </tr>
+                <tr>
+                    <th class="bg-white">Petsa ng Pagtatala</th>
+                    <td>@Model.DateRecorded.ToString("MMMM dd, yyyy")</td>
+                </tr>
+                <tr>
+                    <th class="bg-white">Mga Tala / Remarks</th>
+                    <td>@Model.Remarks</td>
+                </tr>
+            </table>
+
+            <form asp-area="Admin" asp-controller="Health" asp-action="Delete" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-between">
+                    <a asp-area="Admin" asp-controller="Health" asp-action="Index" class="btn btn-secondary px-4">Kanselahin</a>
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">Oo, Burahin na</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

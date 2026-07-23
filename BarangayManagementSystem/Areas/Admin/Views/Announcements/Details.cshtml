@@ -1,0 +1,31 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.AnnouncementViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Detalye ng Patalastas";
+}
+
+<div class="container mt-4" style="max-width: 750px;">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0"><i class="bi bi-info-circle"></i> Buong Detalye ng Patalastas</h4>
+        </div>
+        <div class="card-body">
+            <h2 class="text-primary mb-1">@Model.Title</h2>
+            <p class="text-muted small mb-4">
+                <i class="bi bi-calendar-event"></i> Naipost noong: <strong>@Model.DatePosted.ToString("MMMM dd, yyyy hh:mm tt")</strong>
+            </p>
+
+            <hr />
+
+            <div class="bg-light p-4 border rounded text-wrap" style="white-space: pre-wrap; font-size: 1.1rem; min-height: 150px;">
+                @Model.Content
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between bg-white border-top-0 pt-0 pb-3 px-3">
+            <a asp-action="Index" class="btn btn-secondary">Bumalik sa Listahan</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="bi bi-pencil"></i> Baguhin / I-edit</a>
+        </div>
+    </div>
+</div>

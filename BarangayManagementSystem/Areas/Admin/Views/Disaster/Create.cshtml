@@ -1,0 +1,69 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.DisasterViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Iulat ang Kalamidad";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Pagtatala ng Bagong Insidente / Kalamidad</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="DisasterType" class="form-label fw-bold"></label>
+                    <select asp-for="DisasterType" class="form-select">
+                        <option value="">-- Pumili ng Uri --</option>
+                        <option value="Bagyo (Typhoon)">Bagyo (Typhoon)</option>
+                        <option value="Baha (Flooding)">Baha (Flooding)</option>
+                        <option value="Sunog (Fire Incident)">Sunog (Fire Incident)</option>
+                        <option value="Lindol (Earthquake)">Lindol (Earthquake)</option>
+                        <option value="Landslide">Landslide</option>
+                        <option value="Health Emergency">Health Emergency / Epidemya</option>
+                    </select>
+                    <span asp-validation-for="DisasterType" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label fw-bold"></label>
+                    <input asp-for="Location" class="form-control" placeholder="e.g., Purok 4, Tabing Ilog" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DateOccurred" class="form-label fw-bold"></label>
+                        <input asp-for="DateOccurred" class="form-control" />
+                        <span asp-validation-for="DateOccurred" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Status" class="form-label fw-bold"></label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Active">Active (Kasalukuyang Nangyayari)</option>
+                            <option value="Controlled">Controlled (Kontrolado Na)</option>
+                            <option value="Resolved">Resolved (Ligtas Na)</option>
+                            <option value="Cleared">Cleared (Tapos Na)</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Ibuod ang kasalukuyang sitwasyon o mga pinsala..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">Bumalik</a>
+                    <button type="submit" class="btn btn-danger px-4">I-save at I-monitor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

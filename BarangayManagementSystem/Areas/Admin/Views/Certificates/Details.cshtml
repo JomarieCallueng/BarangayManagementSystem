@@ -1,0 +1,50 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.CertificateViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Certificate Details";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white py-3" style="background-color: #17a2b8 !important;">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i>Certificate Details</h4>
+        </div>
+        <div class="card-body p-4">
+            <table class="table table-borderless fs-5">
+                <tr>
+                    <td class="fw-bold text-muted" style="width: 35%;">Resident Name:</td>
+                    <td>@Model.ResidentFullName</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Certificate Type:</td>
+                    <td>@Model.CertificateType</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Date Requested:</td>
+                    <td>@Model.DateRequested.ToString("MMMM dd, yyyy")</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Date Issued:</td>
+                    <td>@(Model.DateIssued.HasValue ? Model.DateIssued.Value.ToString("MMMM dd, yyyy") : "Pending")</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Status:</td>
+                    <td><span class="badge bg-dark px-3 py-2">@Model.Status</span></td>
+                </tr>
+            </table>
+
+            <!-- 🔑 BUTTONS FIX: Directed to Generate action instead of non-existent Process action -->
+            <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                <a asp-area="Admin" asp-controller="Certificates" asp-action="Index" class="btn btn-secondary px-4">
+                    Back to List
+                </a>
+
+                <a asp-area="Admin" asp-controller="Certificates" asp-action="Generate" asp-route-id="@Model.Id" class="btn btn-success px-4 fw-bold">
+                    Process Request
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

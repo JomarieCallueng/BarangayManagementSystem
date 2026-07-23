@@ -1,0 +1,104 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Admin Dashboard - Residents Census";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+    <div class="d-flex">
+        <!-- Sidebar Navigation -->
+        <div class="bg-dark text-white p-3 min-vh-100" style="width: 260px;">
+            <h5 class="fw-bold mb-4 text-success"><i class="bi bi-shield-lock-fill"></i> BMS Admin</h5>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link active bg-success text-white">
+                        <i class="bi bi-people me-2"></i> Resident Records
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white-50">
+                        <i class="bi bi-file-earmark-text me-2"></i> Document Requests
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link text-white-50">
+                        <i class="bi bi-chat-square-quote me-2"></i> Blotter / Complaints
+                    </a>
+                </li>
+                <hr class="text-secondary">
+                <li class="nav-item">
+                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="nav-link text-danger">
+                        <i class="bi bi-box-arrow-left me-2"></i> Sign Out
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-fill p-4">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Resident Information Management</h2>
+                    <small class="text-muted">Welcome back, Administrator! Here is the community census log.</small>
+                </div>
+                <button class="btn btn-success btn-sm fw-semibold shadow-sm"><i class="bi bi-plus-lg me-1"></i> Add New Resident</button>
+            </div>
+
+            <!-- Fake Data Table Just to Prove it Works -->
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Full Name</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Household No.</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4 fw-semibold">Juan Dela Cruz</td>
+                                    <td>34</td>
+                                    <td>Male</td>
+                                    <td>HH-00124</td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">Verified</span></td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-outline-secondary btn-xs me-1"><i class="bi bi-pencil-square"></i></button>
+                                        <button class="btn btn-outline-danger btn-xs"><i class="bi bi-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4 fw-semibold">Maria Santos</td>
+                                    <td>28</td>
+                                    <td>Female</td>
+                                    <td>HH-00124</td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1">Verified</span></td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-outline-secondary btn-xs me-1"><i class="bi bi-pencil-square"></i></button>
+                                        <button class="btn btn-outline-danger btn-xs"><i class="bi bi-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

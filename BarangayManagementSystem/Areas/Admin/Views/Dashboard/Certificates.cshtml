@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Certificates & Document Approvals";
+}
+
+<div class="mb-4">
+    <h4 class="fw-bold text-dark-blue mb-1">Document Request Desk</h4>
+    <p class="text-muted small">Verify submitted application facts, reference fee matching, and tag transactional updates.</p>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 bg-white">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 text-secondary small">
+            <thead class="table-light text-dark-blue fw-bold">
+                <tr>
+                    <th class="ps-4 py-3">Tracking No.</th>
+                    <th>Applicant</th>
+                    <th>Document Type</th>
+                    <th>Purpose</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Routing</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-bottom-gray">
+                    <td class="ps-4 py-3 text-dark fw-bold font-monospace">BRGY-2026-8801</td>
+                    <td>
+                        <span class="fw-semibold text-dark d-block">Ricardo Jose</span>
+                        <small class="text-muted font-monospace text-xs">0917-123-4567</small>
+                    </td>
+                    <td>Barangay Clearance</td>
+                    <td>Local Job Application</td>
+                    <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-1">PENDING VERIFICATION</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-success bg-emerald border-0 btn-sm text-white py-1 px-2 rounded small fw-bold me-1">Approve</button>
+                        <button class="btn btn-light border btn-sm text-muted py-1 px-2 rounded small">Decline</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

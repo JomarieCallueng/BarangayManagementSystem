@@ -1,0 +1,85 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Barangay Officials";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-person-badge text-primary me-2"></i>Barangay Officials Council</h2>
+        <p class="text-muted small mb-0">Active roster database of the local dynamic governance council members structures.</p>
+    </div>
+    <a href="/Admin/BarangayOfficials/Create" class="btn btn-primary shadow-sm fw-semibold">
+        <i class="bi bi-person-plus-fill me-1"></i> Add Council Member
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Official Name</th>
+                    <th>Position</th>
+                    <th>Committee Assignments</th>
+                    <th>E-Signature</th>
+                    <th>Status Flags</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-dark">
+                                <i class="bi bi-person-circle text-secondary me-1"></i> @item.FullName
+                            </td>
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary py-2 px-3 fw-bold">@item.Position</span>
+                            </td>
+                            <td>
+                                <span class="text-secondary small">@(string.IsNullOrEmpty(item.Committee) ? "No Committee Assigned" : item.Committee)</span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.SignaturePath))
+                                {
+                                    <img src="@item.SignaturePath" alt="Signature" style="max-height: 35px; max-width: 100px; object-fit: contain;" class="border rounded bg-light p-1" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted small italic">No Signature</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success shadow-sm">Active Service</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Term Ended</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a href="/Admin/BarangayOfficials/Edit/@item.Id" class="btn btn-sm btn-outline-primary me-1" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a href="/Admin/BarangayOfficials/Delete/@item.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-person-badge display-6 d-block mb-2 text-primary opacity-50"></i>
+                            <span>No officials found. Register council members into the directory.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

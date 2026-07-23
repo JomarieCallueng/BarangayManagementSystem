@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "File a Complaint - Barangay Management System";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">File a Complaint</li>
+                </ol>
+            </nav>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header text-white p-4 rounded-top-4" style="background-color: #122240;">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-chat-left-text-fill text-warning fs-3"></i>
+                        <div>
+                            <h4 class="m-0 fw-bold">Public Complaint & Dispute Form</h4>
+                            <small class="text-white-50">Isumite ang inyong hinaing o ulat nang ligtas at mabilis.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4 p-md-5 bg-white">
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger border-0 rounded-3 small mb-4">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                        </div>
+                    }
+
+                    <div class="alert alert-info border-0 rounded-3 small mb-4" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Paalala:</strong> Siguraduhing totoo at kumpleto ang impormasyong inyong ilalagay upang mabilis na maaksyunan ng pamunuan ng barangay.
+                    </div>
+
+                    <form asp-controller="Complaint" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Seksyon 1: Impormasyon ng Nagrereklamo -->
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-person-fill text-muted me-2"></i>Complainant Information</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted">Buong Pangalan <span class="text-danger">*</span></label>
+                                <input type="text" name="ComplainantName" class="form-control py-2 rounded-3" placeholder="Juan Dela Cruz" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted">Numero ng Telepono / Mobile <span class="text-danger">*</span></label>
+                                <!-- INAYOS: name="ComplainantContact" para magtugma sa database entry mo -->
+                                <input type="tel" name="ComplainantContact" class="form-control py-2 rounded-3" placeholder="09123456789" required />
+                            </div>
+                        </div>
+
+                        <!-- Seksyon 2: Detalye ng Reklamo -->
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-file-earmark-text-fill text-muted me-2"></i>Incident Details</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted">Petsa ng Pangyayari (Date of Incident) <span class="text-danger">*</span></label>
+                                <input type="date" name="IncidentDate" class="form-control py-2 rounded-3" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted">Lugar kung saan Nangyari (Location) <span class="text-danger">*</span></label>
+                                <!-- INAYOS: name="IncidentLocation" -->
+                                <input type="text" name="IncidentLocation" class="form-control py-2 rounded-3" placeholder="Saan eksaktong naganap ang insidente?" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small text-muted">Salaysay o Detalye ng Reklamo (Statement) <span class="text-danger">*</span></label>
+                                <!-- INAYOS: name="Details" -->
+                                <textarea name="Details" class="form-control rounded-3" rows="5" placeholder="Ikuwento nang malinaw at detalyado ang buong pangyayari..." required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 🔘 BUTTONS -->
+                        <div class="d-flex justify-content-end gap-2 border-top pt-4">
+                            <a href="/" class="btn btn-light px-4 py-2 fw-semibold rounded-3 border">Cancel</a>
+                            <button type="submit" class="btn btn-warning px-4 py-2 fw-semibold text-dark rounded-3 shadow-sm">
+                                <i class="bi bi-send-fill me-2"></i>Isumite ang Reklamo
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

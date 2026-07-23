@@ -1,0 +1,87 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.ComplaintViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Complaints & Blotter Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-exclamation-triangle text-danger me-2"></i>Complaints & Blotter</h2>
+        <p class="text-muted small mb-0">Track, review, and schedule hearings for incidents or citizen complaints.</p>
+    </div>
+    <a href="/Admin/Complaints/Create" class="btn btn-danger shadow-sm fw-semibold">
+        <i class="bi bi-file-earmark-medical me-1"></i> File New Case
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Case ID / Subject</th>
+                    <th>Complainant</th>
+                    <th>Incident Details</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold text-dark">#@item.Subject</td>
+                            <td>
+                                @* 🛠️ HACK / DISKARTE SA UI ONLY: *@
+                                @* Kung ang Subject/Case ID ay nagsisimula sa CMP (Public Portal), itatago natin ang pangalan ng default resident (Jomarie) *@
+                                @if (item.Subject != null && item.Subject.StartsWith("CMP"))
+                                {
+                                    <span class="text-muted italic"><i class="bi bi-globe me-1"></i>Public Web Citizen</span>
+                                }
+                                else
+                                {
+                                    @item.ResidentFullName
+                                }
+                            </td>
+                            <td class="text-truncate" style="max-width: 250px;">@item.Description</td>
+                            <td>
+                                @if (item.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else if (item.Status == "Assigned" || item.Status == "Hearing Scheduled")
+                                {
+                                    <span class="badge bg-danger">@item.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@item.Status</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a href="/Admin/Complaints/Edit/@item.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                    <a href="/Admin/Complaints/Details/@item.Id" class="btn btn-sm btn-outline-info text-info"><i class="bi bi-info-circle"></i></a>
+                                    <a href="/Admin/Complaints/UpdateStatus/@item.Id" class="btn btn-sm btn-outline-success" title="Update Status"><i class="bi bi-arrow-repeat"></i></a>
+                                    <a href="/Admin/Complaints/Delete/@item.Id" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-shield-slash display-6 d-block mb-2"></i>
+                            <span>No active barangay complaints or blotter cases logged.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

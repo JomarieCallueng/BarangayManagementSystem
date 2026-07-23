@@ -1,0 +1,32 @@
+﻿@model BarangayCMS.Web.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "System Runtime Error";
+}
+
+<div class="container py-5 my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 text-center">
+            <div class="card border-0 shadow-sm p-5 rounded-3 bg-white border-top border-4 border-danger">
+                <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 75px; height: 75px;">
+                    <i class="bi bi-bug display-6"></i>
+                </div>
+                <h4 class="fw-bold text-dark-blue mb-2">Internal Processing Interruption</h4>
+                <p class="text-secondary small mb-4 px-lg-4">An unexpected data flow exception happened during runtime routing. Please verify inputs or contact the internal tech administrator group.</p>
+
+                @if (Model?.ShowRequestId == true)
+                {
+                    <div class="bg-light p-3 rounded text-start font-monospace mb-4 text-xs mx-auto border" style="max-width: 480px;">
+                        <span class="text-muted d-block mb-1">Diagnostic Log Metatag:</span>
+                        <strong class="text-danger">@Model.RequestId</strong>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-center gap-2">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-dark-blue text-white btn-sm px-4 fw-semibold rounded shadow-sm">
+                        Return Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

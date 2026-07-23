@@ -1,0 +1,105 @@
+﻿@model IEnumerable<BarangayCMS.Areas.Staff.ViewModels.DisasterViewModel>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Disaster Risk & Emergency Response";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <small class="text-muted text-uppercase fw-bold">Safety</small>
+        <h2 class="fw-bold text-dark m-0"><i class="bi bi-shield-fill-exclamation text-primary me-2"></i>Disaster Risk & Evacuation</h2>
+        <p class="text-muted small mb-0">Monitor evacuation tracking, calamity supply distribution, and safety logs.</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-danger fw-semibold px-4 shadow-sm">
+            <i class="bi bi-shield-plus me-1"></i> Log Emergency Incident
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-secondary small fw-bold">
+                    <tr>
+                        <th class="ps-4 py-3">Incident / Calamity Name</th>
+                        <th class="py-3">Type</th>
+                        <th class="py-3">Date</th>
+                        <th class="py-3">Impact (HH / Indiv)</th>
+                        <th class="py-3">Evac Center</th>
+                        <th class="py-3">Relief Dist.</th>
+                        <th class="text-end pe-4 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="small">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="bi bi-sun display-6 d-block mb-2 text-success"></i>
+                                Ligtas ang komunidad. Walang aktibong kalamidad o insidente.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">@item.IncidentName</td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-dark px-2.5 py-1.5 rounded">
+                                        @item.DisasterType
+                                    </span>
+                                </td>
+                                <td class="text-secondary">@item.OccurrenceDate.ToString("MMM dd, yyyy")</td>
+                                <td class="fw-semibold text-dark">
+                                    <span class="text-danger">@item.AffectedHouseholdsCount HH</span> /
+                                    <span class="text-secondary">@item.DisplacedIndividualsCount Pax</span>
+                                </td>
+                                <td>
+                                    @if (item.EvacuationCenterStatus == "Open")
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded fw-medium">OPEN</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border px-2 py-1 rounded fw-medium">Closed</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.ReliefDistributionStatus?.ToLower() == "completed")
+                                    {
+                                        <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning fw-semibold"><i class="bi bi-hourglass-split me-1"></i>Ongoing</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a asp-action="Manage" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-2">
+                                        <i class="bi bi-gear-fill"></i> Track
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-danger-subtle {
+        background-color: #ffeef2;
+    }
+
+    .bg-secondary-subtle {
+        background-color: #f1f3f5;
+    }
+</style>

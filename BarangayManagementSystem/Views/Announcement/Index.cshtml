@@ -1,0 +1,223 @@
+﻿@model IEnumerable<BarangayCMS.Entities.Announcement>
+
+@{
+    ViewData["Title"] = "Mga Anunsyo sa Barangay";
+}
+
+<!-- Custom Styles para sa Hover Effects, Layout, at Badges -->
+<style>
+    .announcement-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-radius: 16px !important;
+        overflow: hidden;
+    }
+
+        .announcement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+        }
+
+    .hero-banner {
+        background: linear-gradient(135deg, #0d233a 0%, #1a365d 100%);
+        border-radius: 20px;
+        color: white;
+    }
+
+    .badge-emergency {
+        background-color: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+
+    .badge-advisory {
+        background-color: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fcd34d;
+    }
+
+    .badge-health {
+        background-color: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #86efac;
+    }
+
+    .badge-holiday {
+        background-color: #e0f2fe;
+        color: #0284c7;
+        border: 1px solid #7dd3fc;
+    }
+
+    .badge-general {
+        background-color: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- 🌟 MODERN HERO BANNER HEADER -->
+    <div class="hero-banner p-4 p-md-5 mb-5 shadow-sm d-flex align-items-center position-relative overflow-hidden">
+        <div class="position-relative z-index-1">
+            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
+                <i class="bi bi-bell-fill me-1"></i> Balita at Impormasyon
+            </span>
+            <h1 class="display-5 fw-extrabold mb-2 text-white">Mga Anunsyo sa Barangay</h1>
+            <p class="lead text-white-50 mb-0 max-width-600">
+                Manatiling up-to-date sa mga pinakahuling balita, kaganapan, at mahalagang babala para sa kaligtasan at kapakanan ng buong komunidad.
+            </p>
+        </div>
+        <div class="d-none d-lg-block ms-auto">
+            <i class="bi bi-megaphone-fill text-white opacity-10" style="font-size: 10rem; transform: rotate(-15deg); display: block;"></i>
+        </div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <!-- EMPTY STATE DESIGN -->
+        <div class="text-center py-5 my-5 bg-light rounded-4 shadow-sm border">
+            <div class="mb-4">
+                <div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                    <i class="bi bi-megaphone text-muted" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+            <h4 class="fw-bold text-dark">Walang Kasalukuyang Anunsyo</h4>
+            <p class="text-muted mb-0 mx-auto" style="max-width: 400px;">Sa ngayon ay wala pang naka-post na bagong balita o paunawa ang barangay admin. Mangyaring bumalik muli mamaya!</p>
+        </div>
+    }
+    else
+    {
+        <!-- ANNOUNCEMENTS GRID -->
+        <div class="row g-4">
+            @foreach (var announcement in Model)
+            {
+                <!-- Dynamic class setup para sa border at badge -->
+                var badgeClass = "badge-general";
+                var categoryLower = (announcement.Category ?? "").ToLower();
+
+                if (categoryLower.Contains("emergency") || categoryLower.Contains("alert")) { badgeClass = "badge-emergency"; }
+                else if (categoryLower.Contains("advisory") || categoryLower.Contains("warning")) { badgeClass = "badge-advisory"; }
+                else if (categoryLower.Contains("health") || categoryLower.Contains("center")) { badgeClass = "badge-health"; }
+                else if (categoryLower.Contains("holiday") || categoryLower.Contains("event")) { badgeClass = "badge-holiday"; }
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0 announcement-card d-flex flex-column @(announcement.IsPinned ? "border-top border-4 border-success" : "border border-light")">
+
+                        <!-- Image Container -->
+                        @if (!string.IsNullOrEmpty(announcement.ImageUrl))
+                        {
+                            <div class="position-relative overflow-hidden" style="height: 200px;">
+                                <img src="@announcement.ImageUrl" class="w-100 h-100" alt="@announcement.Title" style="object-fit: cover;">
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Default placeholder icon -->
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px; border-bottom: 1px solid #f1f5f9;">
+                                <i class="bi bi-journal-text text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                            </div>
+                        }
+
+                        <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <!-- Styled Category Badge -->
+                                <span class="badge @badgeClass rounded-pill px-3 py-1-5 fw-semibold" style="font-size: 0.75rem;">
+                                    @(string.IsNullOrEmpty(announcement.Category) ? "General" : announcement.Category)
+                                </span>
+
+                                <!-- Pinned State -->
+                                @if (announcement.IsPinned)
+                                {
+                                    <span class="text-success small fw-bold"><i class="bi bi-pin-angle-fill me-1"></i>Pinned</span>
+                                }
+                            </div>
+
+                            <!-- Title -->
+                            <h4 class="card-title fw-bold text-dark mb-2 lh-sm" style="font-size: 1.25rem;">@announcement.Title</h4>
+
+                            <!-- Content Preview (Limitadong mga letra) -->
+                            <p class="card-text text-secondary flex-grow-1 lh-base" style="font-size: 0.95rem;">
+                                @if (announcement.Content != null && announcement.Content.Length > 90)
+                                {
+                                    @announcement.Content.Substring(0, 90)
+                                    <text>...</text>
+                                }
+                                else
+                                {
+                                    @announcement.Content
+                                }
+                            </p>
+
+                            <!-- DETAILS BUTTON (Triggering the Modal) -->
+                            <button type="button" class="btn btn-outline-primary btn-sm w-100 rounded-3 my-3 py-2 fw-semibold"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#announcementModal-@announcement.AnnouncementId">
+                                <i class="bi bi-eye me-1"></i> View Details
+                            </button>
+
+                            <!-- Footer Section (🌟 INAYOS: May saktong ORAS na kasama) -->
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center text-muted" style="font-size: 0.82rem;">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-calendar3 me-2 text-primary"></i>
+                                    <span>@announcement.PublishDate.ToString("MMM dd, yyyy h:mm tt")</span>
+                                </div>
+                                <div class="d-flex align-items-center" style="max-width: 50%;">
+                                    <i class="bi bi-person-circle me-1 text-secondary"></i>
+                                    <span class="fw-medium text-dark ms-1 text-truncate" title="@announcement.AuthorName">
+                                        @(string.IsNullOrEmpty(announcement.AuthorName) ? "Admin" : announcement.AuthorName)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOOTSTRAP MODAL PARA SA DETALYE NG ANUNSYO -->
+                <div class="modal fade" id="announcementModal-@announcement.AnnouncementId" tabindex="-1" aria-labelledby="modalLabel-@announcement.AnnouncementId" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 shadow rounded-4">
+                            <div class="modal-header border-bottom-0 pb-0">
+                                <span class="badge @badgeClass rounded-pill px-3 py-1-5 fw-semibold ms-2" style="font-size: 0.75rem;">
+                                    @(string.IsNullOrEmpty(announcement.Category) ? "General" : announcement.Category)
+                                </span>
+                                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body px-4 py-3">
+                                <!-- Modal Title -->
+                                <h3 class="fw-bold text-dark mb-3" id="modalLabel-@announcement.AnnouncementId">@announcement.Title</h3>
+
+                                <!-- Modal Image -->
+                                @if (!string.IsNullOrEmpty(announcement.ImageUrl))
+                                {
+                                    <div class="mb-4 rounded-3 overflow-hidden" style="max-height: 380px;">
+                                        <img src="@announcement.ImageUrl" class="w-100 h-100" style="object-fit: cover;" alt="@announcement.Title">
+                                    </div>
+                                }
+
+                                <!-- Modal Meta Info (🌟 INAYOS: May saktong ORAS na kasama) -->
+                                <div class="d-flex flex-wrap gap-3 text-muted mb-4 pb-3 border-bottom" style="font-size: 0.9rem;">
+                                    <div>
+                                        <i class="bi bi-calendar3 text-primary me-1"></i>
+                                        <strong>Date Posted:</strong> @announcement.PublishDate.ToString("MMMM dd, yyyy h:mm tt")
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-person-circle text-secondary me-1"></i>
+                                        <strong>Posted By:</strong> @(string.IsNullOrEmpty(announcement.AuthorName) ? "Admin" : announcement.AuthorName)
+                                    </div>
+                                </div>
+
+                                <!-- Modal Content (Buong Teksto) -->
+                                <p class="text-secondary lh-lg" style="font-size: 1.05rem; white-space: pre-line;">
+                                    @announcement.Content
+                                </p>
+                            </div>
+                            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                                <button type="button" class="btn btn-secondary px-4 py-2 rounded-3" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

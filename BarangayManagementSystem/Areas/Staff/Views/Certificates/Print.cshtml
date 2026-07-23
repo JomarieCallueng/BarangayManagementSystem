@@ -1,0 +1,104 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.CertificateViewModel
+
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml"; // Siguraduhing tugma sa inyong Staff Layout
+    ViewData["Title"] = "I-preview, I-edit at I-print";
+}
+
+<style>
+    /* background container para mukhang papel ang page sa browser */
+    .paper-container {
+        background-color: #f5f5f5;
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Standard Letter/A4 Size Layout */
+    .paper {
+        background: white;
+        width: 8.5in;
+        min-height: 11in;
+        padding: 1in;
+        box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        font-family: 'Georgia', serif;
+        color: black;
+        font-size: 12pt;
+        line-height: 1.6;
+        position: relative;
+        outline: none;
+    }
+
+        /* Kulay kapag tinatapatan ng mouse o pinu-focus para i-edit */
+        .paper:hover {
+            outline: 2px dashed #0d6efd;
+        }
+
+        .paper:focus {
+            outline: 2px solid #0d6efd;
+            background-color: #fcfcfc;
+        }
+
+    /* ITAGO ANG MENUS AT MGA BUTTONS KAPAG NAG-PRINT NA */
+    @@media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .paper, .paper * {
+            visibility: visible;
+        }
+
+        .paper {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="container-fluid mt-3">
+    <!-- Action Bar (Itatago kapag nag-print) -->
+    <div class="card border-0 shadow-sm p-3 mb-4 bg-light no-print">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-printer text-primary me-2"></i>@Model.CertificateType
+                </h4>
+                <p class="text-muted small mb-0">
+                    💡 <strong>Tip:</strong> Pwede mong i-click at direktang baguhin ang mga text sa papel sa ibaba bago i-print.
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <!-- Button para mag-trigger ng browser print dialog (Ctrl+P) -->
+                <button onclick="window.print()" class="btn btn-success btn-lg px-4 shadow-sm">
+                    <i class="bi bi-printer-fill me-2"></i>I-print ang Sertipiko
+                </button>
+                <a asp-area="Staff" asp-controller="Certificates" asp-action="Index" class="btn btn-outline-secondary btn-lg">Bumalik sa Listahan</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREVIEW AREA: Dito luluwas ang hitsura ng Word File -->
+    <div class="paper-container">
+        <!-- Ang contenteditable="true" ang nagbibigay ng kapangyarihan kay Staff na baguhin ang text sa screen -->
+        <div class="paper" contenteditable="true" id="printableArea">
+            @if (ViewBag.HtmlContent != null)
+            {
+                @Html.Raw(ViewBag.HtmlContent)
+            }
+            else
+            {
+                <p class="text-muted text-center">Walang makitang nilalaman.</p>
+            }
+        </div>
+    </div>
+</div>

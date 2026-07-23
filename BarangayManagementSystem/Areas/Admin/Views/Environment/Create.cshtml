@@ -1,0 +1,49 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.EnvironmentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Bagong Aktibidad";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Pagtatala ng Aktibidad sa Kalikasan</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="ActivityName" class="form-label fw-bold"></label>
+                    <input asp-for="ActivityName" class="form-control" placeholder="e.g., Tree Planting / Barangay Clean-up" />
+                    <span asp-validation-for="ActivityName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label fw-bold"></label>
+                    <input asp-for="Location" class="form-control" placeholder="e.g., Covered Court / Zone 2 River Side" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ActivityDate" class="form-label fw-bold"></label>
+                    <input asp-for="ActivityDate" class="form-control" />
+                    <span asp-validation-for="ActivityDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Detalye ng programa o mga kailangang dalhin ng mga residente..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">Bumalik</a>
+                    <button type="submit" class="btn btn-success px-4">I-save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

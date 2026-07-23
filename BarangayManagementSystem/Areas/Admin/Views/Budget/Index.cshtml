@@ -1,0 +1,105 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Budget Annual Planner";
+    int selectedYear = ViewBag.SelectedYear ?? DateTime.Now.Year;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-cash-coin text-success me-2"></i>Budget Allocation Planner</h2>
+        <p class="text-muted small mb-0">Monitor annual barangay fiscal funds, total allocations, disbursements, and balances.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <!-- Year Filter Dropdown -->
+        <form method="get" action="/Admin/Budget" class="d-flex align-items-center gap-1">
+            <select name="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 110px;">
+                @for (int y = DateTime.Now.Year + 1; y >= DateTime.Now.Year - 5; y--)
+                {
+                    <!option value="@y" @(y == selectedYear ? "selected" : "")>FY @y</!option>
+                }
+            </select>
+        </form>
+        <a href="/Admin/Budget/Create" class="btn btn-success shadow-sm fw-semibold btn-sm d-flex align-items-center">
+            <i class="bi bi-plus-lg me-1"></i> Add Budget Category
+        </a>
+    </div>
+</div>
+
+<!-- Financial Summary Cards Overview -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded p-3 bg-primary text-white">
+            <small class="text-white-50 text-uppercase fw-bold">Total Annual Allocated</small>
+            <h3 class="fw-bold mb-0">₱@Model.Sum(b => b.AllocatedAmount).ToString("N2")</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded p-3 bg-danger text-white">
+            <small class="text-white-50 text-uppercase fw-bold">Total Disbursed (Spent)</small>
+            <h3 class="fw-bold mb-0">₱@Model.Sum(b => b.UsedAmount).ToString("N2")</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded p-3 bg-success text-white">
+            <small class="text-white-50 text-uppercase fw-bold">Total Remaining Balance</small>
+            <h3 class="fw-bold mb-0">₱@Model.Sum(b => b.AllocatedAmount - b.UsedAmount).ToString("N2")</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Fiscal Year</th>
+                    <th>Fund Category Component</th>
+                    <th class="text-end">Total Allocation</th>
+                    <th class="text-end">Disbursed (Used)</th>
+                    <th class="text-end">Available Balance</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        var remainingBalance = item.AllocatedAmount - item.UsedAmount;
+                        <tr>
+                            <td class="fw-bold text-secondary">FY @item.FiscalYear</td>
+                            <td>
+                                <span class="fw-semibold text-dark d-block">@item.Category</span>
+                                <small class="text-muted d-block text-truncate" style="max-width: 250px;">@item.Remarks</small>
+                            </td>
+                            <td class="text-end fw-semibold text-primary">₱@item.AllocatedAmount.ToString("N2")</td>
+                            <td class="text-end fw-semibold text-danger">₱@item.UsedAmount.ToString("N2")</td>
+                            <td class="text-end fw-bold @(remainingBalance >= 0 ? "text-success" : "text-danger")">
+                                ₱@remainingBalance.ToString("N2")
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a href="/Admin/Budget/Income/@item.Id" class="btn btn-sm btn-outline-success" title="Add Funds / Income"><i class="bi bi-plus-circle"></i></a>
+                                    <a href="/Admin/Budget/Expenses/@item.Id" class="btn btn-sm btn-outline-warning text-dark" title="Disburse / Expense"><i class="bi bi-dash-circle"></i></a>
+                                    <a href="/Admin/Budget/Edit/@item.Id" class="btn btn-sm btn-outline-primary" title="Edit Category"><i class="bi bi-pencil"></i></a>
+                                    <a href="/Admin/Budget/Delete/@item.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-wallet2 display-6 d-block mb-2"></i>
+                            <span>No budget distributions configured for the year @selectedYear.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

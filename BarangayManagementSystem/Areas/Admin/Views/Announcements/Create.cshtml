@@ -1,0 +1,58 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.AnnouncementViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Announcement";
+}
+
+<div class="mb-4">
+    <a href="/Admin/Announcements" class="btn btn-sm btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+    <h2 class="fw-bold text-dark"><i class="bi bi-megaphone-fill text-warning me-2"></i>Post New Announcement</h2>
+    <p class="text-muted small">Fill out the fields below to publish a bulletin message to the community.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-sm rounded p-4">
+            <form action="/Admin/Announcements/Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="Title" class="form-label fw-semibold text-dark">Announcement Title</label>
+                    <input type="text" class="form-control" id="Title" name="Title" placeholder="e.g., General Assembly Meeting" required />
+                    <span class="text-danger small" id="Title-error"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Content" class="form-label fw-semibold text-dark">Content / Message Context</label>
+                    <textarea class="form-control" id="Content" name="Content" rows="5" placeholder="Write the details of the announcement here..." required></textarea>
+                    <span class="text-danger small" id="Content-error"></span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label for="DatePosted" class="form-label fw-semibold text-dark">Publish Date</label>
+                        <input type="datetime-local" class="form-control" id="DatePosted" name="DatePosted" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="ExpiryDate" class="form-label fw-semibold text-dark">
+                            Expiration Date <span class="text-muted fw-normal">(Optional)</span>
+                        </label>
+                        <input type="datetime-local" class="form-control" id="ExpiryDate" name="ExpiryDate" />
+                        <small class="text-muted d-block mt-1">Kapag lumipas ang petsang ito, tatago na sa mga residente.</small>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="/Admin/Announcements" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-warning text-dark fw-semibold px-4">
+                        <i class="bi bi-send-fill me-1"></i> Publish Announcement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

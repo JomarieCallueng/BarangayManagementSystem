@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.CertificateReportItem>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Certificates Issued Report";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4><i class="bi bi-file-earmark-text text-info"></i> Ulat ng mga Na-issue na Sertipiko</h4>
+        <a asp-area="Admin" asp-controller="Reports" asp-action="Index" class="btn btn-sm btn-outline-secondary">Bumalik</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <table class="table table-bordered mb-0">
+            <thead class="table-info">
+                <tr>
+                    <th>Ref No.</th>
+                    <th>Pangalan</th>
+                    <th>Uri ng Sertipiko</th>
+                    <th>Petsa Na-issue</th>
+                    <th>Binayaran</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.ReferenceNo</strong></td>
+                        <td>@item.RequestorName</td>
+                        <td>@item.CertificateType</td>
+                        <td>@(item.DateIssued.HasValue ? item.DateIssued.Value.ToString("yyyy-MM-dd") : "N/A")</td>
+                        <td>₱@item.AmountPaid.ToString("N2")</td>
+                        <td><span class="badge bg-success">@item.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

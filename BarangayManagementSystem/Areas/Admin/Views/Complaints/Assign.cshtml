@@ -1,0 +1,45 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ComplaintViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Assign Case File";
+}
+
+<div class="container mt-4" style="max-width: 550px;">
+    <div class="card shadow border-info">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0"><i class="bi bi-person-badge"></i> Initiate Official Dispatch Assignment</h4>
+        </div>
+        <div class="card-body">
+            <h5>Assigning incident dispute to active field officers or Lupon members.</h5>
+            <div class="p-3 bg-light rounded my-3 border text-start">
+                <strong>Complainant:</strong> @Model.ResidentFullName <br />
+                <strong>Case Subject:</strong> @Model.Subject <br />
+                <strong>Current Status:</strong> <span class="badge bg-secondary">@Model.Status</span>
+            </div>
+
+            <form asp-action="Assign">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Select Handling Officer Designation</label>
+                    <select class="form-select" required>
+                        <option value="">-- Select Authority Unit --</option>
+                        <option value="Lupon">Lupon Tagapamayapa (Mediation Committee)</option>
+                        <option value="Barangay Tanod">Barangay Tanod (Security Enforcement)</option>
+                        <option value="Chief Executive">Barangay Captain / Secretary Direct</option>
+                    </select>
+                </div>
+
+                <div class="alert alert-warning py-2 small">
+                    <i class="bi bi-info-circle"></i> Dispatch action upgrades the tracking state status directly to <strong>Assigned</strong>.
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">Return</a>
+                    <button type="submit" class="btn btn-info text-white px-4">Confirm Official Dispatch</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

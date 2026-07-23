@@ -1,0 +1,56 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Detalye ng Budget";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0"><i class="bi bi-info-circle"></i> Ulat ng Pondo (Budget Analysis)</h4>
+        </div>
+        <div class="card-body">
+            <h3 class="text-primary border-bottom pb-2">@Model.Category</h3>
+
+            <div class="row my-4 text-center">
+                <div class="col-4 border-end">
+                    <span class="text-muted small d-block">Inilaan (Allocated)</span>
+                    <h4 class="text-dark">₱@Model.AllocatedAmount.ToString("N2")</h4>
+                </div>
+                <div class="col-4 border-end">
+                    <span class="text-muted small d-block">Nagamit (Used)</span>
+                    <h4 class="text-danger">₱@Model.UsedAmount.ToString("N2")</h4>
+                </div>
+                <div class="col-4">
+                    <span class="text-muted small d-block">Natitira (Remaining)</span>
+                    <h4 class="text-success fw-bold">₱@Model.RemainingAmount.ToString("N2")</h4>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="fw-bold text-muted small">Progreso ng Paggamit ng Pondo:</label>
+                <div class="progress mt-1" style="height: 25px;">
+                    <div class="progress-bar bg-info text-dark fw-bold" role="progressbar" style="width: @(Model.PercentUsed > 100 ? 100 : Model.PercentUsed)%;">
+                        @Model.PercentUsed.ToString("F1")% Used
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="fw-bold text-muted small d-block">Audit Trail / Mga Tala:</label>
+                <div class="bg-light p-3 border rounded text-wrap fs-7 text-secondary" style="white-space: pre-wrap; max-height: 150px; overflow-y: auto;">
+                    @(string.IsNullOrEmpty(Model.Remarks) ? "Walang naitalang remarks." : Model.Remarks)
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between bg-white">
+            <a asp-action="Index" asp-route-year="@Model.FiscalYear" class="btn btn-secondary">Bumalik</a>
+            <div>
+                <a asp-action="Income" asp-route-id="@Model.Id" class="btn btn-outline-success">+ Pondo</a>
+                <a asp-action="Expenses" asp-route-id="@Model.Id" class="btn btn-outline-danger">- Gastos</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>

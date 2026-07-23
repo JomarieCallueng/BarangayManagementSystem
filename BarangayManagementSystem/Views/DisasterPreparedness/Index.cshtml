@@ -1,0 +1,211 @@
+﻿@{
+    ViewData["Title"] = "Disaster Preparedness - Barangay Portal";
+}
+
+<!-- Custom Styles para sa Disaster Preparedness Page -->
+<style>
+    .disaster-hero {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        border-radius: 20px;
+    }
+
+    .guide-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-radius: 16px;
+        border: none;
+    }
+
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    .hotline-card {
+        border-left: 5px solid #dc2626 !important;
+        border-radius: 12px;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container py-5">
+
+    <!-- 🌟 HERO BANNER -->
+    <div class="disaster-hero p-4 p-md-5 mb-5 shadow-sm d-flex align-items-center position-relative overflow-hidden">
+        <div class="position-relative z-index-1">
+            <span class="badge bg-danger text-white px-3 py-2 mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
+                <i class="bi bi-shield-fill-exclamation me-1"></i> Public Safety & Preparedness
+            </span>
+            <h1 class="display-5 fw-extrabold mb-2 text-white">Kahandaan sa Sakuna at Kalamidad</h1>
+            <p class="lead text-white-50 mb-0 max-width-600">
+                Ang kaligtasan ng pamilya ay nagsisimula sa tamang kaalaman. Alamin ang mga dapat gawin bago, habang, at pagkatapos ng iba't ibang uri ng kalamidad.
+            </p>
+        </div>
+        <div class="d-none d-lg-block ms-auto">
+            <i class="bi bi-shield-shaded text-white opacity-10" style="font-size: 10rem; display: block;"></i>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- 🚨 EMERGENCY HOTLINES SECTION (LEFT) -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 p-4 h-100 bg-light">
+                <h4 class="fw-bold text-danger mb-4"><i class="bi bi-telephone-fill me-2"></i>Emergency Hotlines</h4>
+                <p class="text-muted small">Mabilisang tawagan sa oras ng pangangailangan o sakuna.</p>
+
+                <div class="d-flex flex-column gap-3 mt-3">
+                    <!-- Barangay Emergency -->
+                    <div class="card hotline-card shadow-sm p-3 bg-white">
+                        <span class="text-muted small fw-bold text-uppercase">Barangay Emergency Command Center</span>
+                        <h5 class="fw-bold text-dark mb-1">0917-123-4567</h5>
+                        <span class="text-secondary small"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Barangay Hall Desk</span>
+                    </div>
+
+                    <!-- Bureau of Fire Protection -->
+                    <div class="card hotline-card shadow-sm p-3 bg-white" style="border-left-color: #ea580c !important;">
+                        <span class="text-muted small fw-bold text-uppercase">Bureau of Fire Protection (BFP)</span>
+                        <h5 class="fw-bold text-dark mb-1">(02) 812-3456</h5>
+                    </div>
+
+                    <!-- Police Station -->
+                    <div class="card hotline-card shadow-sm p-3 bg-white" style="border-left-color: #2563eb !important;">
+                        <span class="text-muted small fw-bold text-uppercase">Philippine National Police (PNP)</span>
+                        <h5 class="fw-bold text-dark mb-1">117 / 911</h5>
+                    </div>
+
+                    <!-- Red Cross -->
+                    <div class="card hotline-card shadow-sm p-3 bg-white" style="border-left-color: #dc2626 !important;">
+                        <span class="text-muted small fw-bold text-uppercase">Red Cross Rescue</span>
+                        <h5 class="fw-bold text-dark mb-1">143 / (02) 8527-0000</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📖 DISASTER GUIDES SECTION (RIGHT) -->
+        <div class="col-lg-8">
+            <h3 class="fw-bold text-dark mb-4"><i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>Mga Gabay sa Kaligtasan</h3>
+
+            <div class="row g-4">
+                <!-- BAGYO (Typhoon) -->
+                <div class="col-md-6">
+                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary-subtle text-primary p-3 rounded-3 me-3">
+                                <i class="bi bi-wind fs-3"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-0">Bagyo at Baha</h5>
+                        </div>
+                        <ul class="text-secondary small ps-3 mb-0">
+                            <li class="mb-2">Ihanda ang <strong>Emergency Go-Bag</strong> (pagkain, tubig, flashlight, gamot).</li>
+                            <li class="mb-2">Makinig o magbasa ng pinakabagong ulat-panahon (weather reports).</li>
+                            <li class="mb-2">Kapag tumataas ang tubig, lumikas agad sa pinakamalapit na ligtas na lugar.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- LINDOL (Earthquake) -->
+                <div class="col-md-6">
+                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-warning-subtle text-warning p-3 rounded-3 me-3">
+                                <i class="bi bi-activity fs-3"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-0">Lindol</h5>
+                        </div>
+                        <ul class="text-secondary small ps-3 mb-0">
+                            <li class="mb-2">Tandaan ang <strong>Duck, Cover, and Hold</strong> kapag lumilindol.</li>
+                            <li class="mb-2">Umiwas sa mga bintana, salamin, at matataas na kabinet.</li>
+                            <li class="mb-2">Matapos ang pagyanig, dahan-dahang lumabas patungo sa open space.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SUNOG (Fire Safety) -->
+                <div class="col-md-6">
+                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-danger-subtle text-danger p-3 rounded-3 me-3">
+                                <i class="bi bi-fire fs-3"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-0">Iwas-Sunog</h5>
+                        </div>
+                        <ul class="text-secondary small ps-3 mb-0">
+                            <li class="mb-2">Huwag iwanan ang niluluto o nakasinding kandila.</li>
+                            <li class="mb-2">I-unplug ang mga appliances kapag hindi ginagamit o aalis ng bahay.</li>
+                            <li class="mb-2">Alamin ang lokasyon ng mga fire exit sa inyong tirahan.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- EVACUATION CENTERS (Evacuation Centers) -->
+                <div class="col-md-6">
+                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success-subtle text-success p-3 rounded-3 me-3">
+                                <i class="bi bi-building fs-3"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-0">Evacuation Centers</h5>
+                        </div>
+                        <ul class="text-secondary small ps-3 mb-0">
+                            <li class="mb-2"><strong>Primary:</strong> Barangay Covered Court (Main St.)</li>
+                            <li class="mb-2"><strong>Secondary:</strong> Elementary School Gym (Zone 2)</li>
+                            <li class="mb-2">Makipag-ugnayan sa mga Barangay Tanod o Rescue team sa paglikas.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎒 EMERGENCY GO-BAG SECTION -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mt-5 bg-white">
+        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-backpack2-fill text-primary me-2"></i>Ano ang Laman ng Isang Emergency Go-Bag?</h4>
+        <p class="text-muted">Siguraduhing nakaimbak ang mga ito sa isang backpack na madaling mabitbit ng pamilya kapag may emergency:</p>
+
+        <div class="row g-3 text-secondary" style="font-size: 0.95rem;">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span>Tubig (hindi bababa sa 3-litro bawat tao)</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span>Pagkaing de-lata at biskwit (easy-open)</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span>First Aid Kit at mga personal na gamot</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span>Flashlight, Extra Batteries, at Powerbank</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span>Whistle (pito) at Posporo o Lighter</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <span>Mahalagang Dokumento (naka-plastik)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

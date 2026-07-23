@@ -1,0 +1,34 @@
+﻿@model BarangayCMS.Entities.CertificateType
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Alisin ang Sertipiko";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded p-4 border-start border-danger border-4">
+            <h3 class="fw-bold text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Sigurado ka ba?</h3>
+            <p class="text-muted">Sigurado ka bang nais mong alisin ang sertipiko na ito? Hindi na ito magiging available para sa mga residente.</p>
+            <hr />
+
+            <dl class="row mb-4">
+                <dt class="col-sm-5 fw-bold text-dark">Pangalan ng Sertipiko:</dt>
+                <dd class="col-sm-7">@Model.CertificateName</dd>
+
+                <dt class="col-sm-5 fw-bold text-dark">Kasalukuyang Presyo:</dt>
+                <dd class="col-sm-7 text-success fw-bold">₱@Model.Price.ToString("N2")</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CertificateTypeId" />
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">Bumalik / Kanselahin</a>
+                    <button type="submit" class="btn btn-danger px-4">Oo, Alisin Ito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

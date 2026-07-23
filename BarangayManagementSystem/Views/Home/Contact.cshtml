@@ -1,0 +1,157 @@
+﻿@model BarangayManagementSystem.Models.ContactFormModel
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<section class="hero-section text-white py-5 px-4 mb-5 shadow-sm">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
+                <i class="bi bi-telephone-inbound fs-2"></i>
+            </div>
+            <div>
+                <h1 class="h2 fw-bold mb-1">Contact Us</h1>
+                <p class="text-white-50 mb-0">Reach out to the Barangay Hall for inquiries, concerns, or emergency assistance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-4">
+                <h5 class="fw-bold text-dark-blue mb-4 d-flex align-items-center">
+                    <i class="bi bi-shield-check text-primary me-2"></i> Barangay Hall Office
+                </h5>
+
+                <div class="d-flex align-items-start mb-3 gap-3">
+                    <div class="text-muted"><i class="bi bi-geo-alt fs-5"></i></div>
+                    <div>
+                        <small class="text-muted d-block small-title-label">Address</small>
+                        <span class="text-dark fw-medium">Official Barangay Address Here</span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-3 gap-3">
+                    <div class="text-muted"><i class="bi bi-telephone fs-5"></i></div>
+                    <div>
+                        <small class="text-muted d-block small-title-label">Hotline</small>
+                        <span class="text-dark fw-medium">0912-345-6789</span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-3 gap-3">
+                    <div class="text-muted"><i class="bi bi-envelope fs-5"></i></div>
+                    <div>
+                        <small class="text-muted d-block small-title-label">Email</small>
+                        <span class="text-dark fw-medium">barangay@email.com</span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start gap-3">
+                    <div class="text-muted"><i class="bi bi-clock fs-5"></i></div>
+                    <div>
+                        <small class="text-muted d-block small-title-label">Office Hours</small>
+                        <span class="text-dark fw-medium">Monday – Friday, 8:00 AM – 5:00 PM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
+                <h5 class="fw-bold text-dark-blue mb-3">Emergency Hotlines</h5>
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle mb-0 text-secondary">
+                        <tr class="border-bottom-gray">
+                            <td class="ps-0 py-3 text-muted">Barangay Office</td>
+                            <td class="text-end fw-bold text-dark-blue fs-6">0912-345-6789</td>
+                        </tr>
+                        <tr class="border-bottom-gray">
+                            <td class="ps-0 py-3 text-muted">Fire Station</td>
+                            <td class="text-end fw-bold text-dark-blue fs-6">160</td>
+                        </tr>
+                        <tr class="border-bottom-gray">
+                            <td class="ps-0 py-3 text-muted">Police Station (PNP)</td>
+                            <td class="text-end fw-bold text-dark-blue fs-6">117</td>
+                        </tr>
+                        <tr class="border-bottom-gray">
+                            <td class="ps-0 py-3 text-muted">Emergency / Rescue</td>
+                            <td class="text-end fw-bold text-dark-blue fs-6">911</td>
+                        </tr>
+                        <tr>
+                            <td class="ps-0 py-3 text-muted">NDRRMC Hotline</td>
+                            <td class="text-end fw-bold text-dark-blue fs-6">8-1406</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
+                <h5 class="fw-bold text-dark-blue mb-4 d-flex align-items-center">
+                    <i class="bi bi-chat-square-text text-success me-2"></i> Send a Message
+                </h5>
+
+                <form asp-controller="Home" asp-action="Contact" method="post" novalidate>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label text-dark-blue fw-semibold small mb-1">First Name</label>
+                            <input asp-for="FirstName" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7" placeholder="Juan" />
+                            <span asp-validation-for="FirstName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label text-dark-blue fw-semibold small mb-1">Last Name</label>
+                            <input asp-for="LastName" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7" placeholder="Dela Cruz" />
+                            <span asp-validation-for="LastName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label text-dark-blue fw-semibold small mb-1">Email Address</label>
+                        <input asp-for="Email" type="email" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7" placeholder="juan@email.com" />
+                        <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ContactNumber" class="form-label text-dark-blue fw-semibold small mb-1">Contact Number</label>
+                        <input asp-for="ContactNumber" type="text" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7" placeholder="09XX-XXX-XXXX" />
+                        <span asp-validation-for="ContactNumber" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label text-dark-blue fw-semibold small mb-1">Subject</label>
+                        <input asp-for="Subject" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7" placeholder="What is your concern?" />
+                        <span asp-validation-for="Subject" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Message" class="form-label text-dark-blue fw-semibold small mb-1">Message</label>
+                        <textarea asp-for="Message" rows="5" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7 resize-none" placeholder="Type your message here..."></textarea>
+                        <span asp-validation-for="Message" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark-blue text-white w-100 py-2.5 fw-semibold rounded-3 transition-all shadow-sm">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,126 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ResidentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit Resident";
+}
+
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Resident Information</h4>
+        </div>
+        <div class="card-body">
+            <form asp-area="Admin" asp-controller="Residents" asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <!-- NAMES -->
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="FirstName" class="form-label fw-semibold">First Name</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="LastName" class="form-label fw-semibold">Last Name</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label asp-for="MiddleName" class="form-label fw-semibold">M.I.</label>
+                        <input asp-for="MiddleName" class="form-control" />
+                    </div>
+                </div>
+
+                <!-- GENDER & BIRTHDATE -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Gender" class="form-label fw-semibold">Gender</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="BirthDate" class="form-label fw-semibold">Birth Date</label>
+                        <input asp-for="BirthDate" type="date" class="form-control" />
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- PUROK & ADDRESS -->
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="Purok" class="form-label fw-semibold">Purok / Area / Sitio</label>
+                        <select asp-for="Purok" class="form-select" required>
+                            <option value="">Select Area / Purok</option>
+                            <option value="Area 1">Area 1</option>
+                            <option value="Area 2">Area 2</option>
+                            <option value="Area 3">Area 3</option>
+                            <option value="Area 4">Area 4</option>
+                            <option value="Area 5">Area 5</option>
+                            <option value="Area 6">Area 6</option>
+                            <option value="Area 7">Area 7</option>
+                            <option value="Visayan Area">Visayan Area</option>
+                            <option value="Tagalog Area">Tagalog Area</option>
+                            <option value="Chicago / Ohio Area">Chicago / Ohio Area</option>
+                            <option value="Block 245">Block 245</option>
+                            <option value="Kalasag Area">Kalasag Area</option>
+                            <option value="Kubo Area">Kubo Area</option>
+                            <option value="BMA Area">BMA Area</option>
+                        </select>
+                        <span asp-validation-for="Purok" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-7 mb-3">
+                        <label asp-for="Address" class="form-label fw-semibold">House No. & Street Address</label>
+                        <textarea asp-for="Address" class="form-control" rows="1"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- CONTACT & CIVIL STATUS -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ContactNumber" class="form-label fw-semibold">Contact Number</label>
+                        <input asp-for="ContactNumber" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CivilStatus" class="form-label fw-semibold">Civil Status</label>
+                        <select asp-for="CivilStatus" class="form-select">
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Separated">Separated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 🗳️ VOTER STATUS TOGGLE SWITCH -->
+                <div class="p-3 bg-light rounded border mb-4">
+                    <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                        <input asp-for="IsVoter" class="form-check-input fs-5 mt-0" type="checkbox" id="IsVoterEditSwitch" style="cursor: pointer;">
+                        <label class="form-check-label fw-semibold text-dark" for="IsVoterEditSwitch" style="cursor: pointer;">
+                            Rehistradong Botante sa Barangay na ito (Registered Voter)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-area="Admin" asp-controller="Residents" asp-action="Index" class="btn btn-dark px-3">Back to List</a>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

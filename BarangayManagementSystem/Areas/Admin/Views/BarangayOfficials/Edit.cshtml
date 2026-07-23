@@ -1,0 +1,62 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "I-edit ang Opisyal";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Baguhin ang Impormasyon ng Opisyal</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="SignaturePath" />
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label fw-bold"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Position" class="form-label fw-bold"></label>
+                    <input asp-for="Position" class="form-control" />
+                    <span asp-validation-for="Position" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Committee" class="form-label fw-bold"></label>
+                    <input asp-for="Committee" class="form-control" />
+                    <span asp-validation-for="Committee" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold d-block">Kasalukuyang Pirma</label>
+                    @if (!string.IsNullOrEmpty(Model.SignaturePath))
+                    {
+                        <div class="p-2 border rounded bg-light mb-2 style="width: fit-content;">
+                            <img src="~/uploads/signatures/@Model.SignaturePath" style="height: 60px;" alt="Signature" />
+                        </div>
+                    }
+                    <label asp-for="SignatureFile" class="form-label small text-muted">Palitan ang lagda (Pumili kung babaguhin):</label>
+                    <input asp-for="SignatureFile" type="file" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="mb-3 form-check form-switch pt-2">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch">
+                    <label class="form-check-label fw-bold" for="isActiveSwitch">Aktibo sa Serbisyo</label>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">I-cancel</a>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">I-update ang Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

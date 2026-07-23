@@ -1,0 +1,60 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.HealthViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "I-edit ang Tala ng Konsultasyon";
+}
+
+<div class="container mt-4" style="max-width: 750px;">
+    <div class="card shadow border-0">
+        <div class="card-header bg-warning text-dark py-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>I-edit ang Tala sa Health Center</h4>
+        </div>
+        <div class="card-body p-4">
+
+            <form asp-area="Admin" asp-controller="Health" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- Napakahalaga nito para malaman ng system kung anong ID ang ina-update -->
+                <input type="hidden" asp-for="Id" />
+
+                <!-- 1. Pagpili ng Residente -->
+                <div class="mb-3">
+                    <label asp-for="ResidentId" class="form-label fw-bold">Pangalan ng Residente</label>
+                    <select asp-for="ResidentId" class="form-select" asp-items="@(ViewBag.Residents as SelectList)" required></select>
+                    <span asp-validation-for="ResidentId" class="text-danger small"></span>
+                </div>
+
+                <!-- 2. Medikal na Kondisyon -->
+                <div class="mb-3">
+                    <label asp-for="MedicalCondition" class="form-label fw-bold">Medikal na Kondisyon / Diagnosis</label>
+                    <input asp-for="MedicalCondition" type="text" class="form-control" required />
+                    <span asp-validation-for="MedicalCondition" class="text-danger small"></span>
+                </div>
+
+                <!-- 3. Petsa -->
+                <div class="mb-3">
+                    <label asp-for="DateRecorded" class="form-label fw-bold">Petsa ng Pagtatala</label>
+                    <input asp-for="DateRecorded" type="date" class="form-control" />
+                    <span asp-validation-for="DateRecorded" class="text-danger small"></span>
+                </div>
+
+                <!-- 4. Remarks -->
+                <div class="mb-4">
+                    <label asp-for="Remarks" class="form-label fw-bold">Mga Tala / Remarks / Reseta</label>
+                    <textarea asp-for="Remarks" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger small"></span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between mt-3">
+                    <a asp-area="Admin" asp-controller="Health" asp-action="Index" class="btn btn-secondary px-4">Bumalik</a>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">I-update ang Record</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

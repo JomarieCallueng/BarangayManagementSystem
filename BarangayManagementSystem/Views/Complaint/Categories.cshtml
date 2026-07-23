@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Complaint & Dispute Categories";
+}
+
+<section class="hero-section bg-primary text-white py-5 px-4 mb-5 shadow-sm">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
+                <i class="bi bi-tags fs-2"></i>
+            </div>
+            <div>
+                <h1 class="h2 fw-bold mb-1">Blotter & Incident Categories</h1>
+                <p class="text-white-50 mb-0">Understand how community disputes, administrative violations, and security cases are routed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <!-- Category 1 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100">
+                <div class="text-warning mb-3"><i class="bi bi-people-fill fs-3"></i></div>
+                <h5 class="fw-bold text-dark">Neighborhood Disputes</h5>
+                <p class="text-secondary small">Alitan sa pagitan ng magkakapitbahay gaya ng ingay, boundary issues, o pinsala sa ari-arian na sakop ng Katarungang Pambarangay.</p>
+            </div>
+        </div>
+
+        <!-- Category 2 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100">
+                <div class="text-danger mb-3"><i class="bi bi-exclamation-octagon-fill fs-3"></i></div>
+                <h5 class="fw-bold text-dark">Peace & Order Violations</h5>
+                <p class="text-secondary small">Mga paglabag sa ordinansa tulad ng curfew, talamak na pagsusugal, ilegal na parke, o gulo sa pampublikong daan.</p>
+            </div>
+        </div>
+
+        <!-- Category 3 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100">
+                <div class="text-success mb-3"><i class="bi bi-tree-fill fs-3"></i></div>
+                <h5 class="fw-bold text-dark">Environmental Concerns</h5>
+                <p class="text-secondary small">Ilegal na pagtatapon ng basura, baradong kanal dahil sa kapabayaan, o mga panganib sa kalusugan ng komunidad.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🟢 FIXED & HIGHLY VISIBLE BUTTON HERE -->
+    <div class="mt-5 text-center">
+        <a asp-controller="Complaint" asp-action="Create" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-3 shadow">
+            Proceed to File an Official Report <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</div>

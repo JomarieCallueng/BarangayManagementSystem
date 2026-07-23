@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Announcements & Alerts";
+}
+
+<section class="hero-section text-white py-5 px-4 mb-5 shadow-sm">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
+                <i class="bi bi-megaphone fs-2"></i>
+            </div>
+            <div>
+                <h1 class="h2 fw-bold mb-1">Barangay Bulletins</h1>
+                <p class="text-white-50 mb-0">Manatiling up-to-date sa mga pinakabagong balita, proyekto, at paunawa sa ating komunidad.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <!-- Active Announcements Group -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-8">
+            <h4 class="fw-bold text-dark-blue mb-4">Latest Bulletins</h4>
+
+            <!-- Announcement Card 1 -->
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary mb-2 align-self-start py-2 px-3 rounded-1 font-monospace">HEALTH ADVISORY</span>
+                <h5 class="fw-bold text-dark-blue">Libreng Tuli at Medical Mission ngayong Sabado</h5>
+                <p class="text-muted small">Gaganapin sa Barangay Covered Court mula 8:00 AM hanggang 2:00 PM. Magdala ng Brgy. ID o Certificate of Residency para sa pagpaparehistro.</p>
+                <small class="text-secondary font-monospace"><i class="bi bi-calendar-event me-1"></i> July 2026</small>
+            </div>
+        </div>
+
+        <!-- Sidebar Widgets inside Announcements -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
+                <h5 class="fw-bold text-dark-blue mb-3">Upcoming Schedules</h5>
+                <ul class="list-unstyled text-secondary small lh-lg">
+                    <li><i class="bi bi-dot text-success fs-4 align-middle"></i> Garbage Collection: Every Tue/Sat</li>
+                    <li><i class="bi bi-dot text-success fs-4 align-middle"></i> Lupong Tagapamayapa Session: Every Wed</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMERGENCY ALERTS SECTION (Crucial Link Endpoint) -->
+    <section id="emergency-section" class="card border-0 shadow-sm p-4 rounded-3 bg-white border-start border-4 border-danger">
+        <div class="d-flex align-items-center gap-2 text-danger mb-3">
+            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+            <h4 class="fw-bold mb-0">Live Emergency Alerts</h4>
+        </div>
+        <p class="text-secondary small mb-4">Real-time hazard notifications, weather monitoring, and structural disaster updates within the area matrix.</p>
+
+        <div class="p-3 bg-danger bg-opacity-10 border-0 text-danger rounded-3 small mb-2">
+            <i class="bi bi-cloud-lightning-rain-fill me-2"></i> <strong>WEATHER STATUS:</strong> Orange Rainfall Advisory is hoisted. Heavy flooding expected in low-lying sectors. Evacuation sites are now fully activated.
+        </div>
+    </section>
+</div>

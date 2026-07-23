@@ -1,0 +1,45 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.ProjectViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Ongoing Projects Progress";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-speedometer2 text-warning"></i> Kasalukuyang Minomonitor (Ongoing Projects)</h2>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Bumalik sa Dashboard</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 border-start border-warning border-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-dark">@item.ProjectName</h5>
+                            <div class="mb-2">
+                                <span class="badge bg-warning text-dark"><i class="bi bi-gear-fill spin"></i> Ongoing Implementation</span>
+                            </div>
+                            <p class="small text-muted mb-2"><strong>Target Completion:</strong> @item.EndDate.ToString("MMMM dd, yyyy")</p>
+                            <p class="card-text text-truncate small text-secondary">@item.Description</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-end pb-3">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">Tingnan ang Usad</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-success text-center">
+                    <i class="bi bi-check-circle-fill"></i> Mabuti! Walang naka-pending na "Ongoing" na konstruksyon o proyekto sa kasalukuyan.
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,77 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.CertificateViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Document Preview";
+}
+
+<div class="container mt-3 d-print-none text-center">
+    <div class="card bg-light p-3 border-secondary inline-block mx-auto" style="max-width: 500px;">
+        <p class="mb-2 fw-bold text-muted">Ready to issue? Ensure clean paper is in the tray.</p>
+        <div class="d-flex justify-content-center gap-2">
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Exit Layout</a>
+            <button onclick="window.print()" class="btn btn-primary px-4"><i class="bi bi-printer"></i> Print Document</button>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 print-container bg-white p-5 shadow-sm border border-secondary text-dark mx-auto" style="max-width: 800px; min-height: 1000px; font-family: 'Times New Roman', Times, serif;">
+
+    <div class="text-center mb-5">
+        <h5 class="mb-0 fw-bold">REPUBLIC OF THE PHILIPPINES</h5>
+        <h6 class="mb-0 text-uppercase">Barangay Management System</h6>
+        <h4 class="mt-2 mb-0 text-uppercase fw-bold text-primary" style="letter-spacing: 1px;">OFFICE OF THE BARANGAY CHAIRMAN</h4>
+    </div>
+
+    <hr style="border-top: 2px double #000; margin-top: -10px;" />
+
+    <div class="text-center my-5 py-3">
+        <h1 class="text-uppercase fw-bold" style="text-decoration: underline; letter-spacing: 2px;">@Model.CertificateType</h1>
+    </div>
+
+    <div class="fs-5 lh-lg mt-5 text-start" style="text-indent: 50px;">
+        This is to certify that <strong class="border-bottom border-dark px-1">@Model.ResidentFullName</strong> is a legal, verified resident of this Barangay, and has requested access credentials or certification clear of any standing community liabilities.
+    </div>
+
+    <div class="fs-5 lh-lg mt-3 text-start" style="text-indent: 50px;">
+        Given this official request record filed on <strong>@Model.DateRequested.ToString("MMMM dd, yyyy")</strong>, we declare this entry verified active and cleared for processing.
+    </div>
+
+    <div class="fs-5 lh-lg mt-4 text-start" style="text-indent: 50px;">
+        Issued this <strong>@(Model.DateIssued?.ToString("ddth") ?? DateTime.Now.ToString("ddth"))</strong> day of <strong>@(Model.DateIssued?.ToString("MMMM, yyyy") ?? DateTime.Now.ToString("MMMM, yyyy"))</strong> for whatever legal purpose this clearance may serve best.
+    </div>
+
+    <div class="row" style="margin-top: 150px;">
+        <div class="col-6 text-center">
+            <div class="border-top border-dark pt-1 mx-auto text-uppercase" style="width: 220px;">
+                Applicant Signature
+            </div>
+        </div>
+        <div class="col-6 text-center">
+            <h5 class="fw-bold mb-0 text-uppercase">HON. BARANGAY CHAIRMAN</h5>
+            <div class="border-top border-dark pt-1 mx-auto text-muted small" style="width: 220px;">
+                Punong Barangay
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        body {
+            background: white !important;
+            color: black !important;
+        }
+
+        .print-container {
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .d-print-none {
+            display: none !important;
+        }
+    }
+</style>

@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Request Submitted Successfully";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Siguraduhing tugma sa pangalan ng layout mo
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 text-center">
+            <div class="card border-0 shadow-sm p-5 rounded-4 bg-white">
+                <div class="card-body">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <!-- Header Messages -->
+                    <h2 class="fw-bold text-dark mb-3">Matagumpay na Naisumite!</h2>
+                    <h5 class="text-secondary mb-4">Your certificate request has been successfully submitted.</h5>
+
+                    <hr class="my-4" style="border-style: dashed;" />
+
+                    <!-- Informative Box -->
+                    <div class="p-3 bg-light rounded-3 text-start mb-4">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle text-primary me-2"></i>Ano ang susunod na mangyayari?</h6>
+                        <ul class="text-muted small mb-0 ps-3">
+                            <li class="mb-2">Susuriin ng mga Barangay Staff ang iyong mga detalye at ang uploaded na resibo ng pagbabayad.</li>
+                            <li class="mb-2">Kapag na-verify na ang iyong bayad at impormasyon, aaprubahan ang iyong dokumento.</li>
+                            <li>Maaari mong asahan ang update o makuha ang iyong sertipiko sa takdang oras sa Barangay Hall.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="d-grid gap-2">
+                        <!-- I-redirect natin pabalik sa home o kung saan man nararapat -->
+                        <a href="/" class="btn btn-primary btn-lg fw-bold px-5" style="background-color: #12305B; border-color: #12305B;">
+                            Bumalik sa Home Page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

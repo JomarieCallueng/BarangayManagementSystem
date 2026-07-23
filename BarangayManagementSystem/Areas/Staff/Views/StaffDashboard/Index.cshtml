@@ -1,0 +1,73 @@
+﻿@model BarangayManagementSystem.Areas.Staff.ViewModels.DashboardViewModel
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<div class="container-fluid p-0">
+
+    <!-- 🌟 WELCOME BANNER (Dynamic User Name) -->
+    <div class="card border-0 bg-primary text-white p-4 p-md-5 rounded-3 shadow-sm mb-4" style="background: linear-gradient(135deg, #1e5799 0%, #2989d8 100%);">
+        <span class="text-uppercase tracking-wider small opacity-75 fw-semibold">Welcome Back,</span>
+        <h1 class="fw-bold m-0 display-5" style="font-size: 2rem;">@(ViewData["UserFullName"] ?? "Staff / Encoder")!</h1>
+        <p class="m-0 mt-2 opacity-75 small col-lg-8">
+            This dashboard allows efficient monitoring and management of barangay operations, resident records, and documentation tracking.
+        </p>
+    </div>
+
+    <!-- 📊 STATS CARDS SECTION (Connected to DB) -->
+    <div class="row g-4 mb-4">
+        <!-- Total Residents Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-secondary small fw-semibold text-uppercase">Total Residents</span>
+                    <div class="bg-primary-subtle text-primary rounded p-2 px-2.5">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold m-0 text-dark">@Model.TotalResidents.ToString("N0")</h3>
+            </div>
+        </div>
+
+        <!-- Pending Complaints Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-secondary small fw-semibold text-uppercase">Pending Complaints</span>
+                    <div class="bg-warning-subtle text-warning rounded p-2 px-2.5">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold m-0 text-dark">@Model.ActiveBlotters.ToString("N0")</h3>
+            </div>
+        </div>
+
+        <!-- Certificates Handled Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-secondary small fw-semibold text-uppercase">Certificates Handled</span>
+                    <div class="bg-success-subtle text-success rounded p-2 px-2.5">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold m-0 text-dark">@Model.PendingCertificates.ToString("N0")</h3>
+            </div>
+        </div>
+
+        <!-- System Engine Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-secondary small fw-semibold text-uppercase">System Engine</span>
+                    <div class="bg-info-subtle text-info rounded p-2 px-2.5">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold m-0 text-success" style="font-size: 1.5rem;">Operational</h3>
+            </div>
+        </div>
+    </div>
+
+</div>

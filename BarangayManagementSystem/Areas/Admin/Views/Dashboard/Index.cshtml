@@ -1,0 +1,35 @@
+﻿@model BarangayManagementSystem.Areas.Admin.Models.AdminDashboardViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Admin Panel - Dashboard Overview";
+}
+<!-- Welcome Banner (BLUE THEME) --><div class="p-4 mb-4 text-white rounded shadow-sm" style="background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;">
+<small class="text-uppercase fw-semibold" style="color: rgba(255, 255, 255, 0.8) !important;">Welcome Back,</small>
+<h2 class="fw-bold mb-2 text-white">Administrator!</h2>
+<p class="mb-0 small" style="color: rgba(255, 255, 255, 0.7) !important;">This dashboard allows efficient monitoring and management of barangay operations, resident records, and documentation tracking.</p>
+</div><!-- Counters Row (DYNAMIC DATA FROM DATABASE) --><div class="row g-3 mb-4">
+<div class="col-md-3">
+    <div class="card bg-white p-3 border-0 shadow-sm rounded">
+        <h6 class="text-muted small mb-1">Total Residents</h6>
+        <h3 class="fw-bold text-dark mb-0">@Model.TotalResidents.ToString("N0")</h3>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="card bg-white p-3 border-0 shadow-sm rounded">
+        <h6 class="text-muted small mb-1">Pending Complaints</h6>
+        <h3 class="fw-bold text-dark mb-0">@Model.PendingComplaints.ToString("N0")</h3>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="card bg-white p-3 border-0 shadow-sm rounded">
+        <h6 class="text-muted small mb-1">Certificates Handled</h6>
+        <h3 class="fw-bold text-dark mb-0">@Model.CertificatesHandled.ToString("N0")</h3>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="card bg-white p-3 border-0 shadow-sm rounded">
+        <h6 class="text-muted small mb-1">System Engine</h6>
+        <h3 class="fw-bold text-success mb-0">@Model.SystemStatus</h3>
+    </div>
+</div></div>

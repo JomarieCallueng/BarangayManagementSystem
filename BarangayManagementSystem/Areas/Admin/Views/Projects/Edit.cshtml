@@ -1,0 +1,87 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ProjectViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Baguhin ang Detalye ng Proyekto";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square"></i> Baguhin ang Detalye ng Proyekto</h4>
+        </div>
+        <div class="card-body">
+
+            <!-- 🔑 PINAKAMAHALAGA: May area, controller, method="post", at nakapasa ang Id hidden property -->
+            <form asp-area="Admin" asp-controller="Projects" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Kailangan ito para alam ng Controller kung anong ID ang ina-update natin -->
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Project Name -->
+                <div class="mb-3">
+                    <label asp-for="ProjectName" class="form-label fw-bold">Project Title / Name</label>
+                    <input asp-for="ProjectName" class="form-control" placeholder="e.g., Pagpapatayo ng Evacuation Center" />
+                    <span asp-validation-for="ProjectName" class="text-danger small"></span>
+                </div>
+
+                <!-- Budget & Status -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Budget" class="form-label fw-bold">Allocated Budget (₱)</label>
+                        <input asp-for="Budget" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Budget" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Status" class="form-label fw-bold">Project Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Planned">Planned</option>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label fw-bold">Target Start Date</label>
+                        <input asp-for="StartDate" class="form-control" type="date" />
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndDate" class="form-label fw-bold">Target End Date</label>
+                        <input asp-for="EndDate" class="form-control" type="date" />
+                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Project Description & Details</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mga layunin, kontraktor, o lokasyon ng gagawing proyekto..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between">
+                    <a asp-area="Admin" asp-controller="Projects" asp-action="Index" class="btn btn-secondary px-4">I-cancel</a>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4 shadow-sm">I-save Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

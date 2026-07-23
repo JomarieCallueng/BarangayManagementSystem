@@ -1,0 +1,67 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.HealthViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Pagtatala ng Bagong Konsultasyon";
+}
+
+<div class="container mt-4" style="max-width: 750px;">
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white py-3" style="background-color: #0d6efd !important;">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-heart-pulse-fill me-2"></i>Bagong Tala sa Health Center</h4>
+        </div>
+        <div class="card-body p-4">
+
+            <!-- 🔑 KUMPUNI NG ROUTING: Palitan ang asp-controller kung 'HealthCenter' ang gamit mo -->
+            <form asp-area="Admin" asp-controller="Health" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- 1. Pagpili ng Residente (Dropdown) -->
+                <div class="mb-3">
+                    <label asp-for="ResidentId" class="form-label fw-bold">Pangalan ng Residente</label>
+                    <select asp-for="ResidentId" class="form-select" asp-items="@(ViewBag.Residents as SelectList)" required>
+                        <option value="">-- Pumili ng Residente / Pasyente --</option>
+                        <!-- Kung walang ViewBag.Residents sa Controller mo pa, magpapakita ito ng fallback test options: -->
+                        @if (ViewBag.Residents == null)
+                        {
+                            <option value="1">Juan Dela Cruz (Sample)</option>
+                            <option value="2">Maria Clara (Sample)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ResidentId" class="text-danger small"></span>
+                </div>
+
+                <!-- 2. Medikal na Kondisyon / Diagnosis -->
+                <div class="mb-3">
+                    <label asp-for="MedicalCondition" class="form-label fw-bold">Medikal na Kondisyon / Diagnosis / Serbisyo</label>
+                    <input asp-for="MedicalCondition" type="text" class="form-control" placeholder="e.g., Lagnat, Sipon, Hypertension, o Bakuna" required />
+                    <span asp-validation-for="MedicalCondition" class="text-danger small"></span>
+                </div>
+
+                <!-- 3. Petsa ng Pagtatala -->
+                <div class="mb-3">
+                    <label asp-for="DateRecorded" class="form-label fw-bold">Petsa ng Pagtatala</label>
+                    <input asp-for="DateRecorded" type="date" class="form-control" />
+                    <span asp-validation-for="DateRecorded" class="text-danger small"></span>
+                </div>
+
+                <!-- 4. Mga Tala / Remarks / Reseta (Textarea) -->
+                <div class="mb-4">
+                    <label asp-for="Remarks" class="form-label fw-bold">Mga Tala / Remarks / Reseta ng Gamot</label>
+                    <textarea asp-for="Remarks" class="form-control" rows="4" placeholder="Ilista rito ang mga ibinigay na reseta, vital signs gaya ng BP, o payong medikal..."></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger small"></span>
+                </div>
+
+                <hr />
+
+                <!-- Mga Button sa Ibaba -->
+                <div class="d-flex justify-content-between mt-3">
+                    <a asp-area="Admin" asp-controller="Health" asp-action="Index" class="btn btn-secondary px-4">Bumalik</a>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">I-save ang Record</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

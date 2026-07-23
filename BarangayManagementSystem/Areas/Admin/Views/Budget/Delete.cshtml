@@ -1,0 +1,37 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Pagtanggal ng Budget";
+}
+
+<div class="container mt-4" style="max-width: 550px;">
+    <div class="card border-danger shadow">
+        <div class="card-header bg-danger text-white py-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Babala: Pagtanggal ng Budget</h4>
+        </div>
+        <div class="card-body p-4 text-center">
+            <h5 class="text-dark mb-4 fw-semibold">Sigurado ka bang nais mong permanenteng burahin ang kategoryang ito ng pondo?</h5>
+
+            <div class="p-3 rounded text-start mb-3" style="background-color: #f8d7da; border: 1px solid #f5c6cb;">
+                <p class="mb-1 text-danger"><strong>Kategorya:</strong> @Model.Category</p>
+                <p class="mb-1 text-danger"><strong>Taon:</strong> @Model.FiscalYear</p>
+                <p class="mb-0 text-danger"><strong>Kabuuang Inilaan:</strong> ₱@Model.AllocatedAmount.ToString("N2")</p>
+            </div>
+
+            <p class="text-muted small mb-4">Ang pagtanggal sa record na ito ay magbubura sa kasaysayan ng audit trail nito.</p>
+
+            <!-- 🔑 FORM START FOR POST DELETE -->
+            <form asp-area="Admin" asp-controller="Budget" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-area="Admin" asp-controller="Budget" asp-action="Index" class="btn btn-secondary px-4">I-cancel</a>
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">Oo, Burahin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

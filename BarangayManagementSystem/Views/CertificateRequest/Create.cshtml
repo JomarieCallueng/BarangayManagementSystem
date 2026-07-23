@@ -1,0 +1,143 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.CertificateViewModel
+
+@{
+    ViewData["Title"] = "Online Request Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+
+<!-- 🌟 Form at enctype para sa file upload -->
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <!-- 1. URI NG SERTIPIKO (Dynamic Dropdown galing kay Kapitan) -->
+    <div class="mb-4">
+        <label class="form-label fw-bold text-dark">
+            <i class="bi bi-file-earmark-text text-primary me-2"></i>Uri ng Sertipiko / Certificate Type
+        </label>
+
+        <select class="form-select form-select-lg" id="certificateSelect" asp-for="CertificateType" required>
+            <option value="" data-price="0" disabled selected>-- Piliin ang dokumentong kailangan --</option>
+
+            @* 🌟 DYNAMIC LOADING: I-loop ang mga ginawa ni Kapitan galing sa database *@
+            @if (ViewBag.CertificateTypes != null)
+            {
+                foreach (var type in (IEnumerable<dynamic>)ViewBag.CertificateTypes)
+                {
+                    <option value="@type.CertificateName" data-price="@type.Price">
+                        @type.CertificateName (₱@type.Price.ToString("F2"))
+                    </option>
+                }
+            }
+        </select>
+        <span asp-validation-for="CertificateType" class="text-danger small"></span>
+    </div>
+
+    <!-- 2. APPLICANT INFO -->
+    <div class="mb-4">
+        <label class="form-label fw-bold text-dark">
+            <i class="bi bi-person me-2"></i>Buong Pangalan ng Residente (Full Name)
+        </label>
+        <input type="text" class="form-control" asp-for="ResidentFullName" placeholder="Halimbawa: Juan Dela Cruz" required />
+        <span asp-validation-for="ResidentFullName" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label fw-bold text-dark">
+            <i class="bi bi-chat-left-text me-2"></i>Dahilan ng Pagkuha (Purpose of Request)
+        </label>
+        <!-- Idinagdag natin ang asp-for="Purpose" kung ito ang gamit mo sa model para ma-save ang dahilan -->
+        <textarea class="form-control" rows="3" placeholder="Halimbawa: Employment, Local ID Requirement, Financial Aid..." required></textarea>
+    </div>
+
+    <!-- 3. ONLINE PAYMENT SECTION -->
+    <div class="card border-0 bg-light p-4 mb-4 rounded-3 shadow-sm" id="paymentSectionCard">
+        <h5 class="fw-bold text-dark d-flex align-items-center mb-3">
+            <i class="bi bi-wallet2 text-primary me-2"></i> Impormasyon sa Pagbabayad (Payment Info)
+        </h5>
+
+        <div class="row align-items-center">
+            <!-- GCash QR Code / Details Card -->
+            <div class="col-md-5 mb-3 mb-md-0 text-center" id="gcashQrArea">
+                <div class="bg-white p-3 rounded-3 shadow-sm border">
+                    <span class="badge bg-primary px-3 py-1 mb-2">GCash Payment</span>
+                    <img src="/images/gcash-qr-sample.png" alt="Barangay GCash QR" class="img-fluid rounded-2 mb-2" style="max-height: 150px;" />
+                    <div class="small fw-bold text-dark">BARANGAY TATALON</div>
+                    <div class="small text-muted">0912-345-6789</div>
+                </div>
+            </div>
+
+            <!-- Dynamic Price & File Upload -->
+            <div class="col-md-7">
+                <!-- PRICE DISPLAY BOX: Dito awtomatikong lalabas ang presyo ng pinili nila -->
+                <div class="p-3 mb-3 rounded-3 text-center border-2 border-dashed" id="priceDisplayBox" style="background-color: #f8f9fa; border: 2px dashed #dee2e6;">
+                    <span class="text-muted d-block small fw-semibold">HALAGA NG BABAYARAN (AMOUNT TO PAY)</span>
+                    <span class="fs-2 fw-black text-primary" id="amountToPay">₱0.00</span>
+                </div>
+
+                <div class="form-group" id="receiptUploadGroup">
+                    <label class="form-label fw-bold small text-dark" id="uploadLabel">I-upload ang Resibo / Screenshot ng GCash</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-cloud-upload text-primary"></i></span>
+                        <!-- Inayos ang input para tumugma sa Name ng file parameter sa Controller (PaymentReceipt) -->
+                        <input type="file" class="form-control" name="PaymentReceipt" id="paymentReceiptInput" accept="image/*" required />
+                    </div>
+                    <div class="form-text text-muted small">Tanging mga imahe lamang (.png, .jpg, .jpeg) ang pinapayagan.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="d-flex align-items-center justify-content-end gap-2">
+        <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Bumalik / Cancel</a>
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-bold" style="background-color: #12305B; border-color: #12305B;">
+            I-submit ang Request <i class="bi bi-send ms-1"></i>
+        </button>
+    </div>
+</form>
+
+<!-- 🌟 JAVASCRIPT PARA SA DYNAMIC PRICE CHANGE -->
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const certSelect = document.getElementById("certificateSelect");
+            const amountText = document.getElementById("amountToPay");
+            const priceBox = document.getElementById("priceDisplayBox");
+            const receiptInput = document.getElementById("paymentReceiptInput");
+            const gcashArea = document.getElementById("gcashQrArea");
+            const receiptGroup = document.getElementById("receiptUploadGroup");
+
+            certSelect.addEventListener("change", function () {
+                // Kunin ang data-price attribute ng piniling option galing sa database record
+                const selectedOption = certSelect.options[certSelect.selectedIndex];
+                const price = parseFloat(selectedOption.getAttribute("data-price")) || 0;
+
+                if (price === 0) {
+                    amountText.innerText = "LIBRE (₱0.00)";
+                    amountText.className = "fs-2 fw-bold text-success";
+                    priceBox.style.borderColor = "#28a745";
+                    priceBox.style.backgroundColor = "#e8f5e9";
+
+                    // Itago ang GCash QR at Resibo input kapag libre
+                    receiptInput.removeAttribute("required");
+                    receiptInput.value = ""; // I-clear ang file selection
+                    receiptGroup.style.display = "none";
+                    gcashArea.style.display = "none";
+                } else {
+                    amountText.innerText = "₱" + price.toFixed(2);
+                    amountText.className = "fs-2 fw-bold text-primary";
+                    priceBox.style.borderColor = "#0d6efd";
+                    priceBox.style.backgroundColor = "#f8f9fa";
+
+                    // Ipakita at piliting mag-upload kapag may bayad
+                    receiptInput.setAttribute("required", "required");
+                    receiptGroup.style.display = "block";
+                    gcashArea.style.display = "block";
+                }
+            });
+        });
+    </script>
+}
