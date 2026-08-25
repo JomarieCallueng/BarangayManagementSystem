@@ -1,0 +1,36 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ResidentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Delete Resident";
+}
+
+<div class="container mt-4" style="max-width: 500px;">
+    <div class="card border-danger shadow">
+        <div class="card-header bg-danger text-white py-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Deletion Warning</h4>
+        </div>
+        <div class="card-body p-4 text-center">
+            <h5 class="text-dark mb-3 fw-semibold">Are you sure you want to delete this resident?</h5>
+
+            <!-- Pagsasama-samahin natin ang FirstName at LastName para sa babala -->
+            <h3 class="text-danger fw-bold my-3">
+                @Model.LastName, @Model.FirstName
+            </h3>
+
+            <p class="text-muted small mb-4">This action cannot be undone once completed.</p>
+
+            <!-- 🔑 POST FORM PARA SA PAGBURA -->
+            <form asp-area="Admin" asp-controller="Residents" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-area="Admin" asp-controller="Residents" asp-action="Index" class="btn btn-secondary px-4">Cancel</a>
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

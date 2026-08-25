@@ -1,0 +1,98 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.ReportsViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    // Inayos ang structural block ng Layout assignment
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = Model.ReportTitle;
+}
+
+<div class="container-fluid" id="report-print-area">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold text-dark m-0"><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>@Model.ReportTitle</h2>
+            <p class="text-muted small mb-0">Generated on: @Model.GeneratedDate.ToString("MMMM dd, yyyy hh:mm tt")</p>
+        </div>
+        <div class="btn-group shadow-sm no-print">
+            <a asp-area="Staff" asp-controller="Reports" asp-action="Index" class="btn btn-outline-secondary btn-sm fw-semibold">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+            <button type="button" onclick="window.print()" class="btn btn-danger btn-sm fw-semibold">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export PDF / Print
+            </button>
+            <!-- Server-side Excel Exporter Link -->
+            <a asp-area="Staff" asp-controller="Reports" asp-action="ExportReportToExcel" asp-route-reportType="Disaster" class="btn btn-success btn-sm fw-semibold">
+                <i class="bi bi-file-earmark-excel-fill me-1"></i> Export Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- 📊 CRISIS MANAGEMENT / DISASTER DATATABLE -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0" id="disaster-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event ID</th>
+                        <th>Incident Name</th>
+                        <th>Location / Impact</th>
+                        <th>Operation Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.TableData != null && Model.TableData.Any())
+                    {
+                        foreach (var row in Model.TableData)
+                        {
+                            <tr>
+                                <!-- Swak na swak sa Dictionary keys mula sa server-side controller helper -->
+                                <td><strong>@row["Event ID"]</strong></td>
+                                <td>@row["Incident Name"]</td>
+                                <td>@row["Location / Impact"]</td>
+                                <td>
+                                    <span class="badge @(row["Operation Status"] == "Active" || row["Operation Status"] == "Critical" ? "bg-danger" : "bg-secondary")">
+                                        @row["Operation Status"]
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">No active crisis events reported.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 🖨️ CSS PRINT UTILITY */
+    @@media print {
+        .no-print, nav, .sidebar, header, .navbar, .btn-group, a, .btn {
+            display: none !important;
+        }
+
+        main, .main-content, .content-body, .container-fluid {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        .table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+            .table th {
+                background-color: #212529 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+    }
+</style>

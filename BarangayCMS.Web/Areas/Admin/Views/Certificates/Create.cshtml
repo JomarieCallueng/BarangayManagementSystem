@@ -1,0 +1,79 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.CertificateViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "New Request";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Certificate Document Request</h4>
+        </div>
+        <div class="card-body">
+
+            <form asp-area="Admin" asp-controller="Certificates" asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Resident Dropdown -->
+                <div class="mb-3">
+                    <label asp-for="ResidentId" class="form-label">Resident</label>
+                    <select asp-for="ResidentId" class="form-select" asp-items="Model.ResidentList">
+                        <option value="">-- Select Resident --</option>
+                    </select>
+                    <span asp-validation-for="ResidentId" class="text-danger"></span>
+                </div>
+
+                <!-- Certificate Type Dropdown -->
+                <div class="mb-3">
+                    <label asp-for="CertificateType" class="form-label">Certificate Type</label>
+                    <select asp-for="CertificateType" class="form-select">
+                        <option value="">-- Choose Type --</option>
+                        <option value="Barangay Clearance">Barangay Clearance</option>
+                        <option value="Certificate of Indigency">Certificate of Indigency</option>
+                        <option value="Certificate of Residency">Certificate of Residency</option>
+                    </select>
+                    <span asp-validation-for="CertificateType" class="text-danger"></span>
+                </div>
+
+                <!-- Dates and Status -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DateRequested" class="form-label">Date Requested</label>
+                        <input asp-for="DateRequested" type="date" class="form-control" />
+                        <span asp-validation-for="DateRequested" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Status" class="form-label">Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Issued">Issued</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Optional Date Issued -->
+                <div class="mb-3">
+                    <label asp-for="DateIssued" class="form-label">Date Issued (Optional if Pending)</label>
+                    <input asp-for="DateIssued" type="date" class="form-control" />
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-area="Admin" asp-controller="Certificates" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success px-4">Save Request</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

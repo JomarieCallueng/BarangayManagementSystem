@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "About Us - Barangay Tatalon";
+}
+
+<!-- 🎠 HERO SECTION -->
+<section class="hero-section text-white py-5 px-4 mb-5 shadow-sm">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
+                <i class="bi bi-info-circle fs-2"></i>
+            </div>
+            <div>
+                <h1 class="h2 fw-bold mb-1">About Our Barangay</h1>
+                <p class="text-white-50 mb-0 fs-6">Learn about our history, organizational goals, core public values, and community structures in Barangay Tatalon.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container pb-5">
+
+    <!-- 👁️ VISION & MISSION BLOCK -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 border-start border-4 border-primary">
+                <h4 class="fw-bold text-dark-blue mb-3">
+                    <i class="bi bi-eye text-primary me-2"></i>Our Vision (Pananaw)
+                </h4>
+                <p class="text-dark fs-6 lh-base mb-0">
+                    To build a safe, progressive, climate-resilient, and united Barangay Tatalon that promotes sustainable economic development, equal public healthcare opportunities, and innovative community infrastructure frameworks driven by digitalized data automation systems.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 border-start border-4 border-success">
+                <h4 class="fw-bold text-dark-blue mb-3">
+                    <i class="bi bi-flag text-success me-2"></i>Our Mission (Layunin)
+                </h4>
+                <p class="text-dark fs-6 lh-base mb-0">
+                    To deliver accessible and accurate public welfare services, transparent budget administration reporting, swift disaster risk management reactions, and strong legal support platforms for the common good of all registered families within our territory.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📜 HISTORICAL BACKGROUND BLOCK -->
+    <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-5">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4 flex-wrap gap-2">
+            <div>
+                <h3 class="fw-bold text-dark-blue mb-1">Historical Background (Kasaysayan)</h3>
+                <p class="text-muted mb-0 fs-6">Foundation, Territorial Roots, and the Tatalon Estate Land Reform</p>
+            </div>
+
+            <!-- 🌐 LANGUAGE SWITCHER BUTTONS -->
+            <ul class="nav nav-pills bg-light p-1 rounded-3" id="historyTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active btn-sm fw-bold px-3 fs-6" id="english-tab" data-bs-toggle="tab" data-bs-target="#english-history" type="button" role="tab">
+                        English
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link btn-sm fw-bold px-3 fs-6" id="tagalog-tab" data-bs-toggle="tab" data-bs-target="#tagalog-history" type="button" role="tab">
+                        Tagalog
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row align-items-center g-4">
+            <!-- 📝 TAB CONTENT (ENGLISH & TAGALOG) -->
+            <div class="col-lg-8">
+                <div class="tab-content" id="historyTabContent">
+
+                    <!-- 🇺🇸 ENGLISH VERSION -->
+                    <div class="tab-pane fade show active" id="english-history" role="tabpanel" aria-labelledby="english-tab">
+                        <h5 class="fw-bold text-primary mb-2">Foundation & Territorial Roots</h5>
+                        <p class="text-dark fs-6 lh-lg mb-4">
+                            Barangay Tatalon in Quezon City originally functioned as a rural barrio and portion of Caloocan before the expansion of Metro Manila’s capital boundaries. The name "Tatalon" was derived from the local practice where residents had to jump off and across muddy rice fields ("tumatalon") to navigate the area's natural topography and water flow. Official transfer and incorporation into Quezon City occurred in <strong>1939</strong> under <em>Commonwealth Act No. 502</em> upon the establishment of the new capital city.
+                        </p>
+
+                        <h5 class="fw-bold text-primary mb-2">The Tatalon Estate and Land Battles</h5>
+                        <p class="text-dark fs-6 lh-lg mb-0">
+                            Barangay Tatalon transformed through landmark land-expropriation laws and housing struggles. The area was originally part of the massive <strong>Tatalon Estate</strong>, which was tied to protracted ownership claims involving J.M. Tuazon and Company, Gregorio Araneta, and the Deudor claimants. On <strong>August 3, 1959</strong>, the enactment of <strong>Republic Act No. 2616</strong> authorized the national government to expropriate the Tatalon Estate and sell residential lots at cost to bona fide occupants. This established Barangay Tatalon as a notable early testing ground for government urban land-for-the-landless initiatives driven by long-term legal and community struggles.
+                        </p>
+                    </div>
+
+                    <!-- 🇵🇭 TAGALOG VERSION -->
+                    <div class="tab-pane fade" id="tagalog-history" role="tabpanel" aria-labelledby="tagalog-tab">
+                        <h5 class="fw-bold text-success mb-2">Pinagmulan at Pagtatatag</h5>
+                        <p class="text-dark fs-6 lh-lg mb-4">
+                            Ang <strong>Barangay Tatalon</strong> ay nagsimula bilang isang rural barrio at bahagi ng Caloocan bago pa man lumawak ang mga hangganan ng kabisera sa Metro Manila. Ang pangalang <em>"Tatalon"</em> ay nagmula sa lumang gawi ng mga residente kung saan kailangan nilang tumalon o lumundag sa mga matutubig at maputik na palayan upang makatawid at makalibot sa lugar. Opisyal na inilipat at isinama ang nasasakupan nito sa Lungsod Quezon noong <strong>1939</strong> sa ilalim ng <em>Commonwealth Act No. 502</em> nang maitatag ang bagong capital city ng bansa.
+                        </p>
+
+                        <h5 class="fw-bold text-success mb-2">Ang Tatalon Estate at Pakikibaka sa Lupa</h5>
+                        <p class="text-dark fs-6 lh-lg mb-0">
+                            Lumalalim din ang kasaysayan ng Barangay Tatalon sa pamamagitan ng mga makasaysayang batas sa land expropriation at pabalay. Ang buong lugar ay dating bahagi ng napakalaking <strong>Tatalon Estate</strong>, na nagkaroon ng mahabang usapin sa pagmamay-ari laban sa J.M. Tuazon and Company, Gregorio Araneta, at ng mga Deudor claimants. Noong <strong>Agosto 3, 1959</strong>, isinabatas ang <strong>Republic Act No. 2616</strong> na nag-aawtorisa sa pambansang pamahalaan na bilhin (expropriate) ang Tatalon Estate upang ipagbili ang mga residential lots sa mismong halaga nito sa mga tunay na naninirahan doon. Dahil dito, naging isa ang Tatalon sa mga kauna-unahang ehemplo para sa mga programa ng pamahalaan na <em>urban land-for-the-landless</em>.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 🖼️ OFFICIAL LOGO VISUALIZATION -->
+            <div class="col-lg-4 text-center">
+                <div class="p-4 bg-light rounded-4 border shadow-sm">
+                    <img src="~/images/Barangay%20Tatalon%20Logo-modified.png"
+                         alt="Barangay Tatalon Official Seal"
+                         class="img-fluid mb-3"
+                         style="max-height: 180px; width: auto; object-fit: contain;">
+                    <h5 class="fw-bold text-dark mb-1">Barangay Tatalon</h5>
+                    <span class="badge bg-primary px-3 py-2 fs-6 mb-2">District IV, Quezon City</span>
+                    <p class="text-muted mb-0 fs-6">Est. 1939 (Commonwealth Act No. 502)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🏢 BARANGAY INFORMATION & CONTACT DETAILS -->
+    <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
+        <h4 class="fw-bold text-dark-blue mb-4">Barangay Desk & Contact Info</h4>
+        <div class="row g-4 text-dark fs-6">
+            <div class="col-md-4">
+                <p class="mb-1 fw-bold"><i class="bi bi-clock me-2 text-primary fs-5"></i>Office Hours:</p>
+                <p class="mb-0 text-muted">Monday – Friday, 8:00 AM – 5:00 PM</p>
+            </div>
+            <div class="col-md-4">
+                <p class="mb-1 fw-bold"><i class="bi bi-telephone me-2 text-danger fs-5"></i>Emergency Hotline:</p>
+                <p class="mb-0 text-danger fw-bold fs-5">0912-345-6789</p>
+            </div>
+            <div class="col-md-4">
+                <p class="mb-1 fw-bold"><i class="bi bi-envelope me-2 text-success fs-5"></i>Public Desk Email:</p>
+                <p class="mb-0 text-muted">support@barangaytatalon.gov.ph</p>
+            </div>
+        </div>
+    </div>
+
+</div>

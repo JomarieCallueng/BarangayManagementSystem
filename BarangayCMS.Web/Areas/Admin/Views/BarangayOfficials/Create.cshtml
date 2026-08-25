@@ -1,0 +1,68 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Magdagdag ng Opisyal";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="bi bi-person-plus-fill"></i> Magrehistro ng Bagong Opisyal</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label fw-bold"></label>
+                    <input asp-for="FullName" class="form-control" placeholder="Juan D. Dela Cruz" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Position" class="form-label fw-bold"></label>
+                    <select asp-for="Position" class="form-select">
+                        <option value="">-- Pumili ng Posisyon --</option>
+                        <option value="Barangay Captain">Barangay Captain (Kapitan)</option>
+                        <option value="Barangay Kagawad">Barangay Kagawad</option>
+                        <option value="SK Chairman">SK Chairman</option>
+                        <option value="Barangay Secretary">Barangay Secretary</option>
+                        <option value="Barangay Treasurer">Barangay Treasurer</option>
+                        <option value="Barangay Tanod (Chief)">Barangay Tanod (Chief)</option>
+                    </select>
+                    <span asp-validation-for="Position" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Committee" class="form-label fw-bold"></label>
+                    <input asp-for="Committee" class="form-control" placeholder="e.g., Committee on Peace & Order (Optional)" />
+                    <span asp-validation-for="Committee" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SignatureFile" class="form-label fw-bold"></label>
+                    <input asp-for="SignatureFile" type="file" class="form-control" accept="image/*" />
+                    <div class="form-text">I-upload ang malinaw na transparent PNG na pirma para sa mga digital certificates.</div>
+                </div>
+
+                <div class="mb-3 form-check form-switch pt-2">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                    <label class="form-check-label fw-bold" for="flexSwitchCheckChecked">Kasalukuyang Aktibo sa Serbisyo</label>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">Bumalik</a>
+                    <button type="submit" class="btn btn-success px-4">I-save ang Opisyal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

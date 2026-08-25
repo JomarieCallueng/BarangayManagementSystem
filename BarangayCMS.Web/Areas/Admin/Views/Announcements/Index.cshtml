@@ -1,0 +1,58 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.AnnouncementViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Barangay Bulletins";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-megaphone text-warning me-2"></i>Public Announcements</h2>
+        <p class="text-muted small mb-0">Publish dynamic official circulars, news updates, and informational community alerts.</p>
+    </div>
+    <a href="/Admin/Announcements/Create" class="btn btn-warning text-dark shadow-sm fw-semibold">
+        <i class="bi bi-plus-lg me-1"></i> Post New Update
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Title Heading</th>
+                    <th>Date Broadcasted</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-dark">
+                                @item.Title <br />
+                                <small class="text-muted d-block text-truncate" style="max-width: 400px;">@item.Content</small>
+                            </td>
+                            <td>@item.DatePosted.ToString("MM/dd/yyyy")</td>
+                            <td class="text-end">
+                                <a href="/Admin/Announcements/Edit/@item.Id" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>
+                                <a href="/Admin/Announcements/Delete/@item.Id" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted">
+                            <i class="bi bi-megaphone display-6 d-block mb-2"></i>
+                            <span>The community board is fresh. No official bulletins running.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

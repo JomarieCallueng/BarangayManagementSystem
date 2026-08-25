@@ -1,0 +1,50 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Magbawas / Magtala ng Gastos";
+}
+
+<div class="container py-4" style="max-width: 600px;">
+    <div class="card border-0 shadow rounded-4 p-4">
+        <h4 class="fw-bold text-danger mb-3">
+            <i class="bi bi-dash-circle me-2"></i>Magbawas / Magtala ng Gastos
+        </h4>
+        <p class="text-muted small">
+            I-record ang perang nailabas para sa kategoryang <strong>@Model.Category</strong>.
+        </p>
+
+        <form action="/Admin/Budget/Expenses" method="post">
+            @Html.AntiForgeryToken()
+            <!-- 🔑 DAPAT 'id' ANG NAME -->
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-bold">Kasalukuyang Available Balance</label>
+                <div class="h5 fw-bold text-success">
+                    ₱@((Model.AllocatedAmount - Model.UsedAmount).ToString("N2"))
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Halaga ng Gastos / Disbursement</label>
+                <div class="input-group">
+                    <span class="input-group-text">₱</span>
+                    <!-- 🔑 DAPAT EKSAKTONG 'expenseAmount' ANG NAME -->
+                    <input type="number" step="0.01" min="0.01" name="expenseAmount" class="form-control form-control-lg fw-bold text-danger" required />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Dahilan o Deskripsyon ng Gastos</label>
+                <!-- 🔑 DAPAT EKSAKTONG 'expenseRemarks' ANG NAME -->
+                <textarea name="expenseRemarks" class="form-control" rows="3" placeholder="Ilagay ang detalye ng gastos..."></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a href="/Admin/Budget?year=@Model.FiscalYear" class="btn btn-secondary fw-semibold">Bumalik</a>
+                <button type="submit" class="btn btn-danger fw-bold">I-bawas sa Pondo</button>
+            </div>
+        </form>
+    </div>
+</div>

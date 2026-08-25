@@ -1,0 +1,65 @@
+﻿@model BarangayManagementSystem.Areas.Staff.ViewModels.DashboardViewModel
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<div class="container-fluid p-0">
+
+    <!-- 🌟 WELCOME BANNER (Dynamic User Name) -->
+    <div class="welcome-banner">
+        <span class="welcome-banner__eyebrow">Welcome Back,</span>
+        <h1 class="welcome-banner__title" style="font-size: 2rem;">@(ViewData["UserFullName"] ?? "Staff / Encoder")!</h1>
+        <p class="welcome-banner__text">
+            This dashboard allows efficient monitoring and management of barangay operations, resident records, and documentation tracking.
+        </p>
+    </div>
+
+    <!-- 📊 STATS CARDS SECTION (Connected to DB) -->
+    <div class="row g-3 mb-4">
+        <!-- Total Residents Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-card__icon"><i class="bi bi-people-fill"></i></div>
+                <div>
+                    <p class="stat-card__label">Total Residents</p>
+                    <p class="stat-card__value">@Model.TotalResidents.ToString("N0")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Complaints Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-card__icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                <div>
+                    <p class="stat-card__label">Pending Complaints</p>
+                    <p class="stat-card__value">@Model.ActiveBlotters.ToString("N0")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Certificates Handled Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-card__icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+                <div>
+                    <p class="stat-card__label">Certificates Handled</p>
+                    <p class="stat-card__value">@Model.PendingCertificates.ToString("N0")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Engine Card -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="stat-card__icon"><i class="bi bi-cpu-fill"></i></div>
+                <div>
+                    <p class="stat-card__label">System Engine</p>
+                    <p class="stat-card__value text-success">Operational</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

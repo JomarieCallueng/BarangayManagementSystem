@@ -1,0 +1,98 @@
+﻿@model BarangayCMS.Entities.CertificateType
+
+@* 🌟 PINAKAMAHALAGA: Pinipilit nitong paganahin ang asp-for sa loob ng Areas *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "I-edit ang Sertipiko";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm rounded p-4">
+            <h3 class="fw-bold text-dark mb-3">
+                <i class="bi bi-pencil-square text-primary me-2"></i>I-edit ang Sertipiko
+            </h3>
+            <p class="text-muted small">Baguhin ang detalye o palitan ang template ng dokumento.</p>
+            <hr />
+
+            <form action="/Admin/AdminCertificateTypes/Edit/@Model?.CertificateTypeId" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <!-- Hidden Fields para sa Primary Key at Kasalukuyang File Name -->
+                <input type="hidden" asp-for="CertificateTypeId" name="CertificateTypeId" value="@Model?.CertificateTypeId" />
+                <input type="hidden" asp-for="TemplateFileName" name="TemplateFileName" value="@Model?.TemplateFileName" />
+
+                <!-- Row para sa Pangalan at Presyo -->
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Pangalan ng Sertipiko / Clearance</label>
+                        <!-- 🌟 Dinagdagan ng tahasang value="@Model?.CertificateName" para siguradong may laman -->
+                        <input type="text"
+                               asp-for="CertificateName"
+                               name="CertificateName"
+                               id="CertificateName"
+                               value="@Model?.CertificateName"
+                               class="form-control form-control-lg"
+                               placeholder="Hal. Barangay Clearance"
+                               required />
+                        <span asp-validation-for="CertificateName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Presyo o Halaga (₱)</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-white">₱</span>
+                            <!-- 🌟 Dinagdagan ng tahasang value="@Model?.Price" para siguradong may laman -->
+                            <input type="number"
+                                   asp-for="Price"
+                                   name="Price"
+                                   id="Price"
+                                   step="0.01"
+                                   value="@Model?.Price"
+                                   class="form-control"
+                                   placeholder="0.00"
+                                   required />
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- File Upload Input at Status Message -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-primary">
+                        <i class="bi bi-file-earmark-word me-1"></i> Palitan ang Word Template (.docx)
+                    </label>
+
+                    <!-- Status kung may dating file o wala -->
+                    @if (!string.IsNullOrEmpty(Model?.TemplateFileName))
+                    {
+                        <div class="alert alert-info py-2 px-3 small d-flex align-items-center mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <span>May kasalukuyan nang naka-upload na template (@Model.TemplateFileName). Mag-upload na lang ng bago rito kung nais itong palitan.</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary py-2 px-3 small mb-2 d-flex align-items-center">
+                            <i class="bi bi-exclamation-circle-fill text-muted me-2"></i>
+                            <span>Walang naka-upload na template ang sertipikong ito sa ngayon.</span>
+                        </div>
+                    }
+
+                    <input type="file" name="TemplateFile" id="TemplateFile" class="form-control form-control-lg" accept=".docx" />
+                    <div class="form-text text-muted small mt-2">
+                        Iwanang bakante kung ayaw palitan ang kasalukuyang template. Microsoft Word (.docx) lamang ang tanggap.
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-2 justify-content-end border-top pt-3">
+                    <a href="/Admin/AdminCertificateTypes" class="btn btn-outline-secondary px-4">Bumalik</a>
+                    <button type="submit" class="btn btn-primary px-4">I-save ang mga Binago</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

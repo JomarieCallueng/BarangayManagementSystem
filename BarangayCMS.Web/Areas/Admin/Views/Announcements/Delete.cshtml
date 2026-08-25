@@ -1,0 +1,32 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.AnnouncementViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Burahin ang Patalastas";
+}
+
+<div class="container mt-4" style="max-width: 550px;">
+    <div class="card border-danger shadow">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Babala: Pagtanggal ng Patalastas</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="text-center text-dark">Sigurado ka bang gusto mong permanenteng burahin ang patalastas na ito?</h5>
+
+            <div class="alert alert-warning mt-3">
+                <strong>Pamagat:</strong> @Model.Title <br />
+                <strong>Petsa:</strong> @Model.DatePosted.ToString("yyyy-MM-dd")
+            </div>
+            <p class="text-muted text-center small mb-0">Ang aksyon na ito ay hindi na pwedeng mabawi kapag nakumpirma.</p>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-secondary">Huwag Ituloy</a>
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger px-4">Oo, Burahin Ito</button>
+            </form>
+        </div>
+    </div>
+</div>
+

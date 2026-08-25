@@ -1,0 +1,79 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.UserViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create User Account";
+}
+
+<div class="mb-4">
+    <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-sm btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Back to Accounts List
+    </a>
+    <h2 class="fw-bold text-dark"><i class="bi bi-person-plus-fill text-primary me-2"></i>Create User Account</h2>
+    <p class="text-muted small">Setup login credentials and role assignment privileges for portal access.</p>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <form asp-area="Admin" asp-controller="Users" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- Validation Summary para sa mga Required constraints -->
+        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+        <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-person-bounding-box me-2"></i>Personal Information</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label asp-for="FirstName" class="form-label fw-semibold text-dark"></label>
+                <input asp-for="FirstName" class="form-control" placeholder="e.g., Juan" required />
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="LastName" class="form-label fw-semibold text-dark"></label>
+                <input asp-for="LastName" class="form-control" placeholder="e.g., Dela Cruz" required />
+                <span asp-validation-for="LastName" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-shield-lock me-2"></i>Account Security</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label asp-for="Username" class="form-label fw-semibold text-dark"></label>
+                <input asp-for="Username" class="form-control" placeholder="e.g., juan.delacruz" required />
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Email" class="form-label fw-semibold text-dark"></label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="name@example.com" required />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Password" class="form-label fw-semibold text-dark"></label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Minimum 6 characters" required />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-sliders me-2"></i>Access Privileges</h5>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label asp-for="Role" class="form-label fw-semibold text-dark"></label>
+                <select asp-for="Role" class="form-select" required>
+                    <option value="" selected disabled>-- Pumili ng Tungkulin --</option>
+                    <!-- 🔑 NAAYOS NA VALUES: Sumasakto na ito sa logic ng authorization mo -->
+                    <option value="SuperAdmin">SuperAdmin (Full Access)</option>
+                    <option value="Staff">Staff / Encoder (Data Clerk)</option>
+                    <option value="Health Worker">Barangay Health Worker</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end pt-3 border-top">
+            <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-light px-4">Cancel</a>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                <i class="bi bi-check-circle-fill me-1"></i> Save User Account
+            </button>
+        </div>
+    </form>
+</div>

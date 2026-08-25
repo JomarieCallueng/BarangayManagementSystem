@@ -1,0 +1,101 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.ReportsViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Staff Export Engine";
+}
+
+<div class="container mt-4 mb-5" style="max-width: 650px;">
+    <div class="card shadow-lg text-center border-0 py-4 card-export-body">
+        <div class="card-body">
+            <div class="mb-3">
+                <i class="bi bi-printer-fill text-secondary display-3"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Sentro ng Pag-export ng Opisyal na Ulat (Staff)</h4>
+            <p class="text-muted small px-3">Pumili ng kaukulang format sa ibaba upang i-save o i-print ang buong pinagsama-samang data para sa ebalwasyon ng pamahalaang lokal.</p>
+            <hr />
+
+            <!-- SUMMARY PREVIEW PARA SA PRINT / PDF OUTCOME -->
+            <div class="text-start px-4 mb-4 d-none d-print-block">
+                <h5 class="fw-bold text-center mb-3">PANGKALAHATANG BUOD NG DATA</h5>
+                <table class="table table-bordered sm-table">
+                    <tbody>
+                        <tr>
+                            <th>Kabuuang Residente</th>
+                            <td>@Model.TotalResidents</td>
+                        </tr>
+                        <tr>
+                            <th>Naipamahaging Sertipiko</th>
+                            <td>@Model.TotalCertificatesIssued</td>
+                        </tr>
+                        <tr>
+                            <th>Mga Aktibong Reklamo (Blotter)</th>
+                            <td>@Model.ActiveComplaints</td>
+                        </tr>
+                        <tr>
+                            <th>Aktibong Kaso ng Sakuna/Disaster</th>
+                            <td>@Model.ActiveDisasters</td>
+                        </tr>
+                        <tr>
+                            <th>Petsa ng Pagbuo ng Ulat</th>
+                            <td>@Model.GeneratedDate.ToString("MMMM dd, yyyy hh:mm tt")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-grid gap-3 px-4 print-actions-container">
+                <!-- 🖨️ OPSIYON 1: Print / Save as PDF gamit ang Browser Print -->
+                <button onclick="window.print();" class="btn btn-danger btn-lg fw-bold shadow-sm mb-2">
+                    <i class="bi bi-file-earmark-pdf-fill me-2"></i> I-download bilang PDF (Print View)
+                </button>
+
+                <!-- 📊 OPSIYON 2: Excel Export Link -->
+                <a asp-area="Staff" asp-controller="Reports" asp-action="ExportExcel" class="btn btn-success btn-lg fw-bold shadow-sm mb-2">
+                    <i class="bi bi-file-earmark-excel-fill me-2"></i> I-export sa Microsoft Excel (.csv)
+                </a>
+
+                <hr class="isolation-layer" />
+
+                <!-- 🔙 NAVIGATION BUTTONS -->
+                <div class="d-flex justify-content-between gap-2 isolation-layer">
+                    <a asp-area="Staff" asp-controller="Reports" asp-action="Index" class="btn btn-outline-secondary w-50 py-2">
+                        <i class="bi bi-arrow-left-short"></i> Balik sa Ulat
+                    </a>
+                    <a asp-area="Staff" asp-controller="Dashboard" asp-action="Index" class="btn btn-secondary w-50 py-2">
+                        <i class="bi bi-house-door"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔑 PINAGALING AT NAAYOS NA CSS PRINT GUARD PARA SA STAFF -->
+<style>
+    @@media print {
+        /* Itatago ang navigation, sidebars, headers, at operational action buttons kapag nag-print */
+        .sidebar, .nav, .navbar, .btn, hr, .text-muted, header, footer,
+        #sidebarMenu, .sidebar-wrapper, .isolation-layer, .print-actions-container {
+            display: none !important;
+        }
+        /* Isasagad ang card at summary canvas sa buong papel ng PDF */
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .card-export-body {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+        /* I-force ang browser na ipakita ang table preview tuwing mag-pi-print lamang */
+        .d-print-block {
+            display: block !important;
+        }
+    }
+</style>

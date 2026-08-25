@@ -1,0 +1,50 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.EnvironmentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "I-edit ang Aktibidad";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Baguhin ang Detalye ng Tala</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label asp-for="ActivityName" class="form-label fw-bold"></label>
+                    <input asp-for="ActivityName" class="form-control" />
+                    <span asp-validation-for="ActivityName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label fw-bold"></label>
+                    <input asp-for="Location" class="form-control" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ActivityDate" class="form-label fw-bold"></label>
+                    <input asp-for="ActivityDate" class="form-control" />
+                    <span asp-validation-for="ActivityDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">I-cancel</a>
+                    <button type="submit" class="btn btn-warning px-4">I-save Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

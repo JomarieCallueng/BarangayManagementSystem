@@ -1,0 +1,44 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Magdagdag ng Karagdagang Pondo";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white py-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-plus-circle-fill me-2"></i>Magdagdag ng Karagdagang Pondo</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="mb-3">
+                <h5 class="mb-1"><strong>Kategorya:</strong> <span class="text-primary">@Model.Category</span></h5>
+                <p class="text-muted small">Kasalukuyang Inilaan: ₱@Model.AllocatedAmount.ToString("N2")</p>
+            </div>
+
+            <form asp-area="Admin" asp-controller="Budget" asp-action="Income" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Halaga ng Idadagdag na Pondo</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₱</span>
+                        <input name="amount" class="form-control" type="number" step="0.01" required placeholder="0.00" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Remarks" class="form-label fw-bold">Deskripsyon ng Karagdagang Pondo</label>
+                    <input asp-for="Remarks" class="form-control" placeholder="e.g., Karagdagang subsidiya mula sa lungsod" />
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-area="Admin" asp-controller="Budget" asp-action="Index" class="btn btn-secondary">Bumalik</a>
+                    <button type="submit" class="btn btn-success fw-bold">I-dagdag sa Pondo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

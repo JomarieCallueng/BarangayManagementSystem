@@ -1,0 +1,77 @@
+﻿@model IEnumerable<BarangayCMS.Entities.CertificateType>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Certificate Pricing Setup";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-gear-fill text-primary me-2"></i>Certificate Pricing Setup</h2>
+        <p class="text-muted small mb-0">Magdagdag, mag-bago, o mag-alis ng mga uri ng sertipiko at kanilang mga kaukulang presyo.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/Admin/Certificates" class="btn btn-outline-secondary fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Bumalik sa Requests
+        </a>
+        <!-- 🌟 IPINAKO NA NATIN ANG URL PATH DITO PARA SIGURADONG GUMANA ANG PAG-ADD -->
+        <a href="/Admin/AdminCertificateTypes/Create" class="btn btn-primary fw-semibold shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Magdagdag ng Sertipiko
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Pangalan ng Sertipiko (Certificate Name)</th>
+                    <th>Presyo (Price)</th>
+                    <th class="text-end">Aksyon</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold text-dark">@item.CertificateName</td>
+                            <td>
+                                @if (item.Price > 0)
+                                {
+                                    <span class="badge bg-success-subtle text-success fw-bold fs-6">
+                                        ₱@item.Price.ToString("N2")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted fw-bold fs-6">LIBRE / ₱0.00</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <!-- 🌟 Diretsong URL para sa Edit at Delete -->
+                                <a href="/Admin/AdminCertificateTypes/Edit/@item.CertificateTypeId" class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a href="/Admin/AdminCertificateTypes/Delete/@item.CertificateTypeId" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Alisin
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted">
+                            <i class="bi bi-folder-x display-6 d-block mb-2"></i>
+                            <span>Walang nakitang uri ng sertipiko sa database. I-click ang "+ Magdagdag ng Sertipiko".</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

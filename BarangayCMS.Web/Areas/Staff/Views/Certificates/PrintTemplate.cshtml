@@ -1,0 +1,156 @@
+@model BarangayCMS.Web.Areas.Staff.ViewModels.CertificateViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.CertificateType - @Model.ResidentName</title>
+    <style>
+        @@page { size: A4; margin: 20mm; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            color: #1e293b;
+            padding: 30px;
+            background: #fff;
+            margin: 0;
+        }
+        .cert-border {
+            border: 4px double #0f172a;
+            padding: 40px;
+            text-align: center;
+            min-height: 800px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header h2 { margin: 0; text-transform: uppercase; font-size: 18pt; letter-spacing: 1px; }
+        .header h3 { margin: 5px 0; font-size: 12pt; color: #475569; font-weight: normal; }
+        .cert-title {
+            font-size: 24pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 40px 0;
+            text-decoration: underline;
+            color: #0f172a;
+        }
+        .content {
+            font-size: 13pt;
+            line-height: 1.8;
+            text-align: justify;
+            margin-bottom: 40px;
+        }
+        .footer {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 220px;
+            text-align: center;
+            padding-top: 5px;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .no-print-bar {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-print {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .btn-close {
+            background: #64748b;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+        @@media print {
+            .no-print-bar { display: none !important; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print-bar">
+        <div>
+            <button id="btnPrint" class="btn-print">🖨️ Print Certificate</button>
+            <button id="btnClose" class="btn-close">❌ Close / Back</button>
+        </div>
+        <span style="font-size:12px; color:#64748b;">Requested Date: <strong>@Model.DateRequested.ToString("MMMM dd, yyyy")</strong></span>
+    </div>
+
+    <div class="cert-border">
+        <div>
+            <div class="header">
+                <h3>REPUBLIC OF THE PHILIPPINES</h3>
+                <h2>OFFICE OF THE BARANGAY CHAIRMAN</h2>
+            </div>
+
+            <div class="cert-title">@Model.CertificateType</div>
+
+            <div class="content">
+                <p><strong>TO WHOM IT MAY CONCERN:</strong></p>
+                <p>
+                    This is to certify that <strong>@Model.ResidentName</strong> is a bona fide resident of this Barangay.
+                    Based on official records on file, the above-named individual has no derogatory record logged in this office.
+                </p>
+                <p>
+                    This certification is being issued upon request of the interested party for whatever legal purpose it may serve best.
+                </p>
+                <p>
+                    Issued this <strong>@ViewBag.FormattedDate</strong> at the Barangay Hall.
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div style="text-align: left;">
+                <small>Amount Paid: <strong>₱@Model.FeePaid.ToString("N2")</strong></small><br />
+                <small>Status: <strong>@Model.Status</strong></small>
+            </div>
+            <div class="signature-line">
+                PUNONG BARANGAY<br />
+                <small style="font-weight:normal; font-size: 9pt;">Barangay Chairman</small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btnPrint').addEventListener('click', function() {
+            window.print();
+        });
+
+        document.getElementById('btnClose').addEventListener('click', function() {
+            window.close();
+            setTimeout(function() {
+                window.location.href = '/Staff/Certificates';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

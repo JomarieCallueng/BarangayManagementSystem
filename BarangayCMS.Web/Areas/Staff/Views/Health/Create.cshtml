@@ -1,0 +1,143 @@
+@model BarangayCMS.Areas.Staff.ViewModels.HealthViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "New Medical Log";
+
+    var bloodTypes = new[] { "N/A", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+    var classes = new[] { "General", "Infant", "Child", "Maternal / Pregnant", "Senior Citizen", "PWD" };
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><i class="bi bi-clipboard2-plus-fill"></i> Clinical Assessment Form</h1>
+        <p class="page-header__sub">I-tala ang kondisyong medikal, vital signs, at check-up findings ng residente.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-light border fw-semibold rounded-3"><i class="bi bi-arrow-left me-1"></i> Bumalik</a>
+</div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 rounded-3 small"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="app-card app-card--pad mb-4">
+                <h6 class="fw-bold text-uppercase text-muted small mb-3"><i class="bi bi-person-vcard me-1"></i> Patient &amp; Diagnosis</h6>
+
+                <div class="mb-3">
+                    <label asp-for="ResidentId" class="form-label fw-semibold small"></label>
+                    <select asp-for="ResidentId" asp-items="Model.ResidentDataSource" class="form-select">
+                        <option value="">-- Pumili ng Residente (Patient) --</option>
+                    </select>
+                    <span asp-validation-for="ResidentId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MedicalCondition" class="form-label fw-semibold small"></label>
+                    <input asp-for="MedicalCondition" class="form-control" placeholder="e.g., Asthma, Hypertension, Dental Checkup" />
+                    <span asp-validation-for="MedicalCondition" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-0">
+                    <label asp-for="Remarks" class="form-label fw-semibold small"></label>
+                    <textarea asp-for="Remarks" class="form-control" rows="5" placeholder="Isulat ang ibinigay na gamot, payo ng doktor, o iba pang detalye ng konsultasyon..."></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="app-card app-card--pad">
+                <h6 class="fw-bold text-uppercase text-muted small mb-3"><i class="bi bi-clipboard2-pulse me-1"></i> Program &amp; Schedule</h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="HealthClassification" class="form-label fw-semibold small"></label>
+                        <select asp-for="HealthClassification" class="form-select">
+                            @foreach (var c in classes)
+                            {
+                                <option value="@c">@c</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="AttendingHealthWorker" class="form-label fw-semibold small"></label>
+                        <input asp-for="AttendingHealthWorker" class="form-control" placeholder="e.g., Duty Nurse, BHW Ana" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LastCheckupDate" class="form-label fw-semibold small"></label>
+                        <input asp-for="LastCheckupDate" class="form-control" type="date" />
+                        <span asp-validation-for="LastCheckupDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DateRecorded" class="form-label fw-semibold small"></label>
+                        <input asp-for="DateRecorded" class="form-control" type="date" />
+                        <span asp-validation-for="DateRecorded" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check mt-1">
+                            <input asp-for="IsVaccinated" class="form-check-input" type="checkbox" id="isVax" />
+                            <label class="form-check-label fw-semibold small" for="isVax">Fully vaccinated</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="app-card app-card--pad">
+                <h6 class="fw-bold text-uppercase text-muted small mb-3"><i class="bi bi-activity me-1"></i> Vital Signs</h6>
+
+                <div class="mb-3">
+                    <label asp-for="WeightKg" class="form-label fw-semibold small"></label>
+                    <input asp-for="WeightKg" id="weightInput" type="number" step="0.1" min="0" class="form-control" placeholder="0.0" />
+                    <span asp-validation-for="WeightKg" class="text-danger small"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="HeightCm" class="form-label fw-semibold small"></label>
+                    <input asp-for="HeightCm" id="heightInput" type="number" step="0.1" min="0" class="form-control" placeholder="0.0" />
+                    <span asp-validation-for="HeightCm" class="text-danger small"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="BloodType" class="form-label fw-semibold small"></label>
+                    <select asp-for="BloodType" class="form-select">
+                        @foreach (var b in bloodTypes)
+                        {
+                            <option value="@b">@b</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="p-3 rounded-3 text-center" style="background: var(--surface-alt); border: 1px dashed var(--border);">
+                    <div class="text-muted small fw-semibold text-uppercase">Body Mass Index</div>
+                    <div class="fw-bold" style="font-size: 1.9rem; color: var(--accent);" id="bmiValue">—</div>
+                    <span class="badge rounded-pill" id="bmiCategory" style="background: var(--accent-soft); color: var(--accent);">Auto-calculated</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 border-top pt-4 mt-4">
+        <a asp-action="Index" class="btn btn-light border px-4 fw-semibold rounded-3">Cancel</a>
+        <button type="submit" class="btn btn-success px-4 fw-bold rounded-3"><i class="bi bi-save me-1"></i> Save Health Entry</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var w = document.getElementById('weightInput');
+            var h = document.getElementById('heightInput');
+            var out = document.getElementById('bmiValue');
+            var cat = document.getElementById('bmiCategory');
+            function calc() {
+                var wv = parseFloat(w.value), hv = parseFloat(h.value);
+                if (!wv || !hv || hv <= 0) { out.textContent = '—'; cat.textContent = 'Auto-calculated'; return; }
+                var m = hv / 100, bmi = wv / (m * m);
+                out.textContent = bmi.toFixed(1);
+                cat.textContent = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
+            }
+            [w, h].forEach(function (el) { el && el.addEventListener('input', calc); });
+            calc();
+        })();
+    </script>
+}

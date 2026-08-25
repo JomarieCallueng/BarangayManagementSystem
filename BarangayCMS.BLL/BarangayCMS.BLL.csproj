@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BarangayCMS.DAL\BarangayCMS.DAL.csproj" />
+    <ProjectReference Include="..\BarangayCMS.DTO\BarangayCMS.DTO.csproj" />
+    <ProjectReference Include="..\BarangayCMS.Entities\BarangayCMS.Entities.csproj" />
+  </ItemGroup>
+
+</Project>

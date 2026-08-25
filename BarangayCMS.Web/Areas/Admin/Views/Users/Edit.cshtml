@@ -1,0 +1,97 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.UserViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit User Account";
+}
+
+<div class="row justify-content-center mt-3">
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm rounded-3 p-4">
+
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                    <i class="bi bi-pencil-square fs-5"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold text-dark mb-0">Edit User Account</h4>
+                    <p class="text-muted small mb-0">Update account credentials and user permissions.</p>
+                </div>
+            </div>
+
+            <hr class="text-muted opacity-25 mb-4" />
+
+            <form asp-area="Admin" asp-controller="Users" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Username (ReadOnly) -->
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label fw-semibold text-dark">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
+                        <input asp-for="Username" class="form-control bg-light border-start-0" readonly />
+                    </div>
+                </div>
+
+                <!-- First Name & Last Name (Side by Side) -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FirstName" class="form-label fw-semibold text-dark">First Name</label>
+                        <input asp-for="FirstName" class="form-control" placeholder="Enter first name" required />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="LastName" class="form-label fw-semibold text-dark">Last Name</label>
+                        <input asp-for="LastName" class="form-control" placeholder="Enter last name" required />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Email Address -->
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label fw-semibold text-dark">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
+                        <input asp-for="Email" class="form-control border-start-0" type="email" placeholder="name@barangay.gov.ph" required />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <!-- System Role Dropdown -->
+                <div class="mb-4">
+                    <label asp-for="Role" class="form-label fw-semibold text-dark">System Role</label>
+                    <select asp-for="Role" class="form-select">
+                        <option value="Staff / Encoder">Staff / Encoder</option>
+                        <option value="Staff">Staff</option>
+                        <option value="SuperAdmin">SuperAdmin</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger small"></span>
+                </div>
+
+                <!-- Reset Password Section (Box Container) -->
+                <div class="p-3 bg-light rounded-3 border mb-4">
+                    <label asp-for="Password" class="form-label fw-semibold text-danger d-flex align-items-center">
+                        <i class="bi bi-key-fill me-2"></i> Reset Password (Optional)
+                    </label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Iwanang blanko kung ayaw palitan" />
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle me-1"></i> Lagyan lamang ito ng bagong password kung nakalimutan ni user ang kanyang password at kailangang i-reset.
+                    </small>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center pt-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 fw-semibold">
+                        <i class="bi bi-arrow-left me-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                        <i class="bi bi-check-circle me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

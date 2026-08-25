@@ -1,0 +1,135 @@
+@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.HealthViewModel>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Health Center Management";
+
+    var records = Model?.ToList() ?? new List<BarangayCMS.Web.Areas.Admin.Models.HealthViewModel>();
+    var totalRecords = records.Count;
+    var uniquePatients = records.Select(r => r.ResidentId).Distinct().Count();
+    var vaccinated = records.Count(r => r.IsVaccinated);
+    var vaxRate = totalRecords > 0 ? (int)Math.Round(vaccinated * 100.0 / totalRecords) : 0;
+    var latest = records.Any() ? records.Max(r => r.DateRecorded) : (DateTime?)null;
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><i class="bi bi-heart-pulse-fill"></i> Health Center Records</h1>
+        <p class="page-header__sub">Track patient consultations, vital signs, immunization status, and clinical notes.</p>
+    </div>
+    <a href="/Admin/Health/Create" class="btn btn-success shadow-sm fw-semibold rounded-3">
+        <i class="bi bi-plus-lg me-1"></i> Log Patient Check-up
+    </a>
+</div>
+
+<!-- OVERVIEW STATS -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card__icon"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+            <div><p class="stat-card__label">Total Records</p><p class="stat-card__value">@totalRecords</p></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card__icon"><i class="bi bi-people-fill"></i></div>
+            <div><p class="stat-card__label">Unique Patients</p><p class="stat-card__value">@uniquePatients</p></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card__icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div><p class="stat-card__label">Vaccinated</p><p class="stat-card__value">@vaccinated <small class="text-muted fw-normal" style="font-size:.9rem;">(@vaxRate%)</small></p></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card__icon"><i class="bi bi-calendar-heart-fill"></i></div>
+            <div><p class="stat-card__label">Latest Entry</p><p class="stat-card__value" style="font-size:1.05rem;">@(latest.HasValue ? latest.Value.ToString("MMM dd, yyyy") : "—")</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="app-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-3">Patient</th>
+                    <th>Classification</th>
+                    <th>Condition / Diagnosis</th>
+                    <th>Blood</th>
+                    <th>BMI</th>
+                    <th>Vaccinated</th>
+                    <th>Recorded</th>
+                    <th class="text-end pe-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (records.Any())
+                {
+                    @foreach (var item in records)
+                    {
+                        <tr>
+                            <td class="ps-3 fw-semibold text-dark">
+                                <i class="bi bi-person-heart text-danger me-1"></i> @item.ResidentName
+                                @if (!string.IsNullOrWhiteSpace(item.AttendingHealthWorker))
+                                {
+                                    <small class="d-block text-muted" style="font-size:.72rem;">by @item.AttendingHealthWorker</small>
+                                }
+                            </td>
+                            <td><span class="badge bg-info-subtle text-info-emphasis rounded-pill">@item.HealthClassification</span></td>
+                            <td>
+                                @if (string.IsNullOrEmpty(item.MedicalCondition) || item.MedicalCondition == "None")
+                                {
+                                    <span class="text-muted">None</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger-emphasis fw-semibold">@item.MedicalCondition</span>
+                                }
+                            </td>
+                            <td><span class="fw-semibold">@(string.IsNullOrEmpty(item.BloodType) ? "N/A" : item.BloodType)</span></td>
+                            <td>
+                                @if (item.Bmi > 0)
+                                {
+                                    <span class="fw-semibold">@item.Bmi</span>
+                                    <small class="d-block text-muted" style="font-size:.72rem;">@item.BmiCategory</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsVaccinated)
+                                {
+                                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill"><i class="bi bi-check-lg"></i> Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill"><i class="bi bi-x"></i> No</span>
+                                }
+                            </td>
+                            <td class="text-muted small"><i class="bi bi-calendar3 me-1"></i>@item.DateRecorded.ToString("MM/dd/yyyy")</td>
+                            <td class="text-end pe-3">
+                                <a href="/Admin/Health/Details/@item.Id" class="btn btn-sm btn-outline-info me-1" title="Details"><i class="bi bi-eye"></i></a>
+                                <a href="/Admin/Health/Edit/@item.Id" class="btn btn-sm btn-outline-primary me-1" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a href="/Admin/Health/Delete/@item.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-heart-pulse display-6 d-block mb-2 text-danger opacity-50"></i>
+                            <span>No patient records or clinic transactions logged yet.</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

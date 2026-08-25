@@ -1,0 +1,82 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ComplaintViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Modify Logged Complaint Records";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark py-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Modify Logged Complaint Records</h4>
+        </div>
+        <div class="card-body p-4">
+            <form asp-area="Admin" asp-controller="Complaints" asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Complainant Name Section -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Complainant Name Reference</label>
+
+                    @if (Model.Subject != null && Model.Subject.StartsWith("CMP"))
+                    {
+                        <!-- Ipinapakita ang totoong pangalan mula sa Controller kung ito ay galing sa public form -->
+                        <div class="alert alert-info py-2 px-3 mb-2 rounded border small">
+                            <i class="bi bi-person-fill me-2 text-primary"></i>Submitted Online By: <strong>@Model.ResidentFullName</strong>
+                        </div>
+                        <input type="hidden" asp-for="ResidentId" />
+                    }
+                    else
+                    {
+                        <select asp-for="ResidentId" asp-items="Model.ResidentList" class="form-select">
+                            <option value="">-- Select Complainant --</option>
+                        </select>
+                        <span asp-validation-for="ResidentId" class="text-danger small"></span>
+                    }
+                </div>
+
+                <!-- Subject -->
+                <div class="mb-3">
+                    <label asp-for="Subject" class="form-label fw-bold">Subject / Case Matter</label>
+                    <input asp-for="Subject" class="form-control" readonly="@(Model.Subject != null && Model.Subject.StartsWith("CMP"))" />
+                    <span asp-validation-for="Subject" class="text-danger small"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Narrative & Case Details</label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <!-- Dates & Status -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="DateSubmitted" class="form-label fw-bold">Incident / Logged Date</label>
+                        <input asp-for="DateSubmitted" class="form-control" type="date" />
+                        <span asp-validation-for="DateSubmitted" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label fw-bold">Case Tracking Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Pending">Pending</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Investigation">Investigation</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Dismissed">Dismissed</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between mt-3">
+                    <a asp-area="Admin" asp-controller="Complaints" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Discard Changes</a>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-4 shadow-sm">Update Case File</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

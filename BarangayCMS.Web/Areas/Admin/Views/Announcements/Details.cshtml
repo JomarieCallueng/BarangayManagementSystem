@@ -1,0 +1,84 @@
+@model BarangayCMS.Web.Areas.Admin.Models.AnnouncementViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Detalye ng Patalastas";
+
+    var isActive = !Model.ExpiryDate.HasValue || Model.ExpiryDate.Value >= DateTime.Now;
+    var imgSrc = Model.HasImage ? Url.Action("Image", "Announcement", new { area = "", id = Model.Id }) : Model.ImageUrl;
+    var hasImage = Model.HasImage || !string.IsNullOrWhiteSpace(Model.ImageUrl);
+}
+
+<div class="page-header">
+    <div>
+        <a href="/Admin/Announcements" class="btn btn-sm btn-light border mb-2 rounded-3"><i class="bi bi-arrow-left"></i> Back to List</a>
+        <h1 class="page-header__title"><i class="bi bi-info-circle-fill"></i> Buong Detalye ng Patalastas</h1>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-dark fw-semibold rounded-3"><i class="bi bi-pencil me-1"></i> Baguhin / I-edit</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="app-card app-card--pad">
+            @if (hasImage)
+            {
+                <div class="rounded-3 overflow-hidden mb-4" style="max-height: 320px;">
+                    <img src="@imgSrc" alt="@Model.Title" class="w-100" style="object-fit: cover; max-height: 320px;" />
+                </div>
+            }
+
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge bg-info-subtle text-info-emphasis rounded-pill">@(string.IsNullOrEmpty(Model.Category) ? "General" : Model.Category)</span>
+                @if (Model.IsPinned)
+                {
+                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill"><i class="bi bi-pin-angle-fill me-1"></i>Pinned</span>
+                }
+                @if (isActive)
+                {
+                    <span class="badge bg-success-subtle text-success-emphasis rounded-pill"><i class="bi bi-broadcast me-1"></i>Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill"><i class="bi bi-hourglass-bottom me-1"></i>Expired</span>
+                }
+            </div>
+
+            <h2 class="fw-bold mb-3" style="color: var(--heading);">@Model.Title</h2>
+
+            <div class="p-3 rounded-3" style="background: var(--surface-alt); white-space: pre-wrap; font-size: 1.05rem; line-height: 1.7; color: var(--body-text); min-height: 150px;">@Model.Content</div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="app-card app-card--pad">
+            <h6 class="fw-bold text-uppercase text-muted small mb-3"><i class="bi bi-list-check me-1"></i> Metadata</h6>
+            <ul class="list-unstyled mb-0 small">
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Category</span>
+                    <span class="fw-semibold" style="color:var(--heading);">@(string.IsNullOrEmpty(Model.Category) ? "General" : Model.Category)</span>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Status</span>
+                    <span class="fw-semibold">@(isActive ? "Active" : "Expired")</span>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Pinned</span>
+                    <span class="fw-semibold">@(Model.IsPinned ? "Yes" : "No")</span>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Author</span>
+                    <span class="fw-semibold" style="color:var(--heading);">@(string.IsNullOrEmpty(Model.AuthorName) ? "Admin" : Model.AuthorName)</span>
+                </li>
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-muted">Published</span>
+                    <span class="fw-semibold" style="color:var(--heading);">@Model.DatePosted.ToString("MMM dd, yyyy h:mm tt")</span>
+                </li>
+                <li class="d-flex justify-content-between py-2">
+                    <span class="text-muted">Expires</span>
+                    <span class="fw-semibold" style="color:var(--heading);">@(Model.ExpiryDate.HasValue ? Model.ExpiryDate.Value.ToString("MMM dd, yyyy h:mm tt") : "No expiration")</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

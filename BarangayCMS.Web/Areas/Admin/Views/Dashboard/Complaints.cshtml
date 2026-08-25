@@ -1,0 +1,66 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Blotter Ledger & Cases";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold text-dark-blue mb-1">Blotter Incident Ledger</h4>
+        <p class="text-muted small mb-0">Track peace and order cases, neighborhood settlement updates, and mediation rows.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded fw-semibold"><i class="bi bi-download me-1"></i> Export Log</button>
+    </div>
+</div>
+
+<!-- Case Filters -->
+<div class="card border-0 shadow-sm p-3 rounded-3 bg-white mb-4">
+    <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-dark-blue text-white btn-sm px-3 rounded">All Blotter Logs</button>
+        <button class="btn btn-light border btn-sm px-3 text-secondary rounded">Active Mediation</button>
+        <button class="btn btn-light border btn-sm px-3 text-secondary rounded">Settled Cases</button>
+    </div>
+</div>
+
+<!-- Complaints Ledger Table -->
+<div class="card border-0 shadow-sm rounded-3 bg-white">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 text-secondary small">
+            <thead class="table-light text-dark-blue fw-bold">
+                <tr>
+                    <th class="ps-4 py-3">Case ID</th>
+                    <th>Complainant vs. Respondent</th>
+                    <th>Incident Category</th>
+                    <th>Filing Date</th>
+                    <th>Hearing Status</th>
+                    <th class="text-end pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-bottom-gray">
+                    <td class="ps-4 py-3 text-dark fw-bold font-monospace">BLTR-2026-0412</td>
+                    <td>
+                        <span class="fw-semibold text-dark d-block">Pedro Penduko</span>
+                        <small class="text-danger">vs. Amador Smith</small>
+                    </td>
+                    <td>Neighborhood Dispute (Property Noise)</td>
+                    <td>July 10, 2026</td>
+                    <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-1">1st Mediation Scheduled</span></td>
+                    <td class="text-end pe-4">
+                        <div class="dropdown d-inline-block">
+                            <button class="btn btn-light btn-xs border rounded p-1 px-2" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm small border-0">
+                                <li><a class="dropdown-item py-2" href="#"><i class="bi bi-eye text-muted me-2"></i> View Statement</a></li>
+                                <li><a class="dropdown-item py-2" href="#"><i class="bi bi-calendar-check text-muted me-2"></i> Update Schedule</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item py-2 text-success fw-bold" href="#"><i class="bi bi-check-circle me-2"></i> Mark as Settled</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

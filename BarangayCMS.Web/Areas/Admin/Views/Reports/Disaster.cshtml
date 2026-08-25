@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.DisasterReportItem>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Calamity & Disaster Response Report";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4><i class="bi bi-exclamation-triangle-fill text-danger"></i> Ulat sa Sakuna at Evacuation Monitoring</h4>
+        <!-- 🔑 NAAYOS: Idinagdag ang tag helpers at eksaktong ruta para makabalik nang maayos -->
+        <a asp-area="Admin" asp-controller="Reports" asp-action="Index" class="btn btn-sm btn-outline-secondary">Bumalik</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <table class="table table-bordered mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Sakuna / Incident Name</th>
+                    <th>Evacuation Center</th>
+                    <th>Bilang ng Pamilyang Naroon</th>
+                    <th>Status ng Operasyon</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.IncidentName</strong></td>
+                        <td>@item.EvacuationCenter</td>
+                        <td><span class="badge bg-danger">@item.FamiliesAccommodated Families</span></td>
+                        <td><span class="badge bg-warning text-dark">@item.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

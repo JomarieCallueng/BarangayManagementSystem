@@ -1,0 +1,26 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.UserViewModel
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Tanggalin ang Account";
+}
+
+<div class="container mt-4" style="max-width: 500px;">
+    <div class="card border-danger shadow">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Babala sa Pagbura</h4>
+        </div>
+        <div class="card-body text-center">
+            <h5>Sigurado ka bang nais mong tanggalin ang user account na ito?</h5>
+            <p class="text-muted">Hindi na maibabalik ang account ni <strong>@Model.FullName</strong> (<code>@Model.Username</code>) kapag itinuloy.</p>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Kanselahin</a>
+                    <button type="submit" class="btn btn-danger px-4">Oo, Burahin ito</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

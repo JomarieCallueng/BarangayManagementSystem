@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Report Submitted Successfully";
+}
+
+<div class="container py-5 my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card border-0 shadow-sm p-5 rounded-3 bg-white">
+                <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                    <i class="bi bi-shield-fill-check display-5"></i>
+                </div>
+                <h3 class="fw-bold text-dark-blue mb-2">Report Logged Securely</h3>
+                <p class="text-secondary small mb-4 px-3">Naitala na sa aming system ang iyong sumbong. Ang Barangay Desk Officer ay agad na susuriin ito para sa kaukulang aksyon o pag-iskedyul ng patawag (hearing) kung kinakailangan.</p>
+
+                <div class="bg-light p-3 rounded-3 text-start small mb-4 text-secondary">
+                    <span class="d-block mb-1"><strong>Status:</strong> Pending Review</span>
+                    <span class="d-block"><strong>Notification:</strong> Isang SMS text prompt ang ipapadala sa iyong contact number kapag may update na ang kaso.</span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-dark-blue text-white px-4 py-2 fw-semibold rounded-3 shadow-sm">
+                        Return to Portal Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

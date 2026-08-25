@@ -1,0 +1,101 @@
+﻿@model BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Modify Resident Profile";
+}
+
+<div class="container-fluid p-0">
+    <div class="card border-0 shadow-sm rounded-3 p-5 bg-white mx-auto" style="max-width: 800px; margin-top: 2rem;">
+
+        <div class="border-bottom pb-3 mb-4">
+            <h2 class="fw-bold text-dark m-0" style="font-size: 1.6rem;">
+                <i class="bi bi-pencil-square text-primary me-2"></i>Modify Resident Profile
+            </h2>
+            <p class="text-muted small m-0 mt-1">I-update ang mga impormasyon para sa residenteng ito.</p>
+        </div>
+
+        <form asp-area="Staff" asp-controller="Residents" asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ResidentId" />
+
+            <div class="row g-3">
+                <!-- Last Name -->
+                <div class="col-md-4">
+                    <label asp-for="LastName" class="form-label small fw-semibold text-secondary">Last Name</label>
+                    <input asp-for="LastName" class="form-content form-control" required />
+                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                </div>
+
+                <!-- First Name -->
+                <div class="col-md-4">
+                    <label asp-for="FirstName" class="form-label small fw-semibold text-secondary">First Name</label>
+                    <input asp-for="FirstName" class="form-control" required />
+                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                </div>
+
+                <!-- Middle Name -->
+                <div class="col-md-4">
+                    <label asp-for="MiddleName" class="form-label small fw-semibold text-secondary">Middle Name</label>
+                    <input asp-for="MiddleName" class="form-control" />
+                </div>
+
+                <!-- Gender -->
+                <div class="col-md-4">
+                    <label asp-for="Gender" class="form-label small fw-semibold text-secondary">Gender</label>
+                    <select asp-for="Gender" class="form-select" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <!-- Civil Status -->
+                <div class="col-md-4">
+                    <label asp-for="CivilStatus" class="form-label small fw-semibold text-secondary">Civil Status</label>
+                    <select asp-for="CivilStatus" class="form-select" required>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Legally Separated">Legally Separated</option>
+                    </select>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="col-md-4">
+                    <label asp-for="BirthDate" class="form-label small fw-semibold text-secondary">Date of Birth</label>
+                    <input asp-for="BirthDate" type="date" class="form-control" required />
+                </div>
+
+                <!-- Contact Number -->
+                <div class="col-md-6">
+                    <label asp-for="ContactNumber" class="form-label small fw-semibold text-secondary">Primary Mobile</label>
+                    <input asp-for="ContactNumber" class="form-control" />
+                </div>
+
+                <!-- Voter Status -->
+                <div class="col-md-6 d-flex align-items-center mt-4">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsVoter" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                        <label class="form-check-label fw-medium text-dark ms-2" for="flexSwitchCheckDefault">Registered Voter Status</label>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="col-12">
+                    <label asp-for="Address" class="form-label small fw-semibold text-secondary">Registered Home Address</label>
+                    <textarea asp-for="Address" class="form-control" rows="2" required></textarea>
+                </div>
+            </div>
+
+            <!-- Form Action Buttons -->
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                <a asp-action="Details" asp-route-id="@Model.ResidentId" class="btn btn-outline-secondary px-4">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

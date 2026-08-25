@@ -1,0 +1,104 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.BarangayProfileViewModel
+
+@{
+    ViewData["Title"] = "Global Portal Settings";
+    Layout = "_Layout"; // I-load ang main sidebar at layout design ng admin portal
+}
+
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark"><i class="bi bi-gear-fill me-2"></i>Global Portal Settings</h2>
+        <p class="text-muted">Configure system-wide parameters, barangay metadata, and database engine maintenance.</p>
+    </div>
+
+    <!-- Alert Notifications (Para makita natin kung Success o kung bakit nag-error) -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 8px;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 8px;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- 🏢 Barangay Profile Metadata (Kaliwang Bahagi) -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px; background: white;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-primary mb-4">
+                        <i class="bi bi-building me-2"></i>Barangay Profile Metadata
+                    </h5>
+
+                    <!-- DIREKTANG URL PATH: Inalis ang asp-action para i-force ang routing -->
+                    <form action="/Admin/Settings/BarangayProfile" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-semibold">Official Barangay Name</label>
+                            <!-- DIREKTANG NAME: nilagyan ng name="OfficialBarangayName" para siguradong mabasa ng Controller kahit walang tag helpers -->
+                            <input type="text" class="form-control form-control-lg bg-light border-0"
+                                   asp-for="OfficialBarangayName" name="OfficialBarangayName" required style="border-radius: 8px;" />
+                            <span asp-validation-for="OfficialBarangayName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-semibold">Municipality / City</label>
+                            <!-- DIREKTANG NAME: nilagyan ng name="MunicipalityCity" para siguradong mabasa ng Controller kahit walang tag helpers -->
+                            <input type="text" class="form-control form-control-lg bg-light border-0"
+                                   asp-for="MunicipalityCity" name="MunicipalityCity" required style="border-radius: 8px;" />
+                            <span asp-validation-for="MunicipalityCity" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold" style="border-radius: 8px;">
+                            Update Profile Details
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🖥️ Database Structural Maintenance (Kanang Bahagi) -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px; background: white;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-success mb-3">
+                        <i class="bi bi-database-gear me-2"></i>Database Structural Maintenance
+                    </h5>
+                    <p class="text-muted small mb-5">
+                        Generate full backup structural transaction dumps (.sql) or reset system logs cache safely.
+                    </p>
+
+                    <div class="row g-3 mt-4">
+                        <!-- Backup Button Form gamit ang direktang Action Link -->
+                        <div class="col-6">
+                            <form action="/Admin/Settings/DownloadBackup" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-success w-100 py-2.5 d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px;">
+                                    <i class="bi bi-cloud-arrow-up-fill"></i> Backup
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Clear Cache Form gamit ang direktang Action Link -->
+                        <div class="col-6">
+                            <form action="/Admin/Settings/ClearCache" method="post" onsubmit="return confirm('Sigurado ka bang gusto mong linisin ang cache at log files ng system?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger w-100 py-2.5 d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px;">
+                                    <i class="bi bi-trash3-fill"></i> Clear Cache
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

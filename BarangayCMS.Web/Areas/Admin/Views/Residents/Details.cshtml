@@ -1,0 +1,71 @@
+﻿@model BarangayCMS.Web.Areas.Admin.Models.ResidentViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Resident Details";
+}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white py-3" style="background-color: #17a2b8 !important;">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill me-2"></i>Complete Resident Details</h4>
+        </div>
+        <div class="card-body p-4">
+            <table class="table table-borderless fs-5">
+                <tr>
+                    <td class="fw-bold text-muted" style="width: 35%;">Full Name:</td>
+                    <td>
+                        @Model.LastName, @Model.FirstName @(!string.IsNullOrEmpty(Model.MiddleName) ? Model.MiddleName : "")
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Gender:</td>
+                    <td>@Model.Gender</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Birth Date:</td>
+                    <td>@Model.BirthDate.ToString("MMMM dd, yyyy") (@Model.Age yrs old)</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Civil Status:</td>
+                    <td>@Model.CivilStatus</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Purok / Area:</td>
+                    <td class="text-primary fw-semibold">
+                        @(string.IsNullOrEmpty(Model.Purok) ? "N/A" : Model.Purok)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Contact Number:</td>
+                    <td>@(string.IsNullOrEmpty(Model.ContactNumber) ? "N/A" : Model.ContactNumber)</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Address:</td>
+                    <td>@Model.Address</td>
+                </tr>
+                <!-- 🗳️ VOTER STATUS ROW -->
+                <tr>
+                    <td class="fw-bold text-muted">Voter Status:</td>
+                    <td>
+                        @if (Model.IsVoter)
+                        {
+                            <span class="badge bg-success fs-6"><i class="bi bi-check-circle-fill me-1"></i> Registered Barangay Voter</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary fs-6"><i class="bi bi-x-circle me-1"></i> Non-Voter</span>
+                        }
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 🔑 BUTTONS -->
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-area="Admin" asp-controller="Residents" asp-action="Index" class="btn btn-secondary px-4">Back to List</a>
+                <a asp-area="Admin" asp-controller="Residents" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-dark fw-bold px-4">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>
