@@ -1060,6 +1060,35 @@ body {
     padding: 1.25rem;
 }
 
+/* Create / Edit form pages -------------------------------------------------
+   Every single-column Create & Edit form uses .form-page so they share the
+   same width (SIZE), and .btn-brand so the primary Save action shares the
+   same themed colour everywhere (COLOUR). */
+.form-page {
+    max-width: 760px;
+    margin-inline: auto;
+}
+
+.btn-brand {
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+    .btn-brand:hover,
+    .btn-brand:focus,
+    .btn-brand:active {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+        color: #fff;
+    }
+
+    .btn-brand:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+
 /* Stat card --------------------------------------------------------------- */
 .stat-card {
     display: flex;
@@ -1109,22 +1138,86 @@ body {
     color: var(--body-text);
 }
 
+/* -------------------------------------------------------------------------
+   Unified data-table styling.
+   Every management table looks the same — colour, layout, shape and size —
+   regardless of which Bootstrap modifier classes an individual view happens
+   to use (table-striped / table-hover / table-bordered / table-borderless /
+   fs-5 / small ...). We drive Bootstrap's own --bs-table-* tokens so striping,
+   hover and borders all resolve to the active theme's palette.
+   ------------------------------------------------------------------------- */
 .app-content .table {
+    /* COLOUR — feed Bootstrap's table engine from the theme variables */
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--body-text);
+    --bs-table-border-color: var(--border);
+    --bs-table-striped-bg: var(--surface-alt);
+    --bs-table-striped-color: var(--body-text);
+    --bs-table-hover-bg: var(--accent-soft);
+    --bs-table-hover-color: var(--heading);
+    --bs-table-active-bg: var(--accent-soft);
+    --bs-table-active-color: var(--heading);
     color: var(--body-text);
+    margin-bottom: 0;
+    vertical-align: middle;
+    border-color: var(--border);
 }
 
-    .app-content .table > thead {
-        background: var(--surface-alt);
-    }
+/* SIZE — one cell padding & font size everywhere (overrides fs-5 / small) */
+.app-content .table > thead > tr > th,
+.app-content .table > thead > tr > td,
+.app-content .table > tbody > tr > th,
+.app-content .table > tbody > tr > td {
+    padding: .7rem .9rem;
+    font-size: .9rem;
+}
 
-    .app-content .table > thead th {
-        color: var(--heading);
-        font-size: .78rem;
-        text-transform: uppercase;
-        letter-spacing: .03em;
-        font-weight: 600;
-        border-bottom-color: var(--border);
-    }
+/* LAYOUT — one header treatment (beats view-level thead.table-light) */
+.app-content .table > thead > tr > th,
+.app-content .table > thead > tr > td {
+    background: var(--surface-alt);
+    color: var(--heading);
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 700;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+}
+
+/* LAYOUT — horizontal row separators only; neutralise bordered/borderless
+   so vertical grid lines never appear on some tables and not others */
+.app-content .table > tbody > tr > th,
+.app-content .table > tbody > tr > td {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.app-content .table > tbody > tr:last-child > th,
+.app-content .table > tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+/* SHAPE — every scrollable table reads as one rounded, bordered card */
+.app-content .table-responsive {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+}
+
+/* Keep the midnight (dark) theme readable: views hardcode white cards and
+   dark text, which would clash with the themed table colours above. */
+[data-theme="midnight"] .app-content .card.bg-white {
+    background: var(--surface) !important;
+    border-color: var(--border);
+}
+
+[data-theme="midnight"] .app-content .table .text-dark {
+    color: var(--heading) !important;
+}
 
 .app-content h1,
 .app-content h2,

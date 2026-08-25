@@ -9,10 +9,10 @@
 
 <div class="page-header">
     <div>
-        <a href="/Admin/Announcements" class="btn btn-sm btn-light border mb-2 rounded-3"><i class="bi bi-arrow-left"></i> Back to List</a>
         <h1 class="page-header__title"><i class="bi bi-megaphone-fill"></i> Post New Announcement</h1>
         <p class="page-header__sub">Fill out the fields below to publish a bulletin message to the community.</p>
     </div>
+    <a href="/Admin/Announcements" class="btn btn-light border fw-semibold rounded-3"><i class="bi bi-arrow-left me-1"></i> Back to List</a>
 </div>
 
 <form asp-area="Admin" asp-controller="Announcements" asp-action="Create" method="post" enctype="multipart/form-data">
@@ -107,7 +107,7 @@
 
     <div class="d-flex justify-content-end gap-2 border-top pt-4 mt-4">
         <a href="/Admin/Announcements" class="btn btn-light border px-4 fw-semibold rounded-3">Cancel</a>
-        <button type="submit" class="btn btn-warning text-dark fw-semibold px-4 rounded-3">
+        <button type="submit" class="btn btn-brand px-4 rounded-3">
             <i class="bi bi-send-fill me-1"></i> Publish Announcement
         </button>
     </div>

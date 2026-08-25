@@ -14,6 +14,9 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         public string Location { get; set; } = string.Empty;
 
         [Required]
+        [DataType(DataType.DateTime)]
+        // Render the <input type="datetime-local"> value to the minute only — no seconds / milliseconds.
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime ActivityDate { get; set; } = DateTime.Now;
 
         [MaxLength(500)]

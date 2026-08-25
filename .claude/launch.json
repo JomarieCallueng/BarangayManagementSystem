@@ -7,7 +7,7 @@
       "runtimeArgs": [
         "run",
         "--project",
-        "BarangayManagementSystem/BarangayCMS.Web.csproj",
+        "BarangayCMS.Web/BarangayCMS.Web.csproj",
         "--launch-profile",
         "http",
         "--no-build"

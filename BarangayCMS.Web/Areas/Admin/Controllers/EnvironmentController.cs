@@ -56,10 +56,14 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             return View(viewModel);
         }
 
+        // Strip seconds and milliseconds so activity dates are stored/displayed to the minute only.
+        private static DateTime TruncateToMinute(DateTime dt)
+            => new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0, dt.Kind);
+
         // 3. GET: Admin/Environment/Create
         public IActionResult Create()
         {
-            return View(new EnvironmentViewModel { ActivityDate = DateTime.Now });
+            return View(new EnvironmentViewModel { ActivityDate = TruncateToMinute(DateTime.Now) });
         }
 
         // 4. POST: Admin/Environment/Create
@@ -73,14 +77,14 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 {
                     ActivityName = model.ActivityName,
                     LocationArea = model.Location ?? string.Empty,
-                    InspectionOrActivityDate = model.ActivityDate,
+                    InspectionOrActivityDate = TruncateToMinute(model.ActivityDate),
                     Remarks = model.Description ?? string.Empty,
 
                     // Default fallbacks para sa mga bagong monitoring at logging fields ng entity
                     WasteManagementStatus = "Compliant",
                     ViolationsCount = 0,
                     InspectorName = User.Identity?.Name ?? "Admin",
-                    DateLogged = DateTime.Now
+                    DateLogged = TruncateToMinute(DateTime.Now)
                 };
 
                 _context.EnvironmentRecords.Add(record); // Tahasang tinukoy ang DbSet (.EnvironmentRecords)
@@ -126,7 +130,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
 
                     record.ActivityName = model.ActivityName;
                     record.LocationArea = model.Location ?? string.Empty;
-                    record.InspectionOrActivityDate = model.ActivityDate;
+                    record.InspectionOrActivityDate = TruncateToMinute(model.ActivityDate);
                     record.Remarks = model.Description ?? string.Empty;
                     // I-update din ang pangalan ng huling humawak kung kinakailangan
                     record.InspectorName = User.Identity?.Name ?? "Admin";

@@ -6,6 +6,7 @@ using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.DAL.Context;
 using BarangayCMS.DTO;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,10 +27,8 @@ namespace BarangayCMS.Areas.Staff.Controllers
         // GET: /Staff/Residents/Index
         public async Task<IActionResult> Index(string searchTerm, string purokFilter)
         {
-            // 1. Kuhanin ang listahan ng ResidentDTO mula sa BLL Service
             var dtoList = await _residentService.GetAllResidentsAsync();
 
-            // 2. I-map ang DTOs papuntang ResidentViewModel
             var query = dtoList.Select(r => new ResidentViewModel
             {
                 ResidentId = r.Id,
@@ -43,7 +42,6 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 Address = r.FullAddress ?? r.Street ?? string.Empty
             }).AsQueryable();
 
-            // 3. Search Filter Logic (First Name, Last Name, Middle Name)
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 query = query.Where(r =>
@@ -53,7 +51,6 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 );
             }
 
-            // 4. Purok/Address Filter Logic
             if (!string.IsNullOrWhiteSpace(purokFilter))
             {
                 query = query.Where(r => r.Address != null && r.Address.Contains(purokFilter, StringComparison.OrdinalIgnoreCase));
@@ -61,14 +58,13 @@ namespace BarangayCMS.Areas.Staff.Controllers
 
             var viewModelList = query.OrderBy(r => r.LastName).ToList();
 
-            // 5. Static list / Sample Purok list (maaari mong baguhin ang mga pangalan base sa tunay ninyong purok)
             var purokOptions = new List<string>
-    {
-        "Chicago / Ohio Area",
-        "Kalasag Area",
-        "Kubo Area",
-        "Tagalog Area"
-    };
+            {
+                "Chicago / Ohio Area",
+                "Kalasag Area",
+                "Kubo Area",
+                "Tagalog Area"
+            };
 
             ViewBag.PurokList = new SelectList(purokOptions, purokFilter);
             ViewBag.CurrentSearch = searchTerm;
@@ -115,8 +111,28 @@ namespace BarangayCMS.Areas.Staff.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ResidentViewModel model)
         {
-            if (ModelState.IsValid)
+            // Alisin ang validation para sa ResidentId dahil bago pa lang ito (wala pang ID)
+            ModelState.Remove("ResidentId");
+
+            if (!ModelState.IsValid)
             {
+                // IPAPASOK NITO SA CONSOLE/OUTPUT WINDOW KUNG ANO ANG NAGPA-FAIL SA VALIDATION
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"VALIDATION ERROR ON '{state.Key}': {error.ErrorMessage}");
+                    }
+                }
+                return View(model);
+            }
+
+            try
+            {
+                string fullStreetAddress = string.IsNullOrWhiteSpace(model.Purok)
+                    ? (model.Address ?? string.Empty)
+                    : $"{model.Address}, {model.Purok}";
+
                 var newResidentDto = new ResidentDTO
                 {
                     FirstName = model.FirstName ?? string.Empty,
@@ -129,7 +145,7 @@ namespace BarangayCMS.Areas.Staff.Controllers
                     IsVoter = model.IsVoter,
                     IsResident = true,
                     CreatedAt = DateTime.Now,
-                    Street = model.Address ?? string.Empty
+                    Street = fullStreetAddress
                 };
 
                 bool isSaved = await _residentService.RegisterResidentAsync(newResidentDto);
@@ -141,6 +157,11 @@ namespace BarangayCMS.Areas.Staff.Controllers
 
                 ModelState.AddModelError(string.Empty, "Nagkaroon ng problema sa pag-save sa database. Subukan muli.");
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Database/Server Error: " + ex.Message);
+            }
+
             return View(model);
         }
 

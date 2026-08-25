@@ -1,38 +1,36 @@
-﻿@model BarangayCMS.Areas.Staff.ViewModels.AnnouncementViewModel
+@model BarangayCMS.Areas.Staff.ViewModels.AnnouncementViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    Layout = null;
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Post Announcement";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>Post Announcement</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-</head>
-<body class="bg-light">
-    <div class="container py-5" style="max-width: 650px;">
-        <div class="card border-0 shadow-sm p-4 rounded-3">
-            <h5 class="fw-bold text-dark mb-1">Create Announcement</h5>
-            <p class="text-muted small mb-4">I-encode ang mga mahahalagang detalye para sa impormasyon ng publiko.</p>
 
-            <form asp-action="Create" method="post">
-                @Html.AntiForgeryToken()
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label small fw-bold text-secondary"></label>
-                    <input asp-for="Title" class="form-control form-control-sm" placeholder="Isulat ang paksa..." />
-                    <span asp-validation-for="Title" class="text-danger small"></span>
-                </div>
-                <div class="mb-4">
-                    <label asp-for="Content" class="form-label small fw-bold text-secondary"></label>
-                    <textarea asp-for="Content" class="form-control form-control-sm" rows="6" placeholder="Isulat ang buong nilalaman dito..."></textarea>
-                    <span asp-validation-for="Content" class="text-danger small"></span>
-                </div>
-                <div class="d-flex justify-content-end gap-2">
-                    <a asp-action="Index" class="btn btn-sm btn-light border px-3">Cancel</a>
-                    <button type="submit" class="btn btn-sm btn-primary px-4">Publish Content</button>
-                </div>
-            </form>
-        </div>
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><i class="bi bi-megaphone-fill"></i> Create Announcement</h1>
+        <p class="page-header__sub">I-encode ang mga mahahalagang detalye para sa impormasyon ng publiko.</p>
     </div>
-</body>
-</html>
+    <a asp-action="Index" class="btn btn-light border fw-semibold rounded-3"><i class="bi bi-arrow-left me-1"></i> Bumalik</a>
+</div>
+
+<div class="form-page">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="app-card app-card--pad">
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label fw-semibold"></label>
+                <input asp-for="Title" class="form-control" placeholder="Isulat ang paksa..." />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Content" class="form-label fw-semibold"></label>
+                <textarea asp-for="Content" class="form-control" rows="6" placeholder="Isulat ang buong nilalaman dito..."></textarea>
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+            <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+                <a asp-action="Index" class="btn btn-light border px-4">Cancel</a>
+                <button type="submit" class="btn btn-brand px-4">Publish Content</button>
+            </div>
+        </div>
+    </form>
+</div>

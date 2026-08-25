@@ -35,15 +35,24 @@
                 </tr>
             </table>
 
-            <!-- 🔑 BUTTONS FIX: Directed to Generate action instead of non-existent Process action -->
+            <!-- Actions mirror the Index workflow: Approve a Pending request, otherwise Print/Generate the document. -->
             <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                <a asp-area="Admin" asp-controller="Certificates" asp-action="Index" class="btn btn-secondary px-4">
+                <a asp-area="Admin" asp-controller="Certificates" asp-action="Index" class="btn btn-light border px-4">
                     Back to List
                 </a>
 
-                <a asp-area="Admin" asp-controller="Certificates" asp-action="Generate" asp-route-id="@Model.Id" class="btn btn-success px-4 fw-bold">
-                    Process Request
-                </a>
+                @if (Model.Status == "Pending")
+                {
+                    <a asp-area="Admin" asp-controller="Certificates" asp-action="Approve" asp-route-id="@Model.Id" class="btn btn-success px-4 fw-bold">
+                        <i class="bi bi-check-circle me-1"></i> Approve Request
+                    </a>
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="Certificates" asp-action="Print" asp-route-id="@Model.Id" target="_blank" class="btn btn-success px-4 fw-bold">
+                        <i class="bi bi-printer me-1"></i> Generate / Print
+                    </a>
+                }
             </div>
         </div>
     </div>
