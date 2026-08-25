@@ -1,167 +1,191 @@
-﻿@{
+@{
     ViewData["Title"] = "Disaster Preparedness - Barangay Portal";
 }
 
-<!-- Custom Styles para sa Disaster Preparedness Page -->
 <style>
-    .disaster-hero {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        color: white;
-        border-radius: 20px;
+    /* ============ DISASTER PREPAREDNESS — scoped, theme-aware ============ */
+    .dp-hero {
+        position: relative; overflow: hidden;
+        background: var(--hero-bg); color: var(--hero-text);
+        border-radius: 20px; padding: 2.75rem;
     }
-
-    .guide-card {
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        border-radius: 16px;
-        border: none;
+    .dp-hero::after {
+        content: ""; position: absolute; top: -35%; right: -6%;
+        width: 420px; height: 420px;
+        background: radial-gradient(circle, rgba(255,255,255,.12) 0%, rgba(255,255,255,0) 70%);
+        pointer-events: none;
     }
-
-        .guide-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
-
-    .hotline-card {
-        border-left: 5px solid #dc2626 !important;
-        border-radius: 12px;
+    .dp-hero__shield { position: absolute; right: 2.5rem; top: 50%; transform: translateY(-50%); font-size: 11rem; color: rgba(255,255,255,.12); pointer-events: none; }
+    .dp-hero__inner { position: relative; z-index: 1; max-width: 46rem; }
+    .dp-badge {
+        display: inline-flex; align-items: center; gap: .4rem;
+        background: #dc2626; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+        font-size: .72rem; padding: .4rem .85rem; border-radius: 999px; margin-bottom: 1rem;
     }
+    .dp-hero__title { font-weight: 800; font-size: clamp(1.9rem, 3.8vw, 2.9rem); margin: 0 0 .6rem; }
+    .dp-hero__sub { color: rgba(255,255,255,.8); font-size: 1.02rem; margin: 0 0 1.3rem; }
+    .dp-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .dp-chip {
+        display: inline-flex; align-items: center; gap: .4rem; padding: .5rem .95rem; border-radius: 999px;
+        font-size: .85rem; font-weight: 600; color: #fff; text-decoration: none;
+        background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28);
+        transition: transform .18s ease, background .18s ease;
+    }
+    .dp-chip:hover { background: rgba(255,255,255,.24); transform: translateY(-2px); color: #fff; }
 
-    .step-number {
-        width: 40px;
-        height: 40px;
-        background-color: #3b82f6;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
+    .dp-section-title { font-weight: 800; color: var(--heading); display: flex; align-items: center; gap: .55rem; }
+    .dp-section-title i { color: var(--accent); }
+
+    .dp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
+
+    /* Hotlines */
+    .dp-hotline {
+        display: block; text-decoration: none; padding: .9rem 1rem; border-radius: 12px;
+        background: var(--surface); border: 1px solid var(--border); border-left: 5px solid #dc2626;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .dp-hotline:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .dp-hotline__label { display: block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .dp-hotline__num { font-weight: 800; color: var(--heading); font-size: 1.15rem; margin: .1rem 0 0; display: flex; align-items: center; gap: .4rem; }
+    .dp-hotline__num i { font-size: .8rem; color: var(--accent); }
+    .dp-hotline__meta { font-size: .8rem; color: var(--muted); }
+
+    /* Guide cards */
+    .dp-guide {
+        height: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+        box-shadow: var(--shadow); padding: 1.5rem; transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .dp-guide:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .dp-guide__head { display: flex; align-items: center; gap: .85rem; margin-bottom: 1rem; }
+    .dp-guide__icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; transition: transform .25s ease; }
+    .dp-guide:hover .dp-guide__icon { transform: scale(1.08) rotate(-3deg); }
+    .dp-guide__title { font-weight: 800; color: var(--heading); margin: 0; font-size: 1.1rem; }
+    .dp-guide ul { list-style: none; margin: 0; padding: 0; }
+    .dp-guide li { display: flex; gap: .55rem; padding: .45rem 0; color: var(--body-text); font-size: .9rem; line-height: 1.5; }
+    .dp-guide li + li { border-top: 1px dashed var(--border); }
+    .dp-guide li i { color: var(--accent); flex: 0 0 auto; margin-top: .15rem; }
+
+    /* Go-bag interactive checklist */
+    .dp-gobag { display: flex; align-items: center; gap: .7rem; width: 100%; text-align: left;
+        background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; padding: .8rem .95rem;
+        color: var(--body-text); cursor: pointer; transition: border-color .15s ease, background .15s ease; }
+    .dp-gobag:hover { border-color: var(--accent); }
+    .dp-gobag__box { flex: 0 0 auto; width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--border); display: grid; place-items: center; color: transparent; transition: all .15s ease; }
+    .dp-gobag.is-packed .dp-gobag__box { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .dp-gobag.is-packed .dp-gobag__text { text-decoration: line-through; color: var(--muted); }
+    .dp-progress { font-size: .85rem; font-weight: 700; color: var(--accent); }
+
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-in { opacity: 1; transform: none; }
+    @@media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+        .dp-chip:hover, .dp-hotline:hover, .dp-guide:hover, .dp-guide:hover .dp-guide__icon { transform: none; }
     }
 </style>
 
 <div class="container py-5">
 
-    <!-- 🌟 HERO BANNER -->
-    <div class="disaster-hero p-4 p-md-5 mb-5 shadow-sm d-flex align-items-center position-relative overflow-hidden">
-        <div class="position-relative z-index-1">
-            <span class="badge bg-danger text-white px-3 py-2 mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">
-                <i class="bi bi-shield-fill-exclamation me-1"></i> Public Safety & Preparedness
-            </span>
-            <h1 class="display-5 fw-extrabold mb-2 text-white">Kahandaan sa Sakuna at Kalamidad</h1>
-            <p class="lead text-white-50 mb-0 max-width-600">
-                Ang kaligtasan ng pamilya ay nagsisimula sa tamang kaalaman. Alamin ang mga dapat gawin bago, habang, at pagkatapos ng iba't ibang uri ng kalamidad.
-            </p>
-        </div>
-        <div class="d-none d-lg-block ms-auto">
-            <i class="bi bi-shield-shaded text-white opacity-10" style="font-size: 10rem; display: block;"></i>
+    <!-- 🌟 HERO -->
+    <div class="dp-hero mb-5 reveal">
+        <i class="bi bi-shield-shaded dp-hero__shield d-none d-lg-block"></i>
+        <div class="dp-hero__inner">
+            <span class="dp-badge"><i class="bi bi-shield-fill-exclamation"></i> Public Safety &amp; Preparedness</span>
+            <h1 class="dp-hero__title">Kahandaan sa Sakuna at Kalamidad</h1>
+            <p class="dp-hero__sub">Ang kaligtasan ng pamilya ay nagsisimula sa tamang kaalaman. Alamin ang mga dapat gawin bago, habang, at pagkatapos ng iba't ibang uri ng kalamidad.</p>
+            <div class="dp-chips">
+                <a href="#hotlines" class="dp-chip"><i class="bi bi-telephone-fill"></i> Emergency Hotlines</a>
+                <a href="#guides" class="dp-chip"><i class="bi bi-journal-bookmark-fill"></i> Mga Gabay</a>
+                <a href="#gobag" class="dp-chip"><i class="bi bi-backpack2-fill"></i> Go-Bag Checklist</a>
+            </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <!-- 🚨 EMERGENCY HOTLINES SECTION (LEFT) -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 rounded-4 p-4 h-100 bg-light">
-                <h4 class="fw-bold text-danger mb-4"><i class="bi bi-telephone-fill me-2"></i>Emergency Hotlines</h4>
-                <p class="text-muted small">Mabilisang tawagan sa oras ng pangangailangan o sakuna.</p>
+        <!-- 🚨 EMERGENCY HOTLINES -->
+        <div class="col-lg-4" id="hotlines">
+            <div class="dp-card p-4 h-100 reveal">
+                <h2 class="dp-section-title mb-3" style="color:#dc2626;"><i class="bi bi-telephone-fill" style="color:#dc2626 !important;"></i> Emergency Hotlines</h2>
+                <p style="color: var(--muted); font-size: .88rem;">Mabilisang tawagan sa oras ng pangangailangan o sakuna. I-tap para tumawag.</p>
 
                 <div class="d-flex flex-column gap-3 mt-3">
-                    <!-- Barangay Emergency -->
-                    <div class="card hotline-card shadow-sm p-3 bg-white">
-                        <span class="text-muted small fw-bold text-uppercase">Barangay Emergency Command Center</span>
-                        <h5 class="fw-bold text-dark mb-1">0917-123-4567</h5>
-                        <span class="text-secondary small"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Barangay Hall Desk</span>
-                    </div>
-
-                    <!-- Bureau of Fire Protection -->
-                    <div class="card hotline-card shadow-sm p-3 bg-white" style="border-left-color: #ea580c !important;">
-                        <span class="text-muted small fw-bold text-uppercase">Bureau of Fire Protection (BFP)</span>
-                        <h5 class="fw-bold text-dark mb-1">(02) 812-3456</h5>
-                    </div>
-
-                    <!-- Police Station -->
-                    <div class="card hotline-card shadow-sm p-3 bg-white" style="border-left-color: #2563eb !important;">
-                        <span class="text-muted small fw-bold text-uppercase">Philippine National Police (PNP)</span>
-                        <h5 class="fw-bold text-dark mb-1">117 / 911</h5>
-                    </div>
-
-                    <!-- Red Cross -->
-                    <div class="card hotline-card shadow-sm p-3 bg-white" style="border-left-color: #dc2626 !important;">
-                        <span class="text-muted small fw-bold text-uppercase">Red Cross Rescue</span>
-                        <h5 class="fw-bold text-dark mb-1">143 / (02) 8527-0000</h5>
-                    </div>
+                    <a href="tel:09171234567" class="dp-hotline">
+                        <span class="dp-hotline__label">Barangay Emergency Command Center</span>
+                        <p class="dp-hotline__num">0917-123-4567 <i class="bi bi-telephone-outbound-fill"></i></p>
+                        <span class="dp-hotline__meta"><i class="bi bi-geo-alt-fill" style="color:#dc2626;"></i> Barangay Hall Desk</span>
+                    </a>
+                    <a href="tel:028123456" class="dp-hotline" style="border-left-color:#ea580c;">
+                        <span class="dp-hotline__label">Bureau of Fire Protection (BFP)</span>
+                        <p class="dp-hotline__num">(02) 812-3456 <i class="bi bi-telephone-outbound-fill"></i></p>
+                    </a>
+                    <a href="tel:911" class="dp-hotline" style="border-left-color:#2563eb;">
+                        <span class="dp-hotline__label">Philippine National Police (PNP)</span>
+                        <p class="dp-hotline__num">117 / 911 <i class="bi bi-telephone-outbound-fill"></i></p>
+                    </a>
+                    <a href="tel:143" class="dp-hotline" style="border-left-color:#dc2626;">
+                        <span class="dp-hotline__label">Red Cross Rescue</span>
+                        <p class="dp-hotline__num">143 / (02) 8527-0000 <i class="bi bi-telephone-outbound-fill"></i></p>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- 📖 DISASTER GUIDES SECTION (RIGHT) -->
-        <div class="col-lg-8">
-            <h3 class="fw-bold text-dark mb-4"><i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>Mga Gabay sa Kaligtasan</h3>
+        <!-- 📖 DISASTER GUIDES -->
+        <div class="col-lg-8" id="guides">
+            <h2 class="dp-section-title mb-4 reveal"><i class="bi bi-journal-bookmark-fill"></i> Mga Gabay sa Kaligtasan</h2>
 
             <div class="row g-4">
-                <!-- BAGYO (Typhoon) -->
-                <div class="col-md-6">
-                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-primary-subtle text-primary p-3 rounded-3 me-3">
-                                <i class="bi bi-wind fs-3"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-0">Bagyo at Baha</h5>
+                <div class="col-md-6 reveal">
+                    <div class="dp-guide">
+                        <div class="dp-guide__head">
+                            <div class="dp-guide__icon" style="background: rgba(37,99,235,.12); color:#2563eb;"><i class="bi bi-wind"></i></div>
+                            <h3 class="dp-guide__title">Bagyo at Baha</h3>
                         </div>
-                        <ul class="text-secondary small ps-3 mb-0">
-                            <li class="mb-2">Ihanda ang <strong>Emergency Go-Bag</strong> (pagkain, tubig, flashlight, gamot).</li>
-                            <li class="mb-2">Makinig o magbasa ng pinakabagong ulat-panahon (weather reports).</li>
-                            <li class="mb-2">Kapag tumataas ang tubig, lumikas agad sa pinakamalapit na ligtas na lugar.</li>
+                        <ul>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Ihanda ang <strong>Emergency Go-Bag</strong> (pagkain, tubig, flashlight, gamot).</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Makinig o magbasa ng pinakabagong ulat-panahon (weather reports).</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Kapag tumataas ang tubig, lumikas agad sa pinakamalapit na ligtas na lugar.</span></li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- LINDOL (Earthquake) -->
-                <div class="col-md-6">
-                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-warning-subtle text-warning p-3 rounded-3 me-3">
-                                <i class="bi bi-activity fs-3"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-0">Lindol</h5>
+                <div class="col-md-6 reveal">
+                    <div class="dp-guide">
+                        <div class="dp-guide__head">
+                            <div class="dp-guide__icon" style="background: rgba(245,158,11,.15); color:#d97706;"><i class="bi bi-activity"></i></div>
+                            <h3 class="dp-guide__title">Lindol</h3>
                         </div>
-                        <ul class="text-secondary small ps-3 mb-0">
-                            <li class="mb-2">Tandaan ang <strong>Duck, Cover, and Hold</strong> kapag lumilindol.</li>
-                            <li class="mb-2">Umiwas sa mga bintana, salamin, at matataas na kabinet.</li>
-                            <li class="mb-2">Matapos ang pagyanig, dahan-dahang lumabas patungo sa open space.</li>
+                        <ul>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Tandaan ang <strong>Duck, Cover, and Hold</strong> kapag lumilindol.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Umiwas sa mga bintana, salamin, at matataas na kabinet.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Matapos ang pagyanig, dahan-dahang lumabas patungo sa open space.</span></li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- SUNOG (Fire Safety) -->
-                <div class="col-md-6">
-                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-danger-subtle text-danger p-3 rounded-3 me-3">
-                                <i class="bi bi-fire fs-3"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-0">Iwas-Sunog</h5>
+                <div class="col-md-6 reveal">
+                    <div class="dp-guide">
+                        <div class="dp-guide__head">
+                            <div class="dp-guide__icon" style="background: rgba(220,38,38,.12); color:#dc2626;"><i class="bi bi-fire"></i></div>
+                            <h3 class="dp-guide__title">Iwas-Sunog</h3>
                         </div>
-                        <ul class="text-secondary small ps-3 mb-0">
-                            <li class="mb-2">Huwag iwanan ang niluluto o nakasinding kandila.</li>
-                            <li class="mb-2">I-unplug ang mga appliances kapag hindi ginagamit o aalis ng bahay.</li>
-                            <li class="mb-2">Alamin ang lokasyon ng mga fire exit sa inyong tirahan.</li>
+                        <ul>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Huwag iwanan ang niluluto o nakasinding kandila.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>I-unplug ang mga appliances kapag hindi ginagamit o aalis ng bahay.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Alamin ang lokasyon ng mga fire exit sa inyong tirahan.</span></li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- EVACUATION CENTERS (Evacuation Centers) -->
-                <div class="col-md-6">
-                    <div class="card guide-card h-100 shadow-sm p-4 bg-white">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-success-subtle text-success p-3 rounded-3 me-3">
-                                <i class="bi bi-building fs-3"></i>
-                            </div>
-                            <h5 class="fw-bold text-dark mb-0">Evacuation Centers</h5>
+                <div class="col-md-6 reveal">
+                    <div class="dp-guide">
+                        <div class="dp-guide__head">
+                            <div class="dp-guide__icon" style="background: rgba(22,163,74,.14); color:#16a34a;"><i class="bi bi-building"></i></div>
+                            <h3 class="dp-guide__title">Evacuation Centers</h3>
                         </div>
-                        <ul class="text-secondary small ps-3 mb-0">
-                            <li class="mb-2"><strong>Primary:</strong> Barangay Covered Court (Main St.)</li>
-                            <li class="mb-2"><strong>Secondary:</strong> Elementary School Gym (Zone 2)</li>
-                            <li class="mb-2">Makipag-ugnayan sa mga Barangay Tanod o Rescue team sa paglikas.</li>
+                        <ul>
+                            <li><i class="bi bi-check-circle-fill"></i> <span><strong>Primary:</strong> Barangay Covered Court (Main St.)</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span><strong>Secondary:</strong> Elementary School Gym (Zone 2)</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Makipag-ugnayan sa mga Barangay Tanod o Rescue team sa paglikas.</span></li>
                         </ul>
                     </div>
                 </div>
@@ -169,43 +193,72 @@
         </div>
     </div>
 
-    <!-- 🎒 EMERGENCY GO-BAG SECTION -->
-    <div class="card border-0 shadow-sm rounded-4 p-4 mt-5 bg-white">
-        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-backpack2-fill text-primary me-2"></i>Ano ang Laman ng Isang Emergency Go-Bag?</h4>
-        <p class="text-muted">Siguraduhing nakaimbak ang mga ito sa isang backpack na madaling mabitbit ng pamilya kapag may emergency:</p>
+    <!-- 🎒 EMERGENCY GO-BAG -->
+    <div class="dp-card p-4 mt-5 reveal" id="gobag">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+            <h2 class="dp-section-title mb-0"><i class="bi bi-backpack2-fill"></i> Ano ang Laman ng Isang Emergency Go-Bag?</h2>
+            <span class="dp-progress"><span id="gobagCount">0</span> / 6 na-impake</span>
+        </div>
+        <p style="color: var(--muted);">I-tap ang bawat item para markahan bilang <strong>naka-impake na</strong> — awtomatikong nasse-save sa device na ito.</p>
 
-        <div class="row g-3 text-secondary" style="font-size: 0.95rem;">
-            <div class="col-md-4">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Tubig (hindi bababa sa 3-litro bawat tao)</span>
-                </div>
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Pagkaing de-lata at biskwit (easy-open)</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>First Aid Kit at mga personal na gamot</span>
-                </div>
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Flashlight, Extra Batteries, at Powerbank</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Whistle (pito) at Posporo o Lighter</span>
-                </div>
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Mahalagang Dokumento (naka-plastik)</span>
-                </div>
-            </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-4"><button type="button" class="dp-gobag" data-gobag="0"><span class="dp-gobag__box"><i class="bi bi-check-lg"></i></span><span class="dp-gobag__text">Tubig (hindi bababa sa 3-litro bawat tao)</span></button></div>
+            <div class="col-md-4"><button type="button" class="dp-gobag" data-gobag="1"><span class="dp-gobag__box"><i class="bi bi-check-lg"></i></span><span class="dp-gobag__text">Pagkaing de-lata at biskwit (easy-open)</span></button></div>
+            <div class="col-md-4"><button type="button" class="dp-gobag" data-gobag="2"><span class="dp-gobag__box"><i class="bi bi-check-lg"></i></span><span class="dp-gobag__text">First Aid Kit at mga personal na gamot</span></button></div>
+            <div class="col-md-4"><button type="button" class="dp-gobag" data-gobag="3"><span class="dp-gobag__box"><i class="bi bi-check-lg"></i></span><span class="dp-gobag__text">Flashlight, Extra Batteries, at Powerbank</span></button></div>
+            <div class="col-md-4"><button type="button" class="dp-gobag" data-gobag="4"><span class="dp-gobag__box"><i class="bi bi-check-lg"></i></span><span class="dp-gobag__text">Whistle (pito) at Posporo o Lighter</span></button></div>
+            <div class="col-md-4"><button type="button" class="dp-gobag" data-gobag="5"><span class="dp-gobag__box"><i class="bi bi-check-lg"></i></span><span class="dp-gobag__text">Mahalagang Dokumento (naka-plastik)</span></button></div>
         </div>
     </div>
 
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Smooth scroll for hero chips
+            document.querySelectorAll('.dp-chips a[href^="#"]').forEach(function (a) {
+                a.addEventListener('click', function (e) {
+                    var t = document.querySelector(this.getAttribute('href'));
+                    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                });
+            });
+
+            // Interactive Go-Bag checklist (persisted per device)
+            var KEY = 'bms.gobag';
+            var items = document.querySelectorAll('.dp-gobag');
+            var counter = document.getElementById('gobagCount');
+            var packed = {};
+            try { packed = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { packed = {}; }
+
+            function refresh() {
+                var n = 0;
+                items.forEach(function (btn) {
+                    var id = btn.getAttribute('data-gobag');
+                    var on = !!packed[id];
+                    btn.classList.toggle('is-packed', on);
+                    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    if (on) n++;
+                });
+                if (counter) counter.textContent = n;
+            }
+            items.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = btn.getAttribute('data-gobag');
+                    packed[id] = !packed[id];
+                    try { localStorage.setItem(KEY, JSON.stringify(packed)); } catch (e) { /* non-fatal */ }
+                    refresh();
+                });
+            });
+            refresh();
+
+            // Scroll reveal with graceful fallback
+            var reveals = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) { reveals.forEach(function (el) { el.classList.add('is-in'); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); } });
+            }, { threshold: 0.1 });
+            reveals.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
+}
