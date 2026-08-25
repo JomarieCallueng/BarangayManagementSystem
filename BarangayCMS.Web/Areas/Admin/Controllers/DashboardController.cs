@@ -41,7 +41,9 @@ namespace BarangayManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Residents()
         {
-            return View();
+            // The view file is named "Resident.cshtml"; render it explicitly so the
+            // action name ("Residents") doesn't cause a "view not found" error.
+            return View("Resident");
         }
 
         public IActionResult StaffProfile()

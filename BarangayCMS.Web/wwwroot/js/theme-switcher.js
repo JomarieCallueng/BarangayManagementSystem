@@ -19,7 +19,9 @@
     var PRESETS = {
         civic: { theme: "civic", layout: "classic" },
         coastal: { theme: "coastal", layout: "split" },
-        midnight: { theme: "midnight", layout: "compact" }
+        midnight: { theme: "midnight", layout: "compact" },
+        sage: { theme: "sage", layout: "classic" },
+        lilac: { theme: "lilac", layout: "split" }
     };
 
     function apply(presetId) {

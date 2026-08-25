@@ -126,6 +126,9 @@ namespace BarangayCMS.Areas.Staff.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, AnnouncementViewModel model)
         {
+            // The form posts the PK as "AnnouncementId" (not a route "id"), so id can be 0.
+            if (id == 0) id = model.AnnouncementId != 0 ? model.AnnouncementId : model.Id;
+
             if (ModelState.IsValid)
             {
                 var existing = _context.Announcements.FirstOrDefault(a => a.AnnouncementId == id);

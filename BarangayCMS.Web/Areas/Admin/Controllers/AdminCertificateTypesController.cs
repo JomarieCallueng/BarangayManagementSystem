@@ -111,6 +111,9 @@ namespace BarangayManagementSystem.Controllers.Admin
             [Bind("CertificateTypeId,CertificateName,Price,TemplateFileName")] CertificateType certificateType,
             IFormFile? TemplateFile) // 🌟 Tinatanggap na rin ang uploaded file rito
         {
+            // The form posts the PK as "CertificateTypeId" (not a route "id"), so id can be 0.
+            if (id == 0) id = certificateType.CertificateTypeId;
+
             if (id != certificateType.CertificateTypeId)
             {
                 return NotFound();

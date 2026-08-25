@@ -68,6 +68,48 @@
     --shadow-lg: 0 16px 32px -12px rgba(0, 0, 0, .7);
 }
 
+/* --- 4. SAGE GARDEN (light, soft green) ---------------------------------- */
+[data-theme="sage"] {
+    --brand: #3d6b52;
+    --brand-soft: #558a6b;
+    --accent: #4f9e77;
+    --accent-hover: #3f8663;
+    --accent-soft: rgba(79, 158, 119, .14);
+    --page-bg: #f2f7f3;
+    --surface: #ffffff;
+    --surface-alt: #eaf2ec;
+    --border: #d8e6dd;
+    --heading: #1e3a2b;
+    --body-text: #46574d;
+    --muted: #86a091;
+    --hero-bg: linear-gradient(135deg, #4f8c68 0%, #33604a 100%);
+    --hero-text: #ffffff;
+    --radius: .6rem;
+    --shadow: 0 1px 3px rgba(30, 58, 43, .08);
+    --shadow-lg: 0 12px 24px -8px rgba(30, 58, 43, .18);
+}
+
+/* --- 5. LILAC MIST (light, soft lavender) -------------------------------- */
+[data-theme="lilac"] {
+    --brand: #5a4fa3;
+    --brand-soft: #7266bd;
+    --accent: #6d5fc4;
+    --accent-hover: #5a4dab;
+    --accent-soft: rgba(109, 95, 196, .14);
+    --page-bg: #f6f5fb;
+    --surface: #ffffff;
+    --surface-alt: #efedf9;
+    --border: #e3dff1;
+    --heading: #2e2a4d;
+    --body-text: #565270;
+    --muted: #988fb6;
+    --hero-bg: linear-gradient(135deg, #6d5fc4 0%, #4b3f93 100%);
+    --hero-text: #ffffff;
+    --radius: .75rem;
+    --shadow: 0 1px 3px rgba(46, 42, 77, .08);
+    --shadow-lg: 0 12px 26px -8px rgba(46, 42, 77, .20);
+}
+
 /* ==========================================================================
    GLOBAL SHELL — navbar, footer and body follow the active palette
    ========================================================================== */
@@ -689,6 +731,8 @@ body {
     bottom: 5.5rem;
     z-index: 1050;
     width: min(20rem, calc(100vw - 3rem));
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);

@@ -1,55 +1,127 @@
-﻿@{
+@{
     ViewData["Title"] = "Complaint & Dispute Categories";
 }
 
-<section class="hero-section bg-primary text-white py-5 px-4 mb-5 shadow-sm">
-    <div class="container py-2">
-        <div class="d-flex align-items-center gap-3">
-            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
-                <i class="bi bi-tags fs-2"></i>
-            </div>
-            <div>
-                <h1 class="h2 fw-bold mb-1">Blotter & Incident Categories</h1>
-                <p class="text-white-50 mb-0">Understand how community disputes, administrative violations, and security cases are routed.</p>
-            </div>
+<style>
+    /* ============ BLOTTER & INCIDENT CATEGORIES — scoped, theme-aware ============ */
+    .cat-hero {
+        position: relative; overflow: hidden;
+        background: var(--hero-bg); color: var(--hero-text);
+        padding: 3.25rem 1rem 3.75rem;
+    }
+    .cat-hero::after {
+        content: ""; position: absolute; top: -45%; right: -8%;
+        width: 460px; height: 460px;
+        background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 70%);
+        pointer-events: none;
+    }
+    .cat-hero__inner { max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: center; gap: 1.15rem; flex-wrap: wrap; }
+    .cat-hero__icon {
+        flex: 0 0 auto; width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; font-size: 1.8rem;
+        background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28);
+    }
+    .cat-hero__title { font-weight: 800; font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: 0 0 .35rem; }
+    .cat-hero__sub { color: rgba(255,255,255,.78); max-width: 46rem; margin: 0; }
+
+    .cat-wrap { max-width: 1140px; margin-top: -2.25rem; position: relative; z-index: 2; }
+
+    .cat-card {
+        position: relative; height: 100%; overflow: hidden;
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 1.75rem;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .cat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .cat-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; }
+    .cat-card--warning::before { background: #f59e0b; }
+    .cat-card--danger::before  { background: #dc3545; }
+    .cat-card--success::before { background: #16a34a; }
+    .cat-card__icon {
+        width: 58px; height: 58px; border-radius: 16px; display: grid; place-items: center; font-size: 1.6rem; margin-bottom: 1rem;
+        transition: transform .25s ease;
+    }
+    .cat-card:hover .cat-card__icon { transform: scale(1.08) rotate(-3deg); }
+    .cat-card--warning .cat-card__icon { background: rgba(245,158,11,.15); color: #d97706; }
+    .cat-card--danger  .cat-card__icon { background: rgba(220,53,69,.14);  color: #dc3545; }
+    .cat-card--success .cat-card__icon { background: rgba(22,163,74,.14);  color: #16a34a; }
+    .cat-card__title { font-weight: 800; color: var(--heading); font-size: 1.15rem; margin: 0 0 .5rem; }
+    .cat-card__text { color: var(--body-text); font-size: .92rem; line-height: 1.6; margin: 0; }
+
+    .cat-cta {
+        display: inline-flex; align-items: center; gap: .55rem;
+        padding: .95rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.05rem;
+        color: #fff; text-decoration: none; background: var(--accent); box-shadow: var(--shadow);
+        transition: background .18s ease, transform .15s ease, box-shadow .18s ease;
+    }
+    .cat-cta:hover { background: var(--accent-hover); color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .cat-cta i { transition: transform .18s ease; }
+    .cat-cta:hover i { transform: translateX(4px); }
+
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-in { opacity: 1; transform: none; }
+    @@media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+        .cat-card:hover, .cat-cta:hover { transform: none; }
+        .cat-card:hover .cat-card__icon, .cat-cta:hover i { transform: none; }
+    }
+</style>
+
+<section class="cat-hero">
+    <div class="cat-hero__inner">
+        <div class="cat-hero__icon"><i class="bi bi-tags-fill"></i></div>
+        <div>
+            <h1 class="cat-hero__title">Blotter &amp; Incident Categories</h1>
+            <p class="cat-hero__sub">Understand how community disputes, administrative violations, and security cases are routed.</p>
         </div>
     </div>
 </section>
 
-<div class="container pb-5">
+<div class="container cat-wrap pb-5">
     <div class="row g-4">
         <!-- Category 1 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100">
-                <div class="text-warning mb-3"><i class="bi bi-people-fill fs-3"></i></div>
-                <h5 class="fw-bold text-dark">Neighborhood Disputes</h5>
-                <p class="text-secondary small">Alitan sa pagitan ng magkakapitbahay gaya ng ingay, boundary issues, o pinsala sa ari-arian na sakop ng Katarungang Pambarangay.</p>
+        <div class="col-md-4 reveal">
+            <div class="cat-card cat-card--warning">
+                <div class="cat-card__icon"><i class="bi bi-people-fill"></i></div>
+                <h2 class="cat-card__title">Neighborhood Disputes</h2>
+                <p class="cat-card__text">Alitan sa pagitan ng magkakapitbahay gaya ng ingay, boundary issues, o pinsala sa ari-arian na sakop ng Katarungang Pambarangay.</p>
             </div>
         </div>
 
         <!-- Category 2 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100">
-                <div class="text-danger mb-3"><i class="bi bi-exclamation-octagon-fill fs-3"></i></div>
-                <h5 class="fw-bold text-dark">Peace & Order Violations</h5>
-                <p class="text-secondary small">Mga paglabag sa ordinansa tulad ng curfew, talamak na pagsusugal, ilegal na parke, o gulo sa pampublikong daan.</p>
+        <div class="col-md-4 reveal">
+            <div class="cat-card cat-card--danger">
+                <div class="cat-card__icon"><i class="bi bi-exclamation-octagon-fill"></i></div>
+                <h2 class="cat-card__title">Peace &amp; Order Violations</h2>
+                <p class="cat-card__text">Mga paglabag sa ordinansa tulad ng curfew, talamak na pagsusugal, ilegal na parke, o gulo sa pampublikong daan.</p>
             </div>
         </div>
 
         <!-- Category 3 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100">
-                <div class="text-success mb-3"><i class="bi bi-tree-fill fs-3"></i></div>
-                <h5 class="fw-bold text-dark">Environmental Concerns</h5>
-                <p class="text-secondary small">Ilegal na pagtatapon ng basura, baradong kanal dahil sa kapabayaan, o mga panganib sa kalusugan ng komunidad.</p>
+        <div class="col-md-4 reveal">
+            <div class="cat-card cat-card--success">
+                <div class="cat-card__icon"><i class="bi bi-tree-fill"></i></div>
+                <h2 class="cat-card__title">Environmental Concerns</h2>
+                <p class="cat-card__text">Ilegal na pagtatapon ng basura, baradong kanal dahil sa kapabayaan, o mga panganib sa kalusugan ng komunidad.</p>
             </div>
         </div>
     </div>
 
-    <!-- 🟢 FIXED & HIGHLY VISIBLE BUTTON HERE -->
-    <div class="mt-5 text-center">
-        <a asp-controller="Complaint" asp-action="Create" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-3 shadow">
-            Proceed to File an Official Report <i class="bi bi-arrow-right ms-2"></i>
+    <div class="mt-5 text-center reveal">
+        <a asp-controller="Complaint" asp-action="Create" class="cat-cta">
+            Proceed to File an Official Report <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var items = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('is-in'); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); } });
+            }, { threshold: 0.12 });
+            items.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
+}

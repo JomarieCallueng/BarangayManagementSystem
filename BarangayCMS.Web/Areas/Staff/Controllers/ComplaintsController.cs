@@ -142,6 +142,9 @@ namespace BarangayCMS.Areas.Staff.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ComplaintViewModel model)
         {
+            // The form posts the PK as "ComplaintId" (not a route "id"), so id can be 0.
+            if (id == 0) id = model.ComplaintId;
+
             // Dahil walang Update method para sa buong body, gagamitin natin ang UpdateComplaintStatusAsync mo
             bool isUpdated = await _complaintService.UpdateComplaintStatusAsync(id, model.Status, "Updated by Staff via Dashboard");
 

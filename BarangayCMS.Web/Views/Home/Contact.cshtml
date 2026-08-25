@@ -1,23 +1,118 @@
-﻿@model BarangayManagementSystem.Models.ContactFormModel
+@model BarangayManagementSystem.Models.ContactFormModel
 @{
     ViewData["Title"] = "Contact Us";
 }
 
-<section class="hero-section text-white py-5 px-4 mb-5 shadow-sm">
-    <div class="container py-2">
-        <div class="d-flex align-items-center gap-3">
-            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
-                <i class="bi bi-telephone-inbound fs-2"></i>
-            </div>
-            <div>
-                <h1 class="h2 fw-bold mb-1">Contact Us</h1>
-                <p class="text-white-50 mb-0">Reach out to the Barangay Hall for inquiries, concerns, or emergency assistance.</p>
-            </div>
+<style>
+    /* ================= CONTACT US — scoped, theme-aware styling ================= */
+    .ct-hero {
+        position: relative; overflow: hidden;
+        background: var(--hero-bg); color: var(--hero-text);
+        padding: 3.25rem 1rem 3.75rem;
+    }
+    .ct-hero::after {
+        content: ""; position: absolute; top: -45%; right: -8%;
+        width: 460px; height: 460px;
+        background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 70%);
+        pointer-events: none;
+    }
+    .ct-hero__inner { max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; }
+    .ct-hero__eyebrow {
+        display: inline-flex; align-items: center; gap: .45rem;
+        padding: .35rem .85rem; border-radius: 999px; font-size: .78rem; font-weight: 600;
+        letter-spacing: .02em; margin-bottom: 1rem;
+        background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28);
+    }
+    .ct-hero__title { font-weight: 800; font-size: clamp(1.9rem, 3.6vw, 2.8rem); margin: 0 0 .6rem; }
+    .ct-hero__sub { color: rgba(255,255,255,.78); max-width: 46rem; font-size: 1.02rem; margin: 0 0 1.4rem; }
+    .ct-hero__chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .ct-chip {
+        display: inline-flex; align-items: center; gap: .4rem;
+        padding: .5rem .95rem; border-radius: 999px; font-size: .85rem; font-weight: 600;
+        color: #fff; text-decoration: none;
+        background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.25);
+        transition: transform .18s ease, background .18s ease;
+    }
+    .ct-chip:hover { background: rgba(255,255,255,.22); transform: translateY(-2px); color: #fff; }
+
+    .ct-wrap { max-width: 1140px; margin-top: -2.25rem; position: relative; z-index: 2; }
+
+    .ct-card {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 1.6rem;
+    }
+    .ct-card__title { font-weight: 800; color: var(--heading); font-size: 1.15rem; margin: 0; display: flex; align-items: center; gap: .55rem; }
+    .ct-card__title i { color: var(--accent); }
+
+    /* Office info rows */
+    .ct-info { display: flex; align-items: flex-start; gap: .85rem; padding: .7rem 0; text-decoration: none; }
+    .ct-info + .ct-info { border-top: 1px solid var(--border); }
+    a.ct-info { transition: background .15s ease; border-radius: 8px; margin: 0 -.5rem; padding-left: .5rem; padding-right: .5rem; }
+    a.ct-info:hover { background: var(--accent-soft); }
+    .ct-info__icon { flex: 0 0 auto; width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 1.15rem; background: var(--accent-soft); color: var(--accent); }
+    .ct-info__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--muted); }
+    .ct-info__value { color: var(--heading); font-weight: 700; margin: .1rem 0 0; }
+
+    /* Open / closed status pill */
+    .ct-status { display: inline-flex; align-items: center; gap: .4rem; font-size: .74rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px; }
+    .ct-status--open { background: rgba(22,163,74,.14); color: #16a34a; }
+    .ct-status--closed { background: rgba(148,163,184,.18); color: var(--muted); }
+    .ct-status__dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .ct-status--open .ct-status__dot { animation: ctPulse 1.6s ease-in-out infinite; }
+    @@keyframes ctPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+    /* Emergency hotlines */
+    .ct-emerg { display: flex; align-items: center; gap: .85rem; padding: .8rem .75rem; border-radius: 12px; text-decoration: none; border: 1px solid transparent; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .ct-emerg:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--border); background: var(--surface-alt); }
+    .ct-emerg__icon { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.25rem; }
+    .ct-emerg__name { color: var(--body-text); font-weight: 600; font-size: .92rem; }
+    .ct-emerg__num { margin-left: auto; font-weight: 800; color: var(--heading); font-size: 1.1rem; letter-spacing: .01em; }
+    .ct-emerg__num i { font-size: .8rem; color: var(--muted); margin-left: .3rem; }
+
+    /* Form */
+    .ct-label { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; color: var(--muted); margin-bottom: .35rem; display: block; }
+    .ct-input {
+        width: 100%; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px;
+        padding: .8rem 1rem; color: var(--heading); font-size: .98rem; transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .ct-input::placeholder { color: var(--muted); }
+    .ct-input:focus { outline: none; border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-soft); }
+    textarea.ct-input { resize: vertical; min-height: 150px; }
+    .ct-counter { font-size: .78rem; color: var(--muted); }
+    .ct-submit {
+        width: 100%; border: 0; border-radius: 12px; padding: .85rem 1rem; font-weight: 700; font-size: 1rem;
+        color: #fff; background: var(--accent); box-shadow: var(--shadow);
+        display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+        transition: background .18s ease, transform .12s ease;
+    }
+    .ct-submit:hover { background: var(--accent-hover); }
+    .ct-submit:active { transform: translateY(1px); }
+
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-in { opacity: 1; transform: none; }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+        .ct-chip:hover, .ct-emerg:hover, .ct-submit:active { transform: none; }
+        .ct-status--open .ct-status__dot { animation: none; }
+    }
+</style>
+
+<!-- 🎧 HERO -->
+<section class="ct-hero">
+    <div class="ct-hero__inner">
+        <span class="ct-hero__eyebrow"><i class="bi bi-headset"></i> We're here to help</span>
+        <h1 class="ct-hero__title">Contact Us</h1>
+        <p class="ct-hero__sub">Reach out to the Barangay Hall for inquiries, concerns, or emergency assistance.</p>
+        <div class="ct-hero__chips">
+            <a href="tel:09123456789" class="ct-chip"><i class="bi bi-telephone-fill"></i> Call Hotline</a>
+            <a href="mailto:barangay@email.com" class="ct-chip"><i class="bi bi-envelope-fill"></i> Email Us</a>
+            <a href="#send-message" class="ct-chip"><i class="bi bi-chat-square-text-fill"></i> Send a Message</a>
         </div>
     </div>
 </section>
 
-<div class="container pb-5">
+<div class="container ct-wrap pb-5">
 
     @if (TempData["SuccessMessage"] != null)
     {
@@ -29,101 +124,105 @@
 
     <div class="row g-4">
 
-        <!-- Left Column: Office Details & Hotlines -->
+        <!-- LEFT: Office details + hotlines -->
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-4">
-                <h5 class="fw-bold text-dark-blue mb-4 d-flex align-items-center">
-                    <i class="bi bi-shield-check text-primary me-2"></i> Barangay Hall Office
-                </h5>
+            <div class="ct-card mb-4 reveal">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h2 class="ct-card__title"><i class="bi bi-shield-check"></i> Barangay Hall Office</h2>
+                    <span id="officeStatus" class="ct-status ct-status--closed"><span class="ct-status__dot"></span> —</span>
+                </div>
 
-                <div class="d-flex align-items-start mb-3 gap-3">
-                    <div class="text-muted"><i class="bi bi-geo-alt fs-5"></i></div>
+                <div class="ct-info">
+                    <div class="ct-info__icon"><i class="bi bi-geo-alt-fill"></i></div>
                     <div>
-                        <small class="text-muted d-block small-title-label">Address</small>
-                        <span class="text-dark fw-medium">Official Barangay Address Here</span>
+                        <span class="ct-info__label">Address</span>
+                        <p class="ct-info__value">Official Barangay Address Here</p>
                     </div>
                 </div>
 
-                <div class="d-flex align-items-start mb-3 gap-3">
-                    <div class="text-muted"><i class="bi bi-telephone fs-5"></i></div>
+                <a href="tel:09123456789" class="ct-info">
+                    <div class="ct-info__icon"><i class="bi bi-telephone-fill"></i></div>
                     <div>
-                        <small class="text-muted d-block small-title-label">Hotline</small>
-                        <span class="text-dark fw-medium">0912-345-6789</span>
+                        <span class="ct-info__label">Hotline</span>
+                        <p class="ct-info__value">0912-345-6789</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="d-flex align-items-start mb-3 gap-3">
-                    <div class="text-muted"><i class="bi bi-envelope fs-5"></i></div>
+                <a href="mailto:barangay@email.com" class="ct-info">
+                    <div class="ct-info__icon"><i class="bi bi-envelope-fill"></i></div>
                     <div>
-                        <small class="text-muted d-block small-title-label">Email</small>
-                        <span class="text-dark fw-medium">barangay@email.com</span>
+                        <span class="ct-info__label">Email</span>
+                        <p class="ct-info__value">barangay@email.com</p>
                     </div>
-                </div>
+                </a>
 
-                <div class="d-flex align-items-start gap-3">
-                    <div class="text-muted"><i class="bi bi-clock fs-5"></i></div>
+                <div class="ct-info">
+                    <div class="ct-info__icon"><i class="bi bi-clock-fill"></i></div>
                     <div>
-                        <small class="text-muted d-block small-title-label">Office Hours</small>
-                        <span class="text-dark fw-medium">Monday – Friday, 8:00 AM – 5:00 PM</span>
+                        <span class="ct-info__label">Office Hours</span>
+                        <p class="ct-info__value">Monday – Friday, 8:00 AM – 5:00 PM</p>
                     </div>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
-                <h5 class="fw-bold text-dark-blue mb-3">Emergency Hotlines</h5>
-                <div class="table-responsive">
-                    <table class="table table-borderless align-middle mb-0 text-secondary">
-                        <tr class="border-bottom-gray">
-                            <td class="ps-0 py-3 text-muted">Barangay Office</td>
-                            <td class="text-end fw-bold text-dark-blue fs-6">0912-345-6789</td>
-                        </tr>
-                        <tr class="border-bottom-gray">
-                            <td class="ps-0 py-3 text-muted">Fire Station</td>
-                            <td class="text-end fw-bold text-dark-blue fs-6">160</td>
-                        </tr>
-                        <tr class="border-bottom-gray">
-                            <td class="ps-0 py-3 text-muted">Police Station (PNP)</td>
-                            <td class="text-end fw-bold text-dark-blue fs-6">117</td>
-                        </tr>
-                        <tr class="border-bottom-gray">
-                            <td class="ps-0 py-3 text-muted">Emergency / Rescue</td>
-                            <td class="text-end fw-bold text-dark-blue fs-6">911</td>
-                        </tr>
-                        <tr>
-                            <td class="ps-0 py-3 text-muted">NDRRMC Hotline</td>
-                            <td class="text-end fw-bold text-dark-blue fs-6">8-1406</td>
-                        </tr>
-                    </table>
-                </div>
+            <div class="ct-card reveal">
+                <h2 class="ct-card__title mb-1"><i class="bi bi-exclamation-triangle-fill" style="color:#dc3545 !important;"></i> Emergency Hotlines</h2>
+                <p class="mb-3" style="color: var(--muted); font-size: .85rem;">Tap any line to call directly from your phone.</p>
+
+                <a href="tel:09123456789" class="ct-emerg">
+                    <div class="ct-emerg__icon" style="background: var(--accent-soft); color: var(--accent);"><i class="bi bi-building-fill"></i></div>
+                    <span class="ct-emerg__name">Barangay Office</span>
+                    <span class="ct-emerg__num">0912-345-6789 <i class="bi bi-telephone-outbound-fill"></i></span>
+                </a>
+                <a href="tel:160" class="ct-emerg">
+                    <div class="ct-emerg__icon" style="background: rgba(220,53,69,.14); color:#dc3545;"><i class="bi bi-fire"></i></div>
+                    <span class="ct-emerg__name">Fire Station</span>
+                    <span class="ct-emerg__num">160 <i class="bi bi-telephone-outbound-fill"></i></span>
+                </a>
+                <a href="tel:117" class="ct-emerg">
+                    <div class="ct-emerg__icon" style="background: rgba(30,58,138,.14); color: var(--brand-soft);"><i class="bi bi-shield-shaded"></i></div>
+                    <span class="ct-emerg__name">Police Station (PNP)</span>
+                    <span class="ct-emerg__num">117 <i class="bi bi-telephone-outbound-fill"></i></span>
+                </a>
+                <a href="tel:911" class="ct-emerg">
+                    <div class="ct-emerg__icon" style="background: rgba(22,163,74,.14); color:#16a34a;"><i class="bi bi-heart-pulse-fill"></i></div>
+                    <span class="ct-emerg__name">Emergency / Rescue</span>
+                    <span class="ct-emerg__num">911 <i class="bi bi-telephone-outbound-fill"></i></span>
+                </a>
+                <a href="tel:81406" class="ct-emerg">
+                    <div class="ct-emerg__icon" style="background: rgba(245,158,11,.16); color:#d97706;"><i class="bi bi-broadcast-pin"></i></div>
+                    <span class="ct-emerg__name">NDRRMC Hotline</span>
+                    <span class="ct-emerg__num">8-1406 <i class="bi bi-telephone-outbound-fill"></i></span>
+                </a>
             </div>
         </div>
 
-        <!-- Right Column: Simplified Send a Message Form -->
+        <!-- RIGHT: Send a Message -->
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
-                <h5 class="fw-bold text-dark-blue mb-4 d-flex align-items-center">
-                    <i class="bi bi-chat-square-text text-success me-2"></i> Send a Message
-                </h5>
+            <div class="ct-card reveal h-100" id="send-message">
+                <h2 class="ct-card__title mb-1"><i class="bi bi-chat-square-text-fill"></i> Send a Message</h2>
+                <p class="mb-4" style="color: var(--muted); font-size: .9rem;">Leave your number and message — the Barangay desk will get back to you.</p>
 
                 <form asp-controller="Home" asp-action="Contact" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-                    <!-- Contact Number Field -->
                     <div class="mb-3">
-                        <label asp-for="ContactNumber" class="form-label text-dark-blue fw-semibold small mb-1">Contact Number</label>
-                        <input asp-for="ContactNumber" type="text" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7" placeholder="09XX-XXX-XXXX" />
+                        <label asp-for="ContactNumber" class="ct-label">Contact Number</label>
+                        <input asp-for="ContactNumber" type="text" class="ct-input" placeholder="09XX-XXX-XXXX" inputmode="tel" />
                         <span asp-validation-for="ContactNumber" class="text-danger small mt-1 d-block"></span>
                     </div>
 
-                    <!-- Message Field -->
-                    <div class="mb-4">
-                        <label asp-for="Message" class="form-label text-dark-blue fw-semibold small mb-1">Message</label>
-                        <textarea asp-for="Message" rows="5" class="form-control bg-light border-0 shadow-none py-2 px-3 text-dark fs-7 resize-none" placeholder="Type your message here..."></textarea>
-                        <span asp-validation-for="Message" class="text-danger small mt-1 d-block"></span>
+                    <div class="mb-2">
+                        <label asp-for="Message" class="ct-label">Message</label>
+                        <textarea asp-for="Message" id="ctMessage" rows="6" class="ct-input" placeholder="Type your message here..."></textarea>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span asp-validation-for="Message" class="text-danger small d-block"></span>
+                            <span class="ct-counter"><span id="ctCount">0</span> characters</span>
+                        </div>
                     </div>
 
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn btn-dark-blue text-white w-100 py-2.5 fw-semibold rounded-3 transition-all shadow-sm">
-                        Send Message
+                    <button type="submit" class="ct-submit mt-2">
+                        <i class="bi bi-send-fill"></i> Send Message
                     </button>
                 </form>
             </div>
@@ -134,4 +233,48 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            // Live "Open now / Closed" office status (Mon–Fri, 8:00 AM – 5:00 PM)
+            var badge = document.getElementById('officeStatus');
+            if (badge) {
+                var now = new Date();
+                var day = now.getDay();                       // 0 Sun … 6 Sat
+                var hrs = now.getHours() + now.getMinutes() / 60;
+                var isOpen = day >= 1 && day <= 5 && hrs >= 8 && hrs < 17;
+                badge.classList.toggle('ct-status--open', isOpen);
+                badge.classList.toggle('ct-status--closed', !isOpen);
+                badge.innerHTML = '<span class="ct-status__dot"></span> ' + (isOpen ? 'Open now' : 'Closed');
+            }
+
+            // Message character counter
+            var msg = document.getElementById('ctMessage');
+            var count = document.getElementById('ctCount');
+            if (msg && count) {
+                var upd = function () { count.textContent = (msg.value || '').length; };
+                msg.addEventListener('input', upd); upd();
+            }
+
+            // Smooth scroll for hero "Send a Message" chip
+            document.querySelectorAll('.ct-hero__chips a[href^="#"]').forEach(function (a) {
+                a.addEventListener('click', function (e) {
+                    var t = document.querySelector(this.getAttribute('href'));
+                    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                });
+            });
+
+            // Scroll reveal with graceful fallback
+            var items = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) {
+                items.forEach(function (el) { el.classList.add('is-in'); });
+                return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); }
+                });
+            }, { threshold: 0.12 });
+            items.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
 }

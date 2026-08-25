@@ -20,7 +20,7 @@
                 <dd class="col-sm-7 text-success fw-bold">₱@Model.Price.ToString("N2")</dd>
             </dl>
 
-            <form asp-action="Delete" method="post">
+            <form asp-action="Delete" asp-route-id="@Model.CertificateTypeId" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="CertificateTypeId" />
 

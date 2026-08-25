@@ -197,10 +197,16 @@ namespace BarangayCMS.Areas.Staff.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ResidentViewModel model)
         {
-            if (id != model.ResidentId)
+            // The Edit form posts the hidden ResidentId, not a route "id" segment,
+            // so `id` can arrive as 0. Trust ResidentId as the record identifier.
+            if (id != 0 && id != model.ResidentId)
             {
                 return BadRequest();
             }
+
+            // Purok / Area is maintained separately and is not part of this Edit form,
+            // so it must not block validation just because it's [Required] on the model.
+            ModelState.Remove(nameof(model.Purok));
 
             if (ModelState.IsValid)
             {

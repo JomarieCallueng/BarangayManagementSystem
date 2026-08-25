@@ -1,137 +1,412 @@
-﻿@{
+@{
     ViewData["Title"] = "About Us - Barangay Tatalon";
 }
 
-<!-- 🎠 HERO SECTION -->
-<section class="hero-section text-white py-5 px-4 mb-5 shadow-sm">
-    <div class="container py-2">
-        <div class="d-flex align-items-center gap-3">
-            <div class="p-3 bg-white bg-opacity-10 rounded-3 border border-white border-opacity-25">
-                <i class="bi bi-info-circle fs-2"></i>
-            </div>
-            <div>
-                <h1 class="h2 fw-bold mb-1">About Our Barangay</h1>
-                <p class="text-white-50 mb-0 fs-6">Learn about our history, organizational goals, core public values, and community structures in Barangay Tatalon.</p>
-            </div>
+<style>
+    /* ================= ABOUT US — scoped, theme-aware styling ================= */
+    .about-hero {
+        position: relative;
+        overflow: hidden;
+        background: var(--hero-bg);
+        color: var(--hero-text);
+        padding: 3.25rem 1rem 3.75rem;
+        margin-bottom: 0;
+    }
+    .about-hero::after {
+        /* soft decorative glow */
+        content: "";
+        position: absolute;
+        top: -40%;
+        right: -10%;
+        width: 460px;
+        height: 460px;
+        background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 70%);
+        pointer-events: none;
+    }
+    .about-hero__inner { max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; }
+    .about-hero__eyebrow {
+        display: inline-flex; align-items: center; gap: .45rem;
+        padding: .35rem .85rem; border-radius: 999px; font-size: .78rem; font-weight: 600;
+        letter-spacing: .02em; margin-bottom: 1rem;
+        background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28);
+    }
+    .about-hero__title { font-weight: 800; font-size: clamp(1.9rem, 3.6vw, 2.8rem); margin: 0 0 .6rem; }
+    .about-hero__sub { color: rgba(255,255,255,.78); max-width: 46rem; font-size: 1.02rem; margin: 0 0 1.4rem; }
+    .about-hero__chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .about-chip {
+        display: inline-flex; align-items: center; gap: .4rem;
+        padding: .5rem .95rem; border-radius: 999px; font-size: .85rem; font-weight: 600;
+        color: #fff; text-decoration: none;
+        background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.25);
+        transition: transform .18s ease, background .18s ease;
+    }
+    .about-chip:hover { background: rgba(255,255,255,.22); transform: translateY(-2px); color: #fff; }
+
+    .about-wrap { max-width: 1140px; }
+
+    /* Lift the stats strip so it overlaps the hero for depth */
+    .about-stats { margin-top: -2.25rem; position: relative; z-index: 2; }
+    .about-stat {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 1.1rem 1.15rem; height: 100%;
+        display: flex; align-items: center; gap: .85rem;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .about-stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .about-stat__icon {
+        flex: 0 0 auto; width: 44px; height: 44px; border-radius: 12px;
+        display: grid; place-items: center; font-size: 1.25rem;
+        background: var(--accent-soft); color: var(--accent);
+    }
+    .about-stat__value { font-weight: 800; font-size: 1.15rem; color: var(--heading); line-height: 1.1; }
+    .about-stat__label { font-size: .8rem; color: var(--muted); }
+
+    /* Section heading */
+    .about-eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .74rem; font-weight: 700; color: var(--accent); }
+    .about-h2 { font-weight: 800; color: var(--heading); font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin: .15rem 0 0; }
+
+    /* Card base */
+    .about-card {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 1.75rem;
+    }
+
+    /* Vision / Mission */
+    .about-vm {
+        position: relative; height: 100%; overflow: hidden;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .about-vm:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .about-vm::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; }
+    .about-vm--vision::before { background: var(--brand-soft); }
+    .about-vm--mission::before { background: var(--accent); }
+    .about-vm__icon {
+        width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center;
+        font-size: 1.5rem; margin-bottom: .9rem;
+    }
+    .about-vm--vision .about-vm__icon { background: rgba(30,58,138,.12); color: var(--brand-soft); }
+    .about-vm--mission .about-vm__icon { background: var(--accent-soft); color: var(--accent); }
+    .about-vm__title { font-weight: 800; color: var(--heading); margin: 0 0 .6rem; font-size: 1.2rem; }
+    .about-vm__text { color: var(--body-text); line-height: 1.65; margin: 0; }
+
+    /* Core values */
+    .about-value {
+        height: 100%; background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 1.25rem; text-align: center;
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .about-value:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+    .about-value__icon {
+        width: 54px; height: 54px; border-radius: 50%; margin: 0 auto .75rem;
+        display: grid; place-items: center; font-size: 1.4rem;
+        background: var(--accent-soft); color: var(--accent);
+    }
+    .about-value__title { font-weight: 700; color: var(--heading); font-size: .98rem; margin: 0 0 .3rem; }
+    .about-value__text { font-size: .84rem; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* Language toggle (segmented) */
+    .about-seg { display: inline-flex; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 999px; padding: .25rem; }
+    .about-seg .nav-link {
+        border: 0; border-radius: 999px; font-weight: 700; font-size: .85rem; padding: .4rem 1.1rem;
+        color: var(--muted); background: transparent;
+    }
+    .about-seg .nav-link.active { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
+
+    /* Timeline */
+    .about-timeline { position: relative; margin: 0; padding: 0 0 0 1.75rem; list-style: none; }
+    .about-timeline::before { content: ""; position: absolute; left: 6px; top: .35rem; bottom: .35rem; width: 2px; background: var(--border); }
+    .about-tl-item { position: relative; padding-bottom: 1.6rem; }
+    .about-tl-item:last-child { padding-bottom: 0; }
+    .about-tl-item::before {
+        content: ""; position: absolute; left: -1.75rem; top: .3rem; width: 14px; height: 14px;
+        border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+    .about-tl-badge { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .04em; color: var(--accent); text-transform: uppercase; }
+    .about-tl-title { font-weight: 700; color: var(--heading); margin: .1rem 0 .35rem; font-size: 1.02rem; }
+    .about-tl-text { color: var(--body-text); line-height: 1.65; margin: 0; font-size: .95rem; }
+
+    /* Logo aside */
+    .about-seal { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-align: center; position: sticky; top: 1rem; }
+    .about-seal img { max-height: 170px; width: auto; object-fit: contain; transition: transform .3s ease; }
+    .about-seal:hover img { transform: scale(1.05) rotate(-2deg); }
+    .about-seal__badge { display: inline-block; background: var(--brand); color: #fff; border-radius: 999px; padding: .35rem .85rem; font-size: .78rem; font-weight: 600; }
+
+    /* Contact cards */
+    .about-contact {
+        display: flex; align-items: flex-start; gap: .9rem; height: 100%;
+        background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 1.15rem; text-decoration: none;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .about-contact:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .about-contact__icon { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-size: 1.3rem; }
+    .about-contact__label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+    .about-contact__value { color: var(--heading); font-weight: 700; margin: .15rem 0 0; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.is-in { opacity: 1; transform: none; }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+        .about-stat:hover, .about-vm:hover, .about-value:hover, .about-contact:hover, .about-chip:hover { transform: none; }
+        .about-seal:hover img { transform: none; }
+    }
+</style>
+
+<!-- 🎠 HERO -->
+<section class="about-hero">
+    <div class="about-hero__inner">
+        <span class="about-hero__eyebrow"><i class="bi bi-geo-alt-fill"></i> District IV · Quezon City</span>
+        <h1 class="about-hero__title">About Our Barangay</h1>
+        <p class="about-hero__sub">Learn about our history, organizational goals, core public values, and community structures in Barangay Tatalon.</p>
+        <div class="about-hero__chips">
+            <a href="#vision" class="about-chip"><i class="bi bi-compass"></i> Vision &amp; Mission</a>
+            <a href="#values" class="about-chip"><i class="bi bi-award"></i> Core Values</a>
+            <a href="#history" class="about-chip"><i class="bi bi-clock-history"></i> History</a>
+            <a href="#contact" class="about-chip"><i class="bi bi-headset"></i> Contact</a>
         </div>
     </div>
 </section>
 
-<div class="container pb-5">
+<div class="container about-wrap pb-5">
 
-    <!-- 👁️ VISION & MISSION BLOCK -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 border-start border-4 border-primary">
-                <h4 class="fw-bold text-dark-blue mb-3">
-                    <i class="bi bi-eye text-primary me-2"></i>Our Vision (Pananaw)
-                </h4>
-                <p class="text-dark fs-6 lh-base mb-0">
+    <!-- ⚡ QUICK FACTS -->
+    <div class="row g-3 about-stats">
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-stat">
+                <div class="about-stat__icon"><i class="bi bi-flag-fill"></i></div>
+                <div>
+                    <div class="about-stat__value">Est. 1939</div>
+                    <div class="about-stat__label">Commonwealth Act No. 502</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-stat">
+                <div class="about-stat__icon"><i class="bi bi-house-heart-fill"></i></div>
+                <div>
+                    <div class="about-stat__value">R.A. 2616</div>
+                    <div class="about-stat__label">Land reform · 1959</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-stat">
+                <div class="about-stat__icon"><i class="bi bi-geo-fill"></i></div>
+                <div>
+                    <div class="about-stat__value">District IV</div>
+                    <div class="about-stat__label">Quezon City</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-stat">
+                <div class="about-stat__icon"><i class="bi bi-clock-fill"></i></div>
+                <div>
+                    <div class="about-stat__value">Mon–Fri</div>
+                    <div class="about-stat__label">8:00 AM – 5:00 PM</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👁️ VISION & MISSION -->
+    <div class="text-center mt-5 mb-4 reveal" id="vision">
+        <span class="about-eyebrow">What drives us</span>
+        <h2 class="about-h2">Vision &amp; Mission</h2>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6 reveal">
+            <div class="about-card about-vm about-vm--vision">
+                <div class="about-vm__icon"><i class="bi bi-eye-fill"></i></div>
+                <h3 class="about-vm__title">Our Vision (Pananaw)</h3>
+                <p class="about-vm__text">
                     To build a safe, progressive, climate-resilient, and united Barangay Tatalon that promotes sustainable economic development, equal public healthcare opportunities, and innovative community infrastructure frameworks driven by digitalized data automation systems.
                 </p>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-4 rounded-3 bg-white h-100 border-start border-4 border-success">
-                <h4 class="fw-bold text-dark-blue mb-3">
-                    <i class="bi bi-flag text-success me-2"></i>Our Mission (Layunin)
-                </h4>
-                <p class="text-dark fs-6 lh-base mb-0">
+        <div class="col-md-6 reveal">
+            <div class="about-card about-vm about-vm--mission">
+                <div class="about-vm__icon"><i class="bi bi-flag-fill"></i></div>
+                <h3 class="about-vm__title">Our Mission (Layunin)</h3>
+                <p class="about-vm__text">
                     To deliver accessible and accurate public welfare services, transparent budget administration reporting, swift disaster risk management reactions, and strong legal support platforms for the common good of all registered families within our territory.
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- 📜 HISTORICAL BACKGROUND BLOCK -->
-    <div class="card border-0 shadow-sm p-4 rounded-3 bg-white mb-5">
-        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4 flex-wrap gap-2">
-            <div>
-                <h3 class="fw-bold text-dark-blue mb-1">Historical Background (Kasaysayan)</h3>
-                <p class="text-muted mb-0 fs-6">Foundation, Territorial Roots, and the Tatalon Estate Land Reform</p>
+    <!-- 🏅 CORE VALUES (drawn from our mission) -->
+    <div class="text-center mt-5 mb-4 reveal" id="values">
+        <span class="about-eyebrow">How we serve</span>
+        <h2 class="about-h2">Core Public Values</h2>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-value">
+                <div class="about-value__icon"><i class="bi bi-people-fill"></i></div>
+                <h4 class="about-value__title">Accessible Services</h4>
+                <p class="about-value__text">Public welfare and frontline desk services within reach of every resident.</p>
             </div>
+        </div>
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-value">
+                <div class="about-value__icon"><i class="bi bi-clipboard2-data-fill"></i></div>
+                <h4 class="about-value__title">Transparency</h4>
+                <p class="about-value__text">Open and accurate budget administration and public reporting.</p>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-value">
+                <div class="about-value__icon"><i class="bi bi-shield-fill-check"></i></div>
+                <h4 class="about-value__title">Disaster Resilience</h4>
+                <p class="about-value__text">Swift, prepared, and coordinated disaster risk management responses.</p>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3 reveal">
+            <div class="about-value">
+                <div class="about-value__icon"><i class="bi bi-scales"></i></div>
+                <h4 class="about-value__title">Legal Support</h4>
+                <p class="about-value__text">Strong mediation and legal support platforms for every family.</p>
+            </div>
+        </div>
+    </div>
 
-            <!-- 🌐 LANGUAGE SWITCHER BUTTONS -->
-            <ul class="nav nav-pills bg-light p-1 rounded-3" id="historyTab" role="tablist">
+    <!-- 📜 HISTORICAL BACKGROUND -->
+    <div class="about-card mt-5 reveal" id="history">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4 flex-wrap gap-3" style="border-color: var(--border) !important;">
+            <div>
+                <span class="about-eyebrow">Kasaysayan</span>
+                <h2 class="about-h2">Historical Background</h2>
+                <p class="mb-0" style="color: var(--muted);">Foundation, Territorial Roots, and the Tatalon Estate Land Reform</p>
+            </div>
+            <ul class="nav about-seg" id="historyTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active btn-sm fw-bold px-3 fs-6" id="english-tab" data-bs-toggle="tab" data-bs-target="#english-history" type="button" role="tab">
-                        English
-                    </button>
+                    <button class="nav-link active" id="english-tab" data-bs-toggle="tab" data-bs-target="#english-history" type="button" role="tab">English</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link btn-sm fw-bold px-3 fs-6" id="tagalog-tab" data-bs-toggle="tab" data-bs-target="#tagalog-history" type="button" role="tab">
-                        Tagalog
-                    </button>
+                    <button class="nav-link" id="tagalog-tab" data-bs-toggle="tab" data-bs-target="#tagalog-history" type="button" role="tab">Tagalog</button>
                 </li>
             </ul>
         </div>
 
-        <div class="row align-items-center g-4">
-            <!-- 📝 TAB CONTENT (ENGLISH & TAGALOG) -->
+        <div class="row g-4 align-items-start">
             <div class="col-lg-8">
                 <div class="tab-content" id="historyTabContent">
-
-                    <!-- 🇺🇸 ENGLISH VERSION -->
+                    <!-- ENGLISH -->
                     <div class="tab-pane fade show active" id="english-history" role="tabpanel" aria-labelledby="english-tab">
-                        <h5 class="fw-bold text-primary mb-2">Foundation & Territorial Roots</h5>
-                        <p class="text-dark fs-6 lh-lg mb-4">
-                            Barangay Tatalon in Quezon City originally functioned as a rural barrio and portion of Caloocan before the expansion of Metro Manila’s capital boundaries. The name "Tatalon" was derived from the local practice where residents had to jump off and across muddy rice fields ("tumatalon") to navigate the area's natural topography and water flow. Official transfer and incorporation into Quezon City occurred in <strong>1939</strong> under <em>Commonwealth Act No. 502</em> upon the establishment of the new capital city.
-                        </p>
-
-                        <h5 class="fw-bold text-primary mb-2">The Tatalon Estate and Land Battles</h5>
-                        <p class="text-dark fs-6 lh-lg mb-0">
-                            Barangay Tatalon transformed through landmark land-expropriation laws and housing struggles. The area was originally part of the massive <strong>Tatalon Estate</strong>, which was tied to protracted ownership claims involving J.M. Tuazon and Company, Gregorio Araneta, and the Deudor claimants. On <strong>August 3, 1959</strong>, the enactment of <strong>Republic Act No. 2616</strong> authorized the national government to expropriate the Tatalon Estate and sell residential lots at cost to bona fide occupants. This established Barangay Tatalon as a notable early testing ground for government urban land-for-the-landless initiatives driven by long-term legal and community struggles.
-                        </p>
+                        <ol class="about-timeline">
+                            <li class="about-tl-item">
+                                <span class="about-tl-badge">1939 · Foundation</span>
+                                <h5 class="about-tl-title">Foundation &amp; Territorial Roots</h5>
+                                <p class="about-tl-text">
+                                    Barangay Tatalon in Quezon City originally functioned as a rural barrio and portion of Caloocan before the expansion of Metro Manila’s capital boundaries. The name "Tatalon" was derived from the local practice where residents had to jump off and across muddy rice fields ("tumatalon") to navigate the area's natural topography and water flow. Official transfer and incorporation into Quezon City occurred in <strong>1939</strong> under <em>Commonwealth Act No. 502</em> upon the establishment of the new capital city.
+                                </p>
+                            </li>
+                            <li class="about-tl-item">
+                                <span class="about-tl-badge">1959 · Land Reform</span>
+                                <h5 class="about-tl-title">The Tatalon Estate and Land Battles</h5>
+                                <p class="about-tl-text">
+                                    Barangay Tatalon transformed through landmark land-expropriation laws and housing struggles. The area was originally part of the massive <strong>Tatalon Estate</strong>, which was tied to protracted ownership claims involving J.M. Tuazon and Company, Gregorio Araneta, and the Deudor claimants. On <strong>August 3, 1959</strong>, the enactment of <strong>Republic Act No. 2616</strong> authorized the national government to expropriate the Tatalon Estate and sell residential lots at cost to bona fide occupants. This established Barangay Tatalon as a notable early testing ground for government urban land-for-the-landless initiatives driven by long-term legal and community struggles.
+                                </p>
+                            </li>
+                        </ol>
                     </div>
-
-                    <!-- 🇵🇭 TAGALOG VERSION -->
+                    <!-- TAGALOG -->
                     <div class="tab-pane fade" id="tagalog-history" role="tabpanel" aria-labelledby="tagalog-tab">
-                        <h5 class="fw-bold text-success mb-2">Pinagmulan at Pagtatatag</h5>
-                        <p class="text-dark fs-6 lh-lg mb-4">
-                            Ang <strong>Barangay Tatalon</strong> ay nagsimula bilang isang rural barrio at bahagi ng Caloocan bago pa man lumawak ang mga hangganan ng kabisera sa Metro Manila. Ang pangalang <em>"Tatalon"</em> ay nagmula sa lumang gawi ng mga residente kung saan kailangan nilang tumalon o lumundag sa mga matutubig at maputik na palayan upang makatawid at makalibot sa lugar. Opisyal na inilipat at isinama ang nasasakupan nito sa Lungsod Quezon noong <strong>1939</strong> sa ilalim ng <em>Commonwealth Act No. 502</em> nang maitatag ang bagong capital city ng bansa.
-                        </p>
-
-                        <h5 class="fw-bold text-success mb-2">Ang Tatalon Estate at Pakikibaka sa Lupa</h5>
-                        <p class="text-dark fs-6 lh-lg mb-0">
-                            Lumalalim din ang kasaysayan ng Barangay Tatalon sa pamamagitan ng mga makasaysayang batas sa land expropriation at pabalay. Ang buong lugar ay dating bahagi ng napakalaking <strong>Tatalon Estate</strong>, na nagkaroon ng mahabang usapin sa pagmamay-ari laban sa J.M. Tuazon and Company, Gregorio Araneta, at ng mga Deudor claimants. Noong <strong>Agosto 3, 1959</strong>, isinabatas ang <strong>Republic Act No. 2616</strong> na nag-aawtorisa sa pambansang pamahalaan na bilhin (expropriate) ang Tatalon Estate upang ipagbili ang mga residential lots sa mismong halaga nito sa mga tunay na naninirahan doon. Dahil dito, naging isa ang Tatalon sa mga kauna-unahang ehemplo para sa mga programa ng pamahalaan na <em>urban land-for-the-landless</em>.
-                        </p>
+                        <ol class="about-timeline">
+                            <li class="about-tl-item">
+                                <span class="about-tl-badge">1939 · Pagtatatag</span>
+                                <h5 class="about-tl-title">Pinagmulan at Pagtatatag</h5>
+                                <p class="about-tl-text">
+                                    Ang <strong>Barangay Tatalon</strong> ay nagsimula bilang isang rural barrio at bahagi ng Caloocan bago pa man lumawak ang mga hangganan ng kabisera sa Metro Manila. Ang pangalang <em>"Tatalon"</em> ay nagmula sa lumang gawi ng mga residente kung saan kailangan nilang tumalon o lumundag sa mga matutubig at maputik na palayan upang makatawid at makalibot sa lugar. Opisyal na inilipat at isinama ang nasasakupan nito sa Lungsod Quezon noong <strong>1939</strong> sa ilalim ng <em>Commonwealth Act No. 502</em> nang maitatag ang bagong capital city ng bansa.
+                                </p>
+                            </li>
+                            <li class="about-tl-item">
+                                <span class="about-tl-badge">1959 · Repormang Lupa</span>
+                                <h5 class="about-tl-title">Ang Tatalon Estate at Pakikibaka sa Lupa</h5>
+                                <p class="about-tl-text">
+                                    Lumalalim din ang kasaysayan ng Barangay Tatalon sa pamamagitan ng mga makasaysayang batas sa land expropriation at pabalay. Ang buong lugar ay dating bahagi ng napakalaking <strong>Tatalon Estate</strong>, na nagkaroon ng mahabang usapin sa pagmamay-ari laban sa J.M. Tuazon and Company, Gregorio Araneta, at ng mga Deudor claimants. Noong <strong>Agosto 3, 1959</strong>, isinabatas ang <strong>Republic Act No. 2616</strong> na nag-aawtorisa sa pambansang pamahalaan na bilhin (expropriate) ang Tatalon Estate upang ipagbili ang mga residential lots sa mismong halaga nito sa mga tunay na naninirahan doon. Dahil dito, naging isa ang Tatalon sa mga kauna-unahang ehemplo para sa mga programa ng pamahalaan na <em>urban land-for-the-landless</em>.
+                                </p>
+                            </li>
+                        </ol>
                     </div>
-
                 </div>
             </div>
 
-            <!-- 🖼️ OFFICIAL LOGO VISUALIZATION -->
-            <div class="col-lg-4 text-center">
-                <div class="p-4 bg-light rounded-4 border shadow-sm">
-                    <img src="~/images/Barangay%20Tatalon%20Logo-modified.png"
-                         alt="Barangay Tatalon Official Seal"
-                         class="img-fluid mb-3"
-                         style="max-height: 180px; width: auto; object-fit: contain;">
-                    <h5 class="fw-bold text-dark mb-1">Barangay Tatalon</h5>
-                    <span class="badge bg-primary px-3 py-2 fs-6 mb-2">District IV, Quezon City</span>
-                    <p class="text-muted mb-0 fs-6">Est. 1939 (Commonwealth Act No. 502)</p>
+            <!-- SEAL -->
+            <div class="col-lg-4">
+                <div class="about-seal">
+                    <img src="~/images/Barangay%20Tatalon%20Logo-modified.png" alt="Barangay Tatalon Official Seal" class="img-fluid mb-3">
+                    <h5 class="fw-bold mb-2" style="color: var(--heading);">Barangay Tatalon</h5>
+                    <span class="about-seal__badge">District IV, Quezon City</span>
+                    <p class="mt-2 mb-0" style="color: var(--muted); font-size: .85rem;">Est. 1939 · Commonwealth Act No. 502</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 🏢 BARANGAY INFORMATION & CONTACT DETAILS -->
-    <div class="card border-0 shadow-sm p-4 rounded-3 bg-white">
-        <h4 class="fw-bold text-dark-blue mb-4">Barangay Desk & Contact Info</h4>
-        <div class="row g-4 text-dark fs-6">
-            <div class="col-md-4">
-                <p class="mb-1 fw-bold"><i class="bi bi-clock me-2 text-primary fs-5"></i>Office Hours:</p>
-                <p class="mb-0 text-muted">Monday – Friday, 8:00 AM – 5:00 PM</p>
+    <!-- 🏢 CONTACT -->
+    <div class="text-center mt-5 mb-4 reveal" id="contact">
+        <span class="about-eyebrow">Reach us</span>
+        <h2 class="about-h2">Barangay Desk &amp; Contact Info</h2>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-4 reveal">
+            <div class="about-contact">
+                <div class="about-contact__icon" style="background: var(--accent-soft); color: var(--accent);"><i class="bi bi-clock-fill"></i></div>
+                <div>
+                    <div class="about-contact__label">Office Hours</div>
+                    <p class="about-contact__value">Monday – Friday<br>8:00 AM – 5:00 PM</p>
+                </div>
             </div>
-            <div class="col-md-4">
-                <p class="mb-1 fw-bold"><i class="bi bi-telephone me-2 text-danger fs-5"></i>Emergency Hotline:</p>
-                <p class="mb-0 text-danger fw-bold fs-5">0912-345-6789</p>
-            </div>
-            <div class="col-md-4">
-                <p class="mb-1 fw-bold"><i class="bi bi-envelope me-2 text-success fs-5"></i>Public Desk Email:</p>
-                <p class="mb-0 text-muted">support@barangaytatalon.gov.ph</p>
-            </div>
+        </div>
+        <div class="col-md-4 reveal">
+            <a href="tel:09123456789" class="about-contact">
+                <div class="about-contact__icon" style="background: rgba(220,53,69,.12); color: #dc3545;"><i class="bi bi-telephone-fill"></i></div>
+                <div>
+                    <div class="about-contact__label">Emergency Hotline</div>
+                    <p class="about-contact__value">0912-345-6789</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 reveal">
+            <a href="mailto:support@barangaytatalon.gov.ph" class="about-contact">
+                <div class="about-contact__icon" style="background: rgba(25,135,84,.12); color: #198754;"><i class="bi bi-envelope-fill"></i></div>
+                <div>
+                    <div class="about-contact__label">Public Desk Email</div>
+                    <p class="about-contact__value">support@barangaytatalon.gov.ph</p>
+                </div>
+            </a>
         </div>
     </div>
 
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Smooth scroll for the hero quick-jump chips
+            document.querySelectorAll('.about-hero__chips a[href^="#"]').forEach(function (a) {
+                a.addEventListener('click', function (e) {
+                    var target = document.querySelector(this.getAttribute('href'));
+                    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                });
+            });
+
+            // Scroll-reveal with a graceful fallback
+            var items = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) {
+                items.forEach(function (el) { el.classList.add('is-in'); });
+                return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); }
+                });
+            }, { threshold: 0.12 });
+            items.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
+}

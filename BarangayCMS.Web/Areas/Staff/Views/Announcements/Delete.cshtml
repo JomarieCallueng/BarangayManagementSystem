@@ -24,7 +24,7 @@
                 <span class="fw-bold text-secondary">"@Model.Title"</span>
             </div>
 
-            <form asp-action="Delete" method="post">
+            <form asp-action="Delete" asp-route-id="@Model.AnnouncementId" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="AnnouncementId" />
                 <div class="d-flex justify-content-center gap-2">

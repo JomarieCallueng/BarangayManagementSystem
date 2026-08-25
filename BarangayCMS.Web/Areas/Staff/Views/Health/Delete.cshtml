@@ -24,7 +24,7 @@
                 <div><strong>Condition Logged:</strong> <span class="text-secondary">@Model.MedicalCondition</span></div>
             </div>
 
-            <form asp-action="Delete" method="post">
+            <form asp-action="Delete" asp-route-id="@Model.HealthRecordId" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="HealthRecordId" />
                 <div class="d-flex justify-content-center gap-2">

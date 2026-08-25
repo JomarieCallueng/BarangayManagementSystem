@@ -10,9 +10,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BarangayCMS.Web.Areas.Admin.Controllers
+namespace BarangayCMS.Web.Controllers
 {
-    [Area("Admin")]
+    // Public-facing resident flow: NOT part of the Admin area, so it uses the
+    // public site layout and needs no staff/admin login.
     [Route("CertificateRequest")]
     public class CertificateRequestController : Controller
     {

@@ -110,6 +110,9 @@ namespace BarangayCMS.Areas.Staff.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, EnvironmentViewModel model)
         {
+            // The form posts the PK as "EnvironmentRecordId" (not a route "id"), so id can be 0.
+            if (id == 0) id = model.EnvironmentRecordId;
+
             if (ModelState.IsValid)
             {
                 var existing = _context.EnvironmentRecords.FirstOrDefault(e => e.EnvironmentRecordId == id);
