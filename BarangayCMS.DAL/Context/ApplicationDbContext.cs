@@ -30,6 +30,9 @@ namespace BarangayCMS.DAL.Context
         public DbSet<Project> Projects { get; set; } = null!;
         public DbSet<BarangayOfficial> BarangayOfficials { get; set; }
 
+        // 📱 Emergency SMS Alert History (Disaster Risk Management module)
+        public DbSet<SmsAlert> SmsAlerts { get; set; } = null!;
+
         // 3. IDINAGDAG ITONG OVERRIDE METHOD (NAPAKAHALAGA)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

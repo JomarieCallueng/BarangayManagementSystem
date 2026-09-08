@@ -104,12 +104,30 @@
             </div>
         </div>
 
-        <!-- 🗳️ ROW 4: VOTER STATUS SWITCH -->
+        <!-- 🧮 AUTO-COMPUTED DEMOGRAPHIC CLASSIFICATION PREVIEW -->
+        <div class="p-3 rounded-3 border mb-3" style="background: var(--surface-alt);">
+            <h6 class="fw-bold text-muted small text-uppercase mb-2"><i class="bi bi-calculator me-1"></i> Automatic Demographic Classification</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-dark">Age: <span id="agePreview">—</span></span>
+                <span class="badge bg-secondary" id="ageGroupPreview">Age Group: —</span>
+                <span class="badge bg-info text-dark" id="youthPreview">Youth: —</span>
+                <span class="badge bg-warning text-dark" id="seniorPreview">Senior: —</span>
+            </div>
+            <small class="text-muted d-block mt-2">Awtomatikong kinakalkula mula sa Date of Birth (Youth: 15–30, Senior: 60+).</small>
+        </div>
+
+        <!-- 🗳️ ROW 4: VOTER & PWD STATUS SWITCHES -->
         <div class="p-3 rounded-3 border mb-4" style="background: var(--surface-alt);">
-            <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+            <div class="form-check form-switch d-flex align-items-center gap-2 m-0 mb-2">
                 <input asp-for="IsVoter" class="form-check-input fs-5 mt-0" type="checkbox" id="IsVoterAdmin" style="cursor: pointer;">
                 <label class="form-check-label fw-semibold" for="IsVoterAdmin" style="cursor: pointer;">
                     Rehistradong Botante sa Barangay na ito (Registered Voter)
+                </label>
+            </div>
+            <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                <input asp-for="IsPwd" class="form-check-input fs-5 mt-0" type="checkbox" id="IsPwdAdmin" style="cursor: pointer;">
+                <label class="form-check-label fw-semibold" for="IsPwdAdmin" style="cursor: pointer;">
+                    Person With Disability (PWD)
                 </label>
             </div>
         </div>
@@ -146,5 +164,46 @@
                 input.value = input.value.slice(0, 11);
             }
         }
+
+        // 🧮 Live automatic Age + classification preview mula sa Date of Birth
+        (function () {
+            const dob = document.getElementById('BirthDate');
+            const ageEl = document.getElementById('agePreview');
+            const groupEl = document.getElementById('ageGroupPreview');
+            const youthEl = document.getElementById('youthPreview');
+            const seniorEl = document.getElementById('seniorPreview');
+            if (!dob) return;
+
+            function computeAge(birth) {
+                const today = new Date();
+                let age = today.getFullYear() - birth.getFullYear();
+                const m = today.getMonth() - birth.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+                return age < 0 ? 0 : age;
+            }
+
+            function refresh() {
+                if (!dob.value) { return; }
+                const birth = new Date(dob.value);
+                if (isNaN(birth.getTime())) { return; }
+                const age = computeAge(birth);
+                ageEl.textContent = age + ' yrs';
+
+                let group = 'Adult (31-59)';
+                if (age < 15) group = 'Child (0-14)';
+                else if (age <= 30) group = 'Youth (15-30)';
+                else if (age >= 60) group = 'Senior (60+)';
+                groupEl.textContent = 'Age Group: ' + group;
+
+                const isYouth = age >= 15 && age <= 30;
+                const isSenior = age >= 60;
+                youthEl.textContent = 'Youth: ' + (isYouth ? 'Yes' : 'No');
+                seniorEl.textContent = 'Senior: ' + (isSenior ? 'Yes' : 'No');
+            }
+
+            dob.addEventListener('change', refresh);
+            dob.addEventListener('input', refresh);
+            refresh();
+        })();
     </script>
 }

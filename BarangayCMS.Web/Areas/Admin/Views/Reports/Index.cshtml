@@ -140,6 +140,90 @@
     </div>
 </div>
 
+<!-- ========================================================= -->
+<!-- 🧮 EXECUTIVE DEMOGRAPHIC ANALYTICS (database-driven) -->
+<!-- ========================================================= -->
+<div class="d-flex align-items-center mb-3">
+    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-people text-primary me-2"></i>Demographic Analytics</h5>
+    <span class="badge bg-light text-dark small ms-2">Live mula sa Resident Records</span>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- Total Registered Population -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Total Registered Population</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.TotalRegisteredPopulation</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-primary"><i class="bi bi-people-fill fs-4"></i></div>
+            </div>
+        </div>
+    </div>
+    <!-- Youth Population -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Youth Population</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.YouthPopulation</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-info"><i class="bi bi-person-arms-up fs-4"></i></div>
+            </div>
+            <small class="text-muted mt-2">Edad 15–30 (SK)</small>
+        </div>
+    </div>
+    <!-- Senior Citizen Population -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">Senior Citizen Population</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.SeniorCitizenPopulation</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-warning"><i class="bi bi-person-walking fs-4"></i></div>
+            </div>
+            <small class="text-muted mt-2">Edad 60 pataas</small>
+        </div>
+    </div>
+    <!-- PWD Population -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase mb-1">PWD Population</h6>
+                    <h3 class="fw-bold text-dark mb-0">@Model.PwdPopulation</h3>
+                </div>
+                <div class="bg-light p-2 rounded text-success"><i class="bi bi-universal-access fs-4"></i></div>
+            </div>
+            <small class="text-muted mt-2">Persons With Disability</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- Bar Chart: Population Distribution by Age Group -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Population Distribution by Age Group</h6>
+                <span class="badge bg-light text-dark small">Total: @Model.TotalRegisteredPopulation</span>
+            </div>
+            <div style="min-height: 280px; height: 280px;"><canvas id="ageGroupChart"></canvas></div>
+        </div>
+    </div>
+    <!-- Doughnut: Youth vs Senior vs PWD vs General -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm p-3 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0"><i class="bi bi-pie-chart-fill text-info me-2"></i>Demographic Classification</h6>
+            </div>
+            <div style="min-height: 280px; height: 280px;"><canvas id="demographicChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
 <!-- 📊 VISUAL CHARTS SECTION (MONTHLY TRENDS) -->
 <div class="row g-3 mb-4">
     <!-- Line Graph: Monthly Complaints vs Resident Registration Growth -->
@@ -202,6 +286,54 @@
         const complaintsData = @Html.Raw(Json.Serialize(Model.MonthlyComplaints));
         const certificatesData = @Html.Raw(Json.Serialize(Model.MonthlyCertificates));
         const residentsData = @Html.Raw(Json.Serialize(Model.MonthlyResidents));
+
+        // 🧮 DEMOGRAPHIC DATA (database-driven)
+        const ageGroupLabels = @Html.Raw(Json.Serialize(Model.AgeGroupLabels));
+        const ageGroupCounts = @Html.Raw(Json.Serialize(Model.AgeGroupCounts));
+        const youthPop = @Model.YouthPopulation;
+        const seniorPop = @Model.SeniorCitizenPopulation;
+        const pwdPop = @Model.PwdPopulation;
+        const totalPop = @Model.TotalRegisteredPopulation;
+        const generalPop = Math.max(0, totalPop - youthPop - seniorPop);
+
+        // Bar Chart: Population Distribution by Age Group
+        const ctxAge = document.getElementById('ageGroupChart').getContext('2d');
+        new Chart(ctxAge, {
+            type: 'bar',
+            data: {
+                labels: ageGroupLabels,
+                datasets: [{
+                    label: 'Number of Residents',
+                    data: ageGroupCounts,
+                    backgroundColor: ['#6c757d', '#0dcaf0', '#0d6efd', '#ffc107'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        // Doughnut: Demographic Classification (Youth / Senior / PWD / General)
+        const ctxDemo = document.getElementById('demographicChart').getContext('2d');
+        new Chart(ctxDemo, {
+            type: 'doughnut',
+            data: {
+                labels: ['Youth (15-30)', 'Senior (60+)', 'PWD', 'General (31-59)'],
+                datasets: [{
+                    data: [youthPop, seniorPop, pwdPop, generalPop],
+                    backgroundColor: ['#0dcaf0', '#ffc107', '#198754', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
 
         // 1. Line Chart para sa Complaints at Resident Growth
         const ctxTrend = document.getElementById('monthlyTrendChart').getContext('2d');

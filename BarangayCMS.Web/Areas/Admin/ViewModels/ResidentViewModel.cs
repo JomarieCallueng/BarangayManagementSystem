@@ -58,6 +58,10 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         [Display(Name = "Registered Barangay Voter?")]
         public bool IsVoter { get; set; }
 
+        // 🧑‍🦽 PWD STATUS (Person With Disability) — naka-store sa database
+        [Display(Name = "Person With Disability (PWD)?")]
+        public bool IsPwd { get; set; }
+
         // 📅 DATE REGISTERED
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         [Display(Name = "Date Registered")]
@@ -79,5 +83,37 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         public string FullName => string.IsNullOrWhiteSpace(MiddleName)
             ? $"{LastName}, {FirstName}"
             : $"{LastName}, {FirstName} {MiddleName}".Trim();
+
+        // ==========================================================
+        // 🧮 AUTOMATIC DEMOGRAPHIC CLASSIFICATIONS (derived from Age)
+        // Batay sa pamantayan ng klasipikasyon ng edad ng sistema:
+        //   Child/Minor : 0 – 14
+        //   Youth (SK)  : 15 – 30 (RA 8044 / Sangguniang Kabataan)
+        //   Adult       : 31 – 59
+        //   Senior      : 60 pataas (RA 9994)
+        // ==========================================================
+
+        // 🧒 Youth classification — automatic base sa edad
+        public bool IsYouth => Age >= 15 && Age <= 30;
+
+        // 👴 Senior Citizen status — automatic base sa edad
+        public bool IsSeniorCitizen => Age >= 60;
+
+        // 🏷️ Age group label para sa profile display at analytics
+        public string AgeGroup
+        {
+            get
+            {
+                if (Age < 15) return "Child (0-14)";
+                if (Age <= 30) return "Youth (15-30)";
+                if (Age <= 59) return "Adult (31-59)";
+                return "Senior (60+)";
+            }
+        }
+
+        // 🏷️ Text labels para sa resident profile display
+        public string YouthClassification => IsYouth ? "Youth (SK)" : "Not Youth";
+        public string SeniorClassification => IsSeniorCitizen ? "Senior Citizen" : "Not Senior";
+        public string PwdClassification => IsPwd ? "PWD" : "Non-PWD";
     }
 }

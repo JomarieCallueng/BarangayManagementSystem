@@ -1,9 +1,16 @@
-﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.DisasterViewModel>
+﻿@using BarangayCMS.Web.Areas.Admin.Models
+@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.DisasterViewModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Disaster Risk & Rescue Logs";
+
+    // 📱 Emergency SMS feature = ADMIN ONLY
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+    var purokOptions = ViewBag.PurokOptions as List<string> ?? new List<string>();
+    var residentOptions = ViewBag.ResidentOptions as List<ResidentSmsOption> ?? new List<ResidentSmsOption>();
+    var smsHistory = ViewBag.SmsHistory as List<SmsAlertHistoryItem> ?? new List<SmsAlertHistoryItem>();
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -16,6 +23,29 @@
         <i class="bi bi-plus-lg me-1"></i> Log Emergency Incident
     </a>
 </div>
+
+@* 📱 TempData status alerts para sa Emergency SMS *@
+@if (TempData["SmsSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-1"></i> @TempData["SmsSuccess"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["SmsWarning"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i> @TempData["SmsWarning"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["SmsError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-x-circle-fill me-1"></i> @TempData["SmsError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
 <div class="card border-0 shadow-sm rounded p-4">
     <div class="table-responsive">
@@ -93,3 +123,219 @@
         </table>
     </div>
 </div>
+
+@if (isAdmin)
+{
+    <!-- ================================================================ -->
+    <!-- 📱 EMERGENCY NOTIFICATION (ADMIN ONLY) -->
+    <!-- ================================================================ -->
+    <div class="card border-0 shadow-sm rounded p-4 mt-4 border-start border-danger border-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold text-dark mb-1"><i class="bi bi-broadcast-pin text-danger me-2"></i>Emergency Notification</h4>
+                <p class="text-muted small mb-0">Magpadala ng Emergency SMS Alert sa mga residente gamit ang Semaphore. <span class="badge bg-danger-subtle text-danger">Admin Only</span></p>
+            </div>
+            <button type="button" class="btn btn-danger btn-lg shadow-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#emergencySmsModal">
+                <i class="bi bi-megaphone-fill me-1"></i> Send Emergency Alert
+            </button>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 📜 SMS ALERT HISTORY (ADMIN ONLY) -->
+    <!-- ================================================================ -->
+    <div class="card border-0 shadow-sm rounded p-4 mt-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-clock-history text-secondary me-2"></i>SMS Alert History</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date &amp; Time</th>
+                        <th>Emergency Type</th>
+                        <th>Recipients</th>
+                        <th class="text-center">No. of Recipients</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (smsHistory.Any())
+                    {
+                        @foreach (var h in smsHistory)
+                        {
+                            <tr>
+                                <td><i class="bi bi-calendar-event me-1 text-muted"></i>@h.SentAt.ToString("MM/dd/yyyy h:mm tt")</td>
+                                <td><span class="fw-semibold">@h.EmergencyType</span><br /><small class="text-muted text-truncate d-inline-block" style="max-width:280px;" title="@h.Message">@h.Message</small></td>
+                                <td>@h.RecipientGroup</td>
+                                <td class="text-center">@h.RecipientCount @(h.FailedCount > 0 ? $"({h.SuccessCount} ok / {h.FailedCount} failed)" : "")</td>
+                                <td class="text-center">
+                                    @if (h.Status == "Sent")
+                                    {
+                                        <span class="badge bg-success">Sent</span>
+                                    }
+                                    else if (h.Status == "Partial")
+                                    {
+                                        <span class="badge bg-warning text-dark">Partial</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Failed</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox display-6 d-block mb-2 text-secondary"></i>
+                                Wala pang naipadalang emergency SMS alert.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- 📱 EMERGENCY SMS ALERT MODAL FORM -->
+    <!-- ================================================================ -->
+    <div class="modal fade" id="emergencySmsModal" tabindex="-1" aria-labelledby="emergencySmsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form asp-area="Admin" asp-controller="Disaster" asp-action="SendEmergencyAlert" method="post" id="emergencySmsForm">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="emergencySmsModalLabel"><i class="bi bi-megaphone-fill me-2"></i>Emergency SMS Alert</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Emergency Type -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Emergency Type</label>
+                            <select name="EmergencyType" class="form-select" required>
+                                <option value="">Select Emergency Type</option>
+                                <option value="Typhoon">Typhoon</option>
+                                <option value="Flood">Flood</option>
+                                <option value="Earthquake">Earthquake</option>
+                                <option value="Fire">Fire</option>
+                                <option value="Evacuation Order">Evacuation Order</option>
+                                <option value="Other Emergency">Other Emergency</option>
+                            </select>
+                        </div>
+
+                        <!-- Recipients -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Recipients</label>
+                                <select name="RecipientGroup" id="recipientGroupSelect" class="form-select">
+                                    <option value="All Residents">All Residents</option>
+                                    <option value="Purok">Residents by Purok</option>
+                                    <option value="Selected">Selected Residents</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="purokWrapper" style="display:none;">
+                                <label class="form-label fw-semibold">Purok / Area</label>
+                                <select name="Purok" class="form-select">
+                                    <option value="">Select Purok</option>
+                                    @foreach (var p in purokOptions)
+                                    {
+                                        <option value="@p">@p</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Selected Residents picker -->
+                        <div class="mb-3 mt-2" id="selectedWrapper" style="display:none;">
+                            <label class="form-label fw-semibold">Select Residents <small class="text-muted">(hawakan ang Ctrl para pumili ng marami)</small></label>
+                            <select name="SelectedResidentIds" class="form-select" multiple size="6">
+                                @foreach (var r in residentOptions)
+                                {
+                                    <option value="@r.Id">@r.FullName — @r.Purok (@(string.IsNullOrEmpty(r.ContactNumber) ? "walang numero" : r.ContactNumber))</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-2 mt-2">
+                            <label class="form-label fw-semibold">Message</label>
+                            <textarea name="Message" id="smsMessage" class="form-control" rows="4" maxlength="600" required
+                                      placeholder="Hal.: EMERGENCY ALERT: Dahil sa malakas na ulan at posibleng pagbaha, ang mga residente sa Purok 5 ay pinapayuhang pumunta agad sa itinalagang evacuation center."></textarea>
+                            <small class="text-muted"><span id="charCount">0</span>/600 karakter</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger fw-semibold" id="triggerConfirmBtn">
+                            <i class="bi bi-send-fill me-1"></i> Send via Semaphore
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- ✅ CONFIRMATION DIALOG -->
+    <!-- ================================================================ -->
+    <div class="modal fade" id="confirmSendModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-question-circle text-danger me-2"></i>Kumpirmahin ang Pagpapadala</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to send this emergency alert?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger fw-semibold" id="confirmSendBtn"><i class="bi bi-check2-circle me-1"></i> Confirm &amp; Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            (function () {
+                const groupSelect = document.getElementById('recipientGroupSelect');
+                const purokWrapper = document.getElementById('purokWrapper');
+                const selectedWrapper = document.getElementById('selectedWrapper');
+                const msg = document.getElementById('smsMessage');
+                const charCount = document.getElementById('charCount');
+                const form = document.getElementById('emergencySmsForm');
+                const triggerBtn = document.getElementById('triggerConfirmBtn');
+                const confirmBtn = document.getElementById('confirmSendBtn');
+
+                function toggleRecipient() {
+                    const v = groupSelect.value;
+                    purokWrapper.style.display = (v === 'Purok') ? 'block' : 'none';
+                    selectedWrapper.style.display = (v === 'Selected') ? 'block' : 'none';
+                }
+                groupSelect.addEventListener('change', toggleRecipient);
+                toggleRecipient();
+
+                if (msg) {
+                    msg.addEventListener('input', function () { charCount.textContent = msg.value.length; });
+                }
+
+                // Confirmation dialog bago aktwal na magpadala
+                const confirmModal = new bootstrap.Modal(document.getElementById('confirmSendModal'));
+                triggerBtn.addEventListener('click', function () {
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+                    confirmModal.show();
+                });
+                confirmBtn.addEventListener('click', function () {
+                    confirmModal.hide();
+                    form.submit();
+                });
+            })();
+        </script>
+    }
+}

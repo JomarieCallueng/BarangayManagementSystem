@@ -103,12 +103,18 @@
                     </div>
                 </div>
 
-                <!-- 🗳️ VOTER STATUS TOGGLE SWITCH -->
+                <!-- 🗳️ VOTER & PWD STATUS TOGGLE SWITCHES -->
                 <div class="p-3 bg-light rounded border mb-4">
-                    <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                    <div class="form-check form-switch d-flex align-items-center gap-2 m-0 mb-2">
                         <input asp-for="IsVoter" class="form-check-input fs-5 mt-0" type="checkbox" id="IsVoterEditSwitch" style="cursor: pointer;">
                         <label class="form-check-label fw-semibold text-dark" for="IsVoterEditSwitch" style="cursor: pointer;">
                             Rehistradong Botante sa Barangay na ito (Registered Voter)
+                        </label>
+                    </div>
+                    <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                        <input asp-for="IsPwd" class="form-check-input fs-5 mt-0" type="checkbox" id="IsPwdEditSwitch" style="cursor: pointer;">
+                        <label class="form-check-label fw-semibold text-dark" for="IsPwdEditSwitch" style="cursor: pointer;">
+                            Person With Disability (PWD)
                         </label>
                     </div>
                 </div>

@@ -36,6 +36,9 @@ namespace BarangayCMS.Entities
 
         public bool IsVoter { get; set; }
 
+        // 🧑‍🦽 PWD Status (Person With Disability) — naka-store sa database
+        public bool IsPwd { get; set; }
+
         public bool IsResident { get; set; } = true; // Default na active resident
         public DateTime CreatedAt { get; set; }
 

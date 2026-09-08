@@ -86,8 +86,46 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
 
             int newResidentsThisMonth = residentsData.LastOrDefault();
 
+            // ==========================================================
+            // 🧮 DEMOGRAPHIC ANALYTICS — galing sa AKTWAL na resident records
+            // (BirthDate + IsPwd) at kinakalkula base sa klasipikasyon ng edad.
+            //   Child : 0-14 | Youth : 15-30 | Adult : 31-59 | Senior : 60+
+            // Awtomatikong nag-uupdate tuwing may Add/Edit/Delete sa Residents.
+            // ==========================================================
+            var demographics = await _context.Residents
+                .Where(r => r.IsResident)
+                .Select(r => new { r.BirthDate, r.IsPwd })
+                .ToListAsync();
+
+            int ComputeAge(DateTime birth)
+            {
+                var age = today.Year - birth.Year;
+                if (birth.Date > today.AddYears(-age)) age--;
+                return age < 0 ? 0 : age;
+            }
+
+            int childCount = 0, youthCount = 0, adultCount = 0, seniorCount = 0, pwdCount = 0;
+            foreach (var d in demographics)
+            {
+                int age = ComputeAge(d.BirthDate);
+                if (age < 15) childCount++;
+                else if (age <= 30) youthCount++;
+                else if (age <= 59) adultCount++;
+                else seniorCount++;
+
+                if (d.IsPwd) pwdCount++;
+            }
+
             var dashboardData = new ReportsDashboardViewModel
             {
+                // 🧮 Demographic KPI + chart data
+                TotalRegisteredPopulation = demographics.Count,
+                YouthPopulation = youthCount,
+                SeniorCitizenPopulation = seniorCount,
+                PwdPopulation = pwdCount,
+                AgeGroupLabels = new List<string> { "Child (0-14)", "Youth (15-30)", "Adult (31-59)", "Senior (60+)" },
+                AgeGroupCounts = new List<int> { childCount, youthCount, adultCount, seniorCount },
+
                 TotalResidents = await _context.Residents.CountAsync(r => r.IsResident),
                 TotalComplaints = await _context.Complaints.CountAsync(),
                 TotalBudget = await _context.Budgets.SumAsync(b => (decimal?)b.TotalAllocation) ?? 0m,

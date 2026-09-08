@@ -27,6 +27,32 @@
                     <td class="fw-bold text-muted">Birth Date:</td>
                     <td>@Model.BirthDate.ToString("MMMM dd, yyyy") (@Model.Age yrs old)</td>
                 </tr>
+                <!-- 🧮 AUTOMATIC DEMOGRAPHIC CLASSIFICATIONS -->
+                <tr>
+                    <td class="fw-bold text-muted">Age Group:</td>
+                    <td><span class="badge bg-dark fs-6">@Model.AgeGroup</span></td>
+                </tr>
+                <tr>
+                    <td class="fw-bold text-muted">Demographic Status:</td>
+                    <td>
+                        @if (Model.IsYouth)
+                        {
+                            <span class="badge bg-info text-dark fs-6 me-1"><i class="bi bi-person-arms-up me-1"></i>@Model.YouthClassification</span>
+                        }
+                        @if (Model.IsSeniorCitizen)
+                        {
+                            <span class="badge bg-warning text-dark fs-6 me-1"><i class="bi bi-person-walking me-1"></i>Senior Citizen</span>
+                        }
+                        @if (Model.IsPwd)
+                        {
+                            <span class="badge bg-primary fs-6 me-1"><i class="bi bi-universal-access me-1"></i>PWD</span>
+                        }
+                        @if (!Model.IsYouth && !Model.IsSeniorCitizen && !Model.IsPwd)
+                        {
+                            <span class="badge bg-secondary fs-6">General Population</span>
+                        }
+                    </td>
+                </tr>
                 <tr>
                     <td class="fw-bold text-muted">Civil Status:</td>
                     <td>@Model.CivilStatus</td>
@@ -56,6 +82,20 @@
                         else
                         {
                             <span class="badge bg-secondary fs-6"><i class="bi bi-x-circle me-1"></i> Non-Voter</span>
+                        }
+                    </td>
+                </tr>
+                <!-- 🧑‍🦽 PWD STATUS ROW -->
+                <tr>
+                    <td class="fw-bold text-muted">PWD Status:</td>
+                    <td>
+                        @if (Model.IsPwd)
+                        {
+                            <span class="badge bg-primary fs-6"><i class="bi bi-universal-access me-1"></i> Person With Disability</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary fs-6"><i class="bi bi-x-circle me-1"></i> Non-PWD</span>
                         }
                     </td>
                 </tr>

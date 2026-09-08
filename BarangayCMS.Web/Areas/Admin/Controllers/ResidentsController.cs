@@ -54,6 +54,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     : $"{r.HouseNumber} {r.Street}".Trim(),
                 Purok = string.IsNullOrWhiteSpace(r.SitioPurok) ? "N/A" : r.SitioPurok,
                 IsVoter = r.IsVoter,
+                IsPwd = r.IsPwd,
                 DateRegistered = r.CreatedAt
             }).AsQueryable();
 
@@ -108,6 +109,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 Address = string.IsNullOrEmpty(resident.HouseNumber) ? resident.Street : $"{resident.HouseNumber} {resident.Street}".Trim(),
                 Purok = string.IsNullOrWhiteSpace(resident.SitioPurok) ? "N/A" : resident.SitioPurok,
                 IsVoter = resident.IsVoter,
+                IsPwd = resident.IsPwd,
                 DateRegistered = resident.CreatedAt
             };
 
@@ -144,6 +146,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     HouseNumber = model.Address ?? string.Empty,
                     SitioPurok = model.Purok ?? string.Empty,
                     IsVoter = model.IsVoter,
+                    IsPwd = model.IsPwd,
                     IsResident = true, // Automatic active
                     CreatedAt = DateTime.Now
                 };
@@ -180,7 +183,8 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 ContactNumber = resident.ContactNumber,
                 Address = resident.HouseNumber,
                 Purok = resident.SitioPurok,
-                IsVoter = resident.IsVoter
+                IsVoter = resident.IsVoter,
+                IsPwd = resident.IsPwd
             };
 
             return View(viewModel);
@@ -210,6 +214,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 resident.HouseNumber = model.Address ?? string.Empty;
                 resident.SitioPurok = model.Purok ?? string.Empty;
                 resident.IsVoter = model.IsVoter;
+                resident.IsPwd = model.IsPwd;
 
                 _context.Update(resident);
                 await _context.SaveChangesAsync();

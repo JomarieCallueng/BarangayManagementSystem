@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.DAL.Context;
 using BarangayCMS.Entities;
 using BarangayCMS.Web.Areas.Admin.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,11 +16,19 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
     public class DisasterController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ISemaphoreService _semaphoreService;
 
-        public DisasterController(ApplicationDbContext context)
+        // Ang Emergency SMS feature ay para LAMANG sa Admin (RBAC).
+        private const string AdminRoles = "Admin,SuperAdmin";
+
+        public DisasterController(ApplicationDbContext context, ISemaphoreService semaphoreService)
         {
             _context = context;
+            _semaphoreService = semaphoreService;
         }
+
+        // Helper: nakikita ba ng kasalukuyang user ang Emergency SMS feature?
+        private bool IsAdminUser() => User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
 
         // 1. GET: Admin/Disaster
         public async Task<IActionResult> Index()
@@ -40,7 +51,62 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     Status = $"Relief: {d.ReliefDistributionStatus} | Evac: {d.EvacuationCenterStatus}"
                 }).ToListAsync();
 
+            // 📱 Emergency SMS feature data — para LAMANG sa Admin
+            if (IsAdminUser())
+            {
+                await PopulateEmergencySmsViewDataAsync();
+            }
+
             return View(disasters);
+        }
+
+        // ==========================================================
+        // Helper: i-load ang Purok list, resident options, at SMS history
+        // para sa Emergency Notification section ng Disaster/Index page.
+        // ==========================================================
+        private async Task PopulateEmergencySmsViewDataAsync()
+        {
+            var residents = await _context.Residents
+                .Where(r => r.IsResident)
+                .OrderBy(r => r.SitioPurok).ThenBy(r => r.LastName)
+                .Select(r => new ResidentSmsOption
+                {
+                    Id = r.ResidentId,
+                    FullName = (r.LastName + ", " + r.FirstName).Trim(),
+                    Purok = string.IsNullOrWhiteSpace(r.SitioPurok) ? "N/A" : r.SitioPurok,
+                    ContactNumber = r.ContactNumber
+                })
+                .ToListAsync();
+
+            var purokOptions = residents
+                .Where(r => !string.IsNullOrWhiteSpace(r.Purok) && r.Purok != "N/A")
+                .Select(r => r.Purok)
+                .Distinct()
+                .OrderBy(p => p)
+                .ToList();
+
+            var history = await _context.SmsAlerts
+                .OrderByDescending(s => s.SentAt)
+                .Take(50)
+                .Select(s => new SmsAlertHistoryItem
+                {
+                    Id = s.SmsAlertId,
+                    SentAt = s.SentAt,
+                    EmergencyType = s.EmergencyType,
+                    Message = s.Message,
+                    RecipientGroup = s.RecipientGroup,
+                    RecipientCount = s.RecipientCount,
+                    SuccessCount = s.SuccessCount,
+                    FailedCount = s.FailedCount,
+                    Status = s.Status,
+                    SentBy = s.SentBy
+                })
+                .ToListAsync();
+
+            ViewBag.IsAdminUser = true;
+            ViewBag.PurokOptions = purokOptions;
+            ViewBag.ResidentOptions = residents;
+            ViewBag.SmsHistory = history;
         }
 
         // 2. GET: Admin/Disaster/Details/5
@@ -233,6 +299,127 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        // ==========================================================
+        // 📱 EMERGENCY SMS ALERT (ADMIN ONLY)
+        // Bahagi ng Disaster Risk Management module.
+        // ==========================================================
+
+        // 11. POST: Admin/Disaster/SendEmergencyAlert
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = AdminRoles)]
+        public async Task<IActionResult> SendEmergencyAlert(EmergencySmsViewModel model)
+        {
+            // Server-side validation — huwag umasa sa UI lamang
+            if (string.IsNullOrWhiteSpace(model.EmergencyType) || string.IsNullOrWhiteSpace(model.Message))
+            {
+                TempData["SmsError"] = "Kailangan ang Emergency Type at Message bago magpadala.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // 1. Kunin ang mga contact number base sa napiling recipient group
+            var residentsQuery = _context.Residents.Where(r => r.IsResident);
+            string recipientGroupLabel;
+
+            switch (model.RecipientGroup)
+            {
+                case "Purok":
+                    if (string.IsNullOrWhiteSpace(model.Purok))
+                    {
+                        TempData["SmsError"] = "Pumili ng Purok/Area para sa recipient group na ito.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    residentsQuery = residentsQuery.Where(r => r.SitioPurok == model.Purok);
+                    recipientGroupLabel = $"Purok: {model.Purok}";
+                    break;
+
+                case "Selected":
+                    if (model.SelectedResidentIds == null || model.SelectedResidentIds.Count == 0)
+                    {
+                        TempData["SmsError"] = "Pumili ng kahit isang residente para sa 'Selected Residents'.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    residentsQuery = residentsQuery.Where(r => model.SelectedResidentIds.Contains(r.ResidentId));
+                    recipientGroupLabel = $"Selected Residents ({model.SelectedResidentIds.Count})";
+                    break;
+
+                default: // "All Residents"
+                    recipientGroupLabel = "All Residents";
+                    break;
+            }
+
+            var numbers = await residentsQuery
+                .Select(r => r.ContactNumber)
+                .Where(n => n != null && n != "")
+                .ToListAsync();
+
+            if (numbers.Count == 0)
+            {
+                TempData["SmsError"] = "Walang natagpuang registered mobile number para sa napiling recipients.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // 2. Ipadala gamit ang Semaphore (may validation + error handling sa service)
+            var result = await _semaphoreService.SendBulkSmsAsync(numbers, model.Message);
+
+            // 3. I-record sa SMS Alert History (WALANG API key na itinatago dito)
+            var alert = new SmsAlert
+            {
+                EmergencyType = model.EmergencyType,
+                Message = model.Message,
+                RecipientGroup = recipientGroupLabel,
+                RecipientCount = result.TotalRecipients,
+                SuccessCount = result.SuccessCount,
+                FailedCount = result.FailedCount + result.InvalidNumbers.Count,
+                Status = result.Status,
+                SentBy = User.Identity?.Name ?? "Admin",
+                SentAt = DateTime.Now
+            };
+            _context.SmsAlerts.Add(alert);
+            await _context.SaveChangesAsync();
+
+            // 4. Ibalik ang resulta sa user
+            if (result.Status == "Sent")
+            {
+                TempData["SmsSuccess"] = $"Matagumpay na naipadala ang emergency alert sa {result.SuccessCount} residente.";
+            }
+            else if (result.Status == "Partial")
+            {
+                TempData["SmsWarning"] = $"Bahagyang naipadala: {result.SuccessCount} tagumpay, {alert.FailedCount} nabigo/invalid.";
+            }
+            else
+            {
+                TempData["SmsError"] = "Nabigo ang pagpapadala ng emergency alert. Suriin ang Semaphore configuration o ang mga numero.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // 12. GET: Admin/Disaster/SmsHistory (buong history view — Admin only)
+        [HttpGet]
+        [Authorize(Roles = AdminRoles)]
+        public async Task<IActionResult> SmsHistory()
+        {
+            var history = await _context.SmsAlerts
+                .OrderByDescending(s => s.SentAt)
+                .Select(s => new SmsAlertHistoryItem
+                {
+                    Id = s.SmsAlertId,
+                    SentAt = s.SentAt,
+                    EmergencyType = s.EmergencyType,
+                    Message = s.Message,
+                    RecipientGroup = s.RecipientGroup,
+                    RecipientCount = s.RecipientCount,
+                    SuccessCount = s.SuccessCount,
+                    FailedCount = s.FailedCount,
+                    Status = s.Status,
+                    SentBy = s.SentBy
+                })
+                .ToListAsync();
+
+            return View(history);
         }
     }
 }

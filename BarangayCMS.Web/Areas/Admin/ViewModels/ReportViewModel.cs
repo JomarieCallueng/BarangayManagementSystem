@@ -28,6 +28,18 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         public List<int> MonthlyComplaints { get; set; } = new List<int>();
         public List<int> MonthlyCertificates { get; set; } = new List<int>();
         public List<int> MonthlyResidents { get; set; } = new List<int>();
+
+        // ==========================================================
+        // 🧮 DEMOGRAPHIC ANALYTICS (galing sa aktwal na resident records)
+        // ==========================================================
+        public int TotalRegisteredPopulation { get; set; }
+        public int YouthPopulation { get; set; }
+        public int SeniorCitizenPopulation { get; set; }
+        public int PwdPopulation { get; set; }
+
+        // Age Group distribution: Child (0-14), Youth (15-30), Adult (31-59), Senior (60+)
+        public List<string> AgeGroupLabels { get; set; } = new List<string>();
+        public List<int> AgeGroupCounts { get; set; } = new List<int>();
     }
 
     // --- SUB-REPORT ITEM MODELS (MAY ALIASES PARA SA LAHAT NG CS1061 ERRORS) ---
