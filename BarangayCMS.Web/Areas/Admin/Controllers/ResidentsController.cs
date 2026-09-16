@@ -259,12 +259,40 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var resident = await _context.Residents.FindAsync(id);
-            if (resident != null)
+            if (resident == null)
             {
-                // Hard delete para tuluyang maalis sa database
-                _context.Residents.Remove(resident);
-                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+
+            // Kailangan munang linisin ang mga naka-link na record bago tanggalin
+            // ang residente, kung hindi ay iba-block ito ng foreign key constraints.
+
+            // Ang mga sertipiko ay may sariling nakatagong ResidentName sa row,
+            // kaya alisin na lang ang link (ResidentId = null) para hindi mawala
+            // ang history ng mga na-issue na certificate.
+            var certificates = await _context.Certificates
+                .Where(c => c.ResidentId == id)
+                .ToListAsync();
+            foreach (var certificate in certificates)
+            {
+                certificate.ResidentId = null;
+            }
+
+            // Ang mga reklamo at health records ay nakatali sa tao mismo,
+            // kaya tuluyang tanggalin kasama ng residente.
+            var complaints = await _context.Complaints
+                .Where(c => c.ResidentId == id)
+                .ToListAsync();
+            _context.Complaints.RemoveRange(complaints);
+
+            var healthRecords = await _context.HealthRecords
+                .Where(h => h.ResidentId == id)
+                .ToListAsync();
+            _context.HealthRecords.RemoveRange(healthRecords);
+
+            // Hard delete para tuluyang maalis sa database
+            _context.Residents.Remove(resident);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

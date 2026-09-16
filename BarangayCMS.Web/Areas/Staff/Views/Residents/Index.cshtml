@@ -1,132 +1,155 @@
-﻿@model IEnumerable<BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel>
+@model IEnumerable<BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Resident Demographic Registry";
+    ViewData["Title"] = "Residents Management";
 }
 
-<div class="container-fluid p-0">
-    <!-- Top Action Row -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <span class="text-muted small">Dashboard</span>
-            <h2 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">Resident Demographic Registry</h2>
-        </div>
-        <div>
-            <a asp-area="Staff" asp-controller="Residents" asp-action="Create" class="btn btn-primary fw-semibold px-4 shadow-sm">
-                <i class="bi bi-person-plus me-1"></i> Register Citizen
-            </a>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-people-fill text-primary me-2"></i>Residents Management
+        </h2>
+        <p class="text-muted small mb-0">Census data bank containing profiles, voting registrations, and households roster information.</p>
     </div>
+    <a asp-area="Staff" asp-controller="Residents" asp-action="Create" class="btn btn-primary px-3 shadow-sm fw-semibold">
+        <i class="bi bi-person-plus-fill me-1"></i> + Register Resident
+    </a>
+</div>
 
-    <!-- FILTER AND SEARCH BAR (AUTO-SUBMIT ON PUROK SELECT) -->
-    <div class="card border-0 shadow-sm p-3 mb-4 bg-white rounded-3">
-        <form id="filterForm" method="get" asp-area="Staff" asp-controller="Residents" asp-action="Index" class="row g-2 align-items-center">
-
-            <!-- Auto-Submit Purok Filter Dropdown -->
-            <div class="col-md-4 col-lg-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-light text-muted border-end-0">
-                        <i class="bi bi-geo-alt-fill text-danger"></i>
-                    </span>
-                    <!-- 💡 IDINAGDAG ANG onchange="this.form.submit()" DITO -->
-                    <select name="purokFilter"
-                            asp-items="ViewBag.PurokList"
-                            class="form-select border-start-0 bg-light"
-                            onchange="this.form.submit()">
-                        <option value="">-- Lahat ng Purok (All Residents) --</option>
-                    </select>
-                </div>
+<div class="card border-0 shadow-sm rounded-3 mb-4 p-3 bg-white">
+    <div class="row g-3">
+        <div class="col-md-5">
+            <div class="input-group">
+                <label class="input-group-text bg-light border-end-0 text-muted fw-bold" for="purokFilterSelect">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> Pumili ng Purok:
+                </label>
+                <select id="purokFilterSelect" class="form-select bg-light border-start-0 fw-semibold" onchange="filterResidents()">
+                    <option value="">-- Lahat ng Purok (All Residents) --</option>
+                </select>
             </div>
+        </div>
 
-            <!-- Search Input Box -->
-            <div class="col-md-5 col-lg-5">
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0">
-                        <i class="bi bi-search text-muted"></i>
-                    </span>
-                    <input type="text"
-                           name="searchTerm"
-                           value="@ViewBag.CurrentSearch"
-                           class="form-control border-start-0 bg-light"
-                           placeholder="Maghanap ng pangalan ng residente..." />
-                </div>
+        <div class="col-md-7">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="residentSearchInput" class="form-control bg-light border-start-0" placeholder="Maghanap ng pangalan sa napiling purok..." onkeyup="filterResidents()">
             </div>
-
-            <!-- Search & Reset Buttons -->
-            <div class="col-md-3 col-lg-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary w-100 fw-semibold">
-                    Search
-                </button>
-                @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string) || !string.IsNullOrEmpty(ViewBag.CurrentPurok as string))
-                {
-                    <a asp-area="Staff" asp-controller="Residents" asp-action="Index" class="btn btn-outline-secondary">
-                        Reset
-                    </a>
-                }
-            </div>
-        </form>
-    </div>
-
-    <!-- Data Table Container Wrapped in Clean White Card Look -->
-    <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr class="text-uppercase tracking-wider text-secondary" style="font-size: 0.75rem; font-weight: 600;">
-                        <th>Full Name</th>
-                        <th>Gender</th>
-                        <th>Civil Status</th>
-                        <th>Contact</th>
-                        <th>Voter Status</th>
-                        <th class="text-end">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
-                            <tr>
-                                <td class="fw-semibold text-dark">
-                                    @item.LastName, @item.FirstName @item.MiddleName
-                                </td>
-                                <td>@item.Gender</td>
-                                <td>@item.CivilStatus</td>
-                                <td class="text-muted">@item.ContactNumber</td>
-                                <td>
-                                    @if (item.IsVoter)
-                                    {
-                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded">Voter</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded">Non-Voter</span>
-                                    }
-                                </td>
-                                <td class="text-end">
-                                    <a asp-area="Staff"
-                                       asp-controller="Residents"
-                                       asp-action="Details"
-                                       asp-route-id="@item.ResidentId"
-                                       class="btn btn-sm btn-outline-secondary px-3">
-                                        View Profile
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted small">
-                                <i class="bi bi-folder-x fs-3 d-block mb-2 text-secondary"></i>
-                                Walang nakitang record ng mga residente na tumutugma sa iyong hinahanap.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
+
+<div class="card border-0 shadow-sm rounded-3 bg-white p-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="residentsTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Resident Name</th>
+                    <th>Gender / Age</th>
+                    <th>Purok Address</th>
+                    <th>Voter Status</th>
+                    <th>Contact Number</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr class="resident-row">
+                            <td class="fw-bold text-dark resident-name">
+                                @item.LastName, @item.FirstName @item.MiddleName
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary text-light">@item.Gender</span>
+                                <small class="text-muted ms-1">(@item.Age yrs old)</small>
+                            </td>
+                            <td class="resident-purok fw-semibold text-primary">
+                                @(string.IsNullOrEmpty(item.Purok) ? "N/A" : item.Purok)
+                            </td>
+
+                            <!-- 🗳️ VOTER BADGE DISPLAY -->
+                            <td>
+                                @if (item.IsVoter)
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>Voter</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark border"><i class="bi bi-x-circle me-1"></i>Non-Voter</span>
+                                }
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrEmpty(item.ContactNumber) ? "N/A" : item.ContactNumber)
+                            </td>
+                            <td class="text-center">
+                                <a asp-area="Staff" asp-controller="Residents" asp-action="Edit" asp-route-id="@item.ResidentId" class="btn btn-sm btn-outline-primary me-1" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a asp-area="Staff" asp-controller="Residents" asp-action="Details" asp-route-id="@item.ResidentId" class="btn btn-sm btn-outline-info" title="View Info">
+                                    <i class="bi bi-info-circle"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Walang resident record na nahanap.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            populatePurokDropdown();
+        });
+
+        function populatePurokDropdown() {
+            const purokSelect = document.getElementById('purokFilterSelect');
+            const purokCells = document.querySelectorAll('.resident-purok');
+            const uniquePuroks = new Set();
+
+            purokCells.forEach(cell => {
+                const purokText = cell.textContent.trim();
+                if (purokText && purokText !== "N/A") {
+                    uniquePuroks.add(purokText);
+                }
+            });
+
+            Array.from(uniquePuroks).sort().forEach(purok => {
+                const option = document.createElement('option');
+                option.value = purok;
+                option.textContent = purok;
+                purokSelect.appendChild(option);
+            });
+        }
+
+        function filterResidents() {
+            const selectedPurok = document.getElementById('purokFilterSelect').value.toLowerCase().trim();
+            const searchInput = document.getElementById('residentSearchInput').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.resident-row');
+
+            rows.forEach(row => {
+                const name = row.querySelector('.resident-name').textContent.toLowerCase();
+                const purok = row.querySelector('.resident-purok').textContent.toLowerCase().trim();
+
+                const matchesPurok = (selectedPurok === "") || (purok === selectedPurok);
+                const matchesName = name.includes(searchInput);
+
+                row.style.display = (matchesPurok && matchesName) ? '' : 'none';
+            });
+        }
+    </script>
+}

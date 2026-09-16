@@ -3,19 +3,22 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BarangayCMS.DAL.Context;
+using BarangayCMS.BLL.Interfaces;
 using BarangayManagementSystem.Areas.Admin.Models;
 
 namespace BarangayManagementSystem.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IContactMessageService _contactMessages;
 
-        public DashboardController(ApplicationDbContext context)
+        public DashboardController(ApplicationDbContext context, IContactMessageService contactMessages)
         {
             _context = context;
+            _contactMessages = contactMessages;
         }
 
         // 🌟 REAL-TIME DATABASE COUNTING
@@ -32,6 +35,9 @@ namespace BarangayManagementSystem.Areas.Admin.Controllers
 
                 // 🌟 INAYOS DITO: 'Certificates' na ang ginamit mula sa iyong ApplicationDbContext
                 CertificatesHandled = await _context.Certificates.CountAsync(),
+
+                // Bilang ng hindi pa nababasang mensahe mula sa Contact Us form
+                UnreadMessages = await _contactMessages.GetUnreadCountAsync(),
 
                 SystemStatus = "Operational"
             };

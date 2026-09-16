@@ -6,25 +6,23 @@
     ViewData["Title"] = "Certificates Ledger";
 }
 
-<div class="container-fluid p-0">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <span class="text-muted small">Dashboard</span>
-            <h2 class="fw-bold m-0 text-dark" style="font-size: 1.5rem;">Certificates Ledger</h2>
-        </div>
-        <div>
-            <a asp-area="Staff" asp-controller="Certificates" asp-action="Create" class="btn btn-primary fw-semibold px-4 shadow-sm">
-                Issue New Certificate
-            </a>
-        </div>
+<div class="page-header">
+    <div>
+        <small class="text-muted text-uppercase fw-bold">Documents</small>
+        <h1 class="page-header__title"><i class="bi bi-file-earmark-text-fill"></i> Certificates Ledger</h1>
+        <p class="page-header__sub">Issue, approve, and print barangay certificates for residents.</p>
     </div>
+    <a asp-area="Staff" asp-controller="Certificates" asp-action="Create" class="btn btn-brand fw-semibold px-4">
+        <i class="bi bi-plus-lg me-1"></i> Issue New Certificate
+    </a>
+</div>
 
-    <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr class="text-uppercase tracking-wider text-secondary" style="font-size: 0.75rem; font-weight: 600;">
-                        <th>Control No.</th>
+<div class="app-card app-card--pad">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="text-uppercase text-secondary" style="font-size: 0.75rem; font-weight: 600;">
+                    <th>Control No.</th>
                         <th>Resident Name</th>
                         <th>Certificate Type</th>
                         <th>Purpose</th>
@@ -156,4 +154,3 @@
             </table>
         </div>
     </div>
-</div>

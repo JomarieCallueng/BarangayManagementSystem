@@ -55,9 +55,9 @@
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger small p-2 mb-3"></div>
 
                             <div class="mb-3">
-                                <label asp-for="Email" class="form-label text-secondary small fw-semibold">Email Address</label>
+                                <label asp-for="Email" class="form-label text-secondary small fw-semibold">Email or Username</label>
                                 <!-- Idinagdag ang id at name para sa siguradong binding sa backend -->
-                                <input asp-for="Email" id="Email" name="Email" type="email" class="form-control form-control-sm py-2" placeholder="name@barangay.gov.ph" required />
+                                <input asp-for="Email" id="Email" name="Email" type="text" class="form-control form-control-sm py-2" placeholder="Email o username (hal. jom)" required />
                                 <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                             </div>
 

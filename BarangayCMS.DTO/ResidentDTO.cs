@@ -36,6 +36,7 @@ namespace BarangayCMS.DTO
         public string FullAddress => $"{HouseNumber} {Street}, {SitioPurok}".Trim();
 
         public bool IsVoter { get; set; }
+        public bool IsPwd { get; set; } // Person With Disability
         public bool IsResident { get; set; } // Active or Moved Out
         public DateTime CreatedAt { get; set; }
     }

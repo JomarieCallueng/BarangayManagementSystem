@@ -16,6 +16,10 @@ namespace BarangayCMS.DAL.Context
 
         public DbSet<ReportLog> ReportLogs { get; set; } = null!;
         public DbSet<CertificateType> CertificateTypes { get; set; }
+
+        // 📄 Dynamic na requirements per certificate type (admin-driven).
+        public DbSet<CertificateRequirement> CertificateRequirements { get; set; } = null!;
+
         public DbSet<SystemSetting> SystemSettings { get; set; }
 
         public DbSet<Complaint> Complaints { get; set; } = null!;
@@ -30,14 +34,37 @@ namespace BarangayCMS.DAL.Context
         public DbSet<Project> Projects { get; set; } = null!;
         public DbSet<BarangayOfficial> BarangayOfficials { get; set; }
 
+        // 🏛️ Service history (mga termino) per barangay official.
+        public DbSet<OfficialServiceHistory> OfficialServiceHistories { get; set; } = null!;
+
         // 📱 Emergency SMS Alert History (Disaster Risk Management module)
         public DbSet<SmsAlert> SmsAlerts { get; set; } = null!;
+
+        // 💬 Contact Us messages (public → admin inbox). Walang account.
+        public DbSet<ContactMessage> ContactMessages { get; set; } = null!;
 
         // 3. IDINAGDAG ITONG OVERRIDE METHOD (NAPAKAHALAGA)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Tinatawag nito ang internal configuration ng Identity para i-setup ang mga tables tulad ng Claims, Roles, etc.
             base.OnModelCreating(modelBuilder);
+
+            // 🏛️ One person (BarangayOfficial) → many service-history records.
+            // Cascade delete: kapag natanggal ang opisyal, kasama ang kanyang history.
+            modelBuilder.Entity<OfficialServiceHistory>()
+                .HasOne(h => h.BarangayOfficial)
+                .WithMany(o => o.ServiceHistories)
+                .HasForeignKey(h => h.BarangayOfficialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // 📄 One CertificateType → many CertificateRequirement.
+            // Cascade delete: kapag natanggal ang uri ng sertipiko, kasama ang
+            // kanyang mga requirement.
+            modelBuilder.Entity<CertificateRequirement>()
+                .HasOne(r => r.CertificateType)
+                .WithMany(t => t.Requirements)
+                .HasForeignKey(r => r.CertificateTypeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

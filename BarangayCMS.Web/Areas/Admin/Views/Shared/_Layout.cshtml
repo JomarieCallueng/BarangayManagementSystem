@@ -1,4 +1,9 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject BarangayCMS.BLL.Interfaces.IContactMessageService ContactMessageService
+@{
+    int adminUnread = 0;
+    try { adminUnread = await ContactMessageService.GetUnreadCountAsync(); } catch { }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,6 +40,13 @@
                 <a href="/Admin/Residents" class="app-nav__link"><i class="bi bi-people-fill"></i> Residents</a>
                 <a href="/Admin/Certificates" class="app-nav__link"><i class="bi bi-file-earmark-text-fill"></i> Certificates</a>
                 <a href="/Admin/Complaints" class="app-nav__link"><i class="bi bi-chat-left-text-fill"></i> Complaints</a>
+                <a href="/Admin/Messages" class="app-nav__link d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-inbox-fill"></i> Messages</span>
+                    @if (adminUnread > 0)
+                    {
+                        <span class="badge rounded-pill bg-danger">@adminUnread</span>
+                    }
+                </a>
                 <a href="/Admin/Projects" class="app-nav__link"><i class="bi bi-kanban-fill"></i> Projects</a>
                 <a href="/Admin/Budget" class="app-nav__link"><i class="bi bi-cash-coin"></i> Budget Tracker</a>
                 <a href="/Admin/Disaster" class="app-nav__link"><i class="bi bi-shield-exclamation"></i> Disaster Risk</a>
@@ -132,6 +144,7 @@
             if (best) { best.classList.add("active"); }
         })();
     </script>
+    <script src="~/js/form-persist.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

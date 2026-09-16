@@ -35,11 +35,29 @@
                     <span asp-validation-for="Committee" class="text-danger"></span>
                 </div>
 
+                <input type="hidden" asp-for="ProfileImagePath" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold d-block">Kasalukuyang Profile Photo</label>
+                    @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                    {
+                        <div class="p-2 border rounded bg-light mb-2" style="width: fit-content;">
+                            <img src="~/uploads/officials/@Model.ProfileImagePath" style="height: 80px; width: 80px; object-fit: cover; border-radius: 8px;" alt="Profile Photo" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted small mb-2"><i class="bi bi-person-circle me-1"></i>Walang naka-upload na larawan (initials ang ipapakita sa public page).</div>
+                    }
+                    <label asp-for="ProfileImageFile" class="form-label small text-muted">Palitan ang profile photo (Pumili kung babaguhin):</label>
+                    <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" />
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label fw-bold d-block">Kasalukuyang Pirma</label>
                     @if (!string.IsNullOrEmpty(Model.SignaturePath))
                     {
-                        <div class="p-2 border rounded bg-light mb-2 style="width: fit-content;">
+                        <div class="p-2 border rounded bg-light mb-2" style="width: fit-content;">
                             <img src="~/uploads/signatures/@Model.SignaturePath" style="height: 60px;" alt="Signature" />
                         </div>
                     }

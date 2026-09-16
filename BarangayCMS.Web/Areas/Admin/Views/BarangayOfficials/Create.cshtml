@@ -45,6 +45,12 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="ProfileImageFile" class="form-label fw-bold"></label>
+                <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" />
+                <div class="form-text">Larawan ng opisyal na ipapakita sa public "About the Barangay" page. (Optional — kung wala, initials ang ipapakita.)</div>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="SignatureFile" class="form-label fw-bold"></label>
                 <input asp-for="SignatureFile" type="file" class="form-control" accept="image/*" />
                 <div class="form-text">I-upload ang malinaw na transparent PNG na pirma para sa mga digital certificates.</div>

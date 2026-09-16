@@ -1,0 +1,120 @@
+@model BarangayCMS.DTO.ContactMessageDTO
+@{
+    Layout = null;
+    string statusBadge = Model.Status switch
+    {
+        "Replied" => "bg-success",
+        "Read" => "bg-info",
+        "Archived" => "bg-secondary",
+        _ => "bg-warning text-dark"
+    };
+}
+
+<style>
+    #msgModalContent .bubble { max-width: 88%; padding: .65rem .9rem; border-radius: .9rem; box-shadow: 0 2px 5px rgba(15,23,42,.06); }
+    #msgModalContent .bubble .meta { font-size: .7rem; opacity: .85; }
+    #msgModalContent .bubble-admin { background: #2563eb; color: #fff; border-bottom-right-radius: .2rem; }
+    #msgModalContent .bubble-resident { background: #fff; color: #0f172a; border: 1px solid #e2e8f0; border-bottom-left-radius: .2rem; }
+    #msgModalContent .row-admin { justify-content: flex-end; }
+    #msgModalContent .row-resident { justify-content: flex-start; }
+    #msgModalContent .chat-scroll { background: #f1f5f9; border-radius: .75rem; }
+</style>
+
+<div class="modal-header bg-light">
+    <div>
+        <h5 class="modal-title fw-bold mb-1"><i class="bi bi-chat-left-text-fill text-primary me-2"></i>Message Details</h5>
+        <span class="badge @statusBadge">@Model.Status</span>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    <!-- META -->
+    <div class="card bg-light border-0 mb-3">
+        <div class="card-body py-3">
+            <div class="row g-2 small">
+                <div class="col-md-6">
+                    <div class="text-muted text-uppercase" style="font-size:.68rem;letter-spacing:.5px;">Contact Number</div>
+                    <div class="fw-semibold"><i class="bi bi-telephone-fill me-1 text-secondary"></i>@Model.ContactNumber</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-muted text-uppercase" style="font-size:.68rem;letter-spacing:.5px;">Date Submitted</div>
+                    <div class="fw-semibold"><i class="bi bi-calendar3 me-1 text-secondary"></i>@Model.CreatedAt.ToString("MMMM dd, yyyy — h:mm tt")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONVERSATION -->
+    <h6 class="fw-bold small text-muted text-uppercase mb-2"><i class="bi bi-chat-dots me-1"></i>Conversation</h6>
+    <div class="chat-scroll p-3">
+        <div class="d-flex flex-column gap-2">
+            <!-- Resident message -->
+            <div class="d-flex row-resident">
+                <div class="bubble bubble-resident">
+                    <div class="meta fw-semibold mb-1">
+                        <i class="bi bi-person-fill me-1"></i>@Model.ContactNumber
+                        <span class="badge bg-secondary-subtle text-secondary ms-1">Resident</span>
+                    </div>
+                    <div style="white-space:pre-wrap;word-break:break-word;">@Model.Message</div>
+                    <div class="meta text-end mt-1">@Model.CreatedAt.ToString("MMM dd, yyyy · h:mm tt")</div>
+                </div>
+            </div>
+
+            <!-- Admin reply -->
+            @if (Model.HasReply)
+            {
+                <div class="d-flex row-admin">
+                    <div class="bubble bubble-admin">
+                        <div class="meta fw-semibold mb-1">
+                            <i class="bi bi-shield-fill-check me-1"></i>Barangay Admin
+                        </div>
+                        <div style="white-space:pre-wrap;word-break:break-word;">@Model.AdminReply</div>
+                        <div class="meta text-end mt-1">@(Model.RepliedAt?.ToString("MMM dd, yyyy · h:mm tt"))</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted small py-2"><i class="bi bi-info-circle me-1"></i>Wala pang sagot ang admin.</div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer flex-column align-items-stretch gap-2">
+    <!-- Action buttons -->
+    <div class="d-flex gap-2 w-100">
+        @if (Model.Status == "Unread")
+        {
+            <form method="post" action="/Admin/Messages/MarkRead/@Model.Id" class="flex-fill">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-info btn-sm w-100"><i class="bi bi-check2-all me-1"></i>Mark as Read</button>
+            </form>
+        }
+        @if (Model.Status != "Archived")
+        {
+            <form method="post" action="/Admin/Messages/Archive/@Model.Id" class="flex-fill">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-secondary btn-sm w-100"><i class="bi bi-archive me-1"></i>Archive</button>
+            </form>
+        }
+        <form method="post" action="/Admin/Messages/Delete/@Model.Id" class="flex-fill"
+              onsubmit="return confirm('Permanente nang matatanggal ang mensaheng ito. Ituloy?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100"><i class="bi bi-trash me-1"></i>Delete</button>
+        </form>
+    </div>
+
+    <!-- Reply -->
+    <form method="post" action="/Admin/Messages/Reply" class="w-100">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <label class="form-label fw-semibold small mb-1">@(Model.HasReply ? "I-update ang sagot" : "Reply")</label>
+        <div class="input-group">
+            <textarea name="reply" class="form-control" rows="2" maxlength="2000" required
+                      placeholder="Isulat ang iyong sagot...">@Model.AdminReply</textarea>
+            <button type="submit" class="btn btn-primary px-3"><i class="bi bi-send-fill me-1"></i>Send</button>
+        </div>
+    </form>
+</div>

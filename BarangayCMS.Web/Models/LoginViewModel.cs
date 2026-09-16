@@ -4,9 +4,10 @@ namespace BarangayCMS.Web.Models
 {
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "Ang Email address ay kinakailangan.")]
-        [EmailAddress(ErrorMessage = "Hindi valid ang format ng iyong email.")]
-        [Display(Name = "Email Address")]
+        // Tinatanggap nito ang Email Address O Username — kaya walang
+        // [EmailAddress] validation para hindi ma-block ang plain username.
+        [Required(ErrorMessage = "Ang Email o Username ay kinakailangan.")]
+        [Display(Name = "Email or Username")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Ang password ay kinakailangan.")]

@@ -39,6 +39,7 @@ namespace BarangayCMS.BLL.Services
                 Street = r.Street,
                 SitioPurok = r.SitioPurok,
                 IsVoter = r.IsVoter,
+                IsPwd = r.IsPwd,
                 IsResident = r.IsResident,
                 CreatedAt = r.CreatedAt
             };
@@ -63,6 +64,7 @@ namespace BarangayCMS.BLL.Services
                 Street = r.Street,
                 SitioPurok = r.SitioPurok,
                 IsVoter = r.IsVoter,
+                IsPwd = r.IsPwd,
                 IsResident = r.IsResident,
                 CreatedAt = r.CreatedAt
             });
@@ -85,6 +87,7 @@ namespace BarangayCMS.BLL.Services
                 Street = r.Street,
                 SitioPurok = r.SitioPurok,
                 IsVoter = r.IsVoter,
+                IsPwd = r.IsPwd,
                 IsResident = r.IsResident
             });
         }
@@ -106,6 +109,7 @@ namespace BarangayCMS.BLL.Services
                 Street = dto.Street,
                 SitioPurok = dto.SitioPurok,
                 IsVoter = dto.IsVoter,
+                IsPwd = dto.IsPwd,
                 IsResident = true, // Bagong rehistro ay automatic active resident
                 CreatedAt = DateTime.Now
             };
@@ -132,6 +136,7 @@ namespace BarangayCMS.BLL.Services
             resident.Street = dto.Street;
             resident.SitioPurok = dto.SitioPurok;
             resident.IsVoter = dto.IsVoter;
+            resident.IsPwd = dto.IsPwd;
             resident.IsResident = dto.IsResident;
 
             _residentRepo.Update(resident);

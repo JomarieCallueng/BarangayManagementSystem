@@ -36,9 +36,12 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 LastName = r.LastName,
                 MiddleName = r.MiddleName,
                 Gender = r.Gender,
+                BirthDate = r.BirthDate,
                 CivilStatus = r.CivilStatus,
                 ContactNumber = r.ContactNumber,
                 IsVoter = r.IsVoter,
+                IsPwd = r.IsPwd,
+                Purok = r.SitioPurok,
                 Address = r.FullAddress ?? r.Street ?? string.Empty
             }).AsQueryable();
 
@@ -93,8 +96,13 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 CivilStatus = residentDto.CivilStatus,
                 ContactNumber = residentDto.ContactNumber,
                 IsVoter = residentDto.IsVoter,
-                Address = residentDto.FullAddress,
-                BirthDate = residentDto.BirthDate
+                IsPwd = residentDto.IsPwd,
+                Purok = residentDto.SitioPurok,
+                Address = string.IsNullOrWhiteSpace(residentDto.HouseNumber)
+                    ? residentDto.Street
+                    : $"{residentDto.HouseNumber} {residentDto.Street}".Trim(),
+                BirthDate = residentDto.BirthDate,
+                DateRegistered = residentDto.CreatedAt
             };
 
             return View(viewModel);
@@ -129,10 +137,9 @@ namespace BarangayCMS.Areas.Staff.Controllers
 
             try
             {
-                string fullStreetAddress = string.IsNullOrWhiteSpace(model.Purok)
-                    ? (model.Address ?? string.Empty)
-                    : $"{model.Address}, {model.Purok}";
-
+                // Itago ang Address at Purok bilang magkahiwalay na field, katulad ng
+                // Admin (HouseNumber = Address, SitioPurok = Purok), para pareho ang
+                // data handling sa dalawang portal.
                 var newResidentDto = new ResidentDTO
                 {
                     FirstName = model.FirstName ?? string.Empty,
@@ -142,10 +149,12 @@ namespace BarangayCMS.Areas.Staff.Controllers
                     Gender = model.Gender ?? string.Empty,
                     CivilStatus = model.CivilStatus ?? string.Empty,
                     ContactNumber = model.ContactNumber ?? string.Empty,
+                    HouseNumber = model.Address ?? string.Empty,
+                    SitioPurok = model.Purok ?? string.Empty,
                     IsVoter = model.IsVoter,
+                    IsPwd = model.IsPwd,
                     IsResident = true,
-                    CreatedAt = DateTime.Now,
-                    Street = fullStreetAddress
+                    CreatedAt = DateTime.Now
                 };
 
                 bool isSaved = await _residentService.RegisterResidentAsync(newResidentDto);
@@ -185,7 +194,11 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 CivilStatus = residentDto.CivilStatus,
                 ContactNumber = residentDto.ContactNumber,
                 IsVoter = residentDto.IsVoter,
-                Address = residentDto.Street,
+                IsPwd = residentDto.IsPwd,
+                Purok = residentDto.SitioPurok,
+                Address = string.IsNullOrWhiteSpace(residentDto.HouseNumber)
+                    ? residentDto.Street
+                    : $"{residentDto.HouseNumber} {residentDto.Street}".Trim(),
                 BirthDate = residentDto.BirthDate
             };
 
@@ -204,10 +217,6 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 return BadRequest();
             }
 
-            // Purok / Area is maintained separately and is not part of this Edit form,
-            // so it must not block validation just because it's [Required] on the model.
-            ModelState.Remove(nameof(model.Purok));
-
             if (ModelState.IsValid)
             {
                 var updatedDto = new ResidentDTO
@@ -220,8 +229,12 @@ namespace BarangayCMS.Areas.Staff.Controllers
                     Gender = model.Gender ?? string.Empty,
                     CivilStatus = model.CivilStatus ?? string.Empty,
                     ContactNumber = model.ContactNumber ?? string.Empty,
+                    // Pareho ng Admin: Address → HouseNumber, Purok → SitioPurok.
+                    HouseNumber = model.Address ?? string.Empty,
+                    SitioPurok = model.Purok ?? string.Empty,
                     IsVoter = model.IsVoter,
-                    Street = model.Address ?? string.Empty
+                    IsPwd = model.IsPwd,
+                    IsResident = true // panatilihing aktibong residente sa pag-edit
                 };
 
                 bool isUpdated = await _residentService.UpdateResidentInfoAsync(updatedDto);

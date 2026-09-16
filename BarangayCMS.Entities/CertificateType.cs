@@ -19,5 +19,9 @@ namespace BarangayCMS.Entities
 
         public string? TemplateFileName { get; set; }
         public byte[]? TemplateData { get; set; }
+
+        // Isang uri ng sertipiko → maraming requirements (dynamic, mula sa DB).
+        public virtual ICollection<CertificateRequirement> Requirements { get; set; }
+            = new List<CertificateRequirement>();
     }
 }

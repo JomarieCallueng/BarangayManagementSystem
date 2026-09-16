@@ -9,6 +9,7 @@ namespace BarangayManagementSystem.Areas.Admin.Models
         public int TotalResidents { get; set; }
         public int PendingComplaints { get; set; }
         public int CertificatesHandled { get; set; }
+        public int UnreadMessages { get; set; }
         public string SystemStatus { get; set; } = "Operational";
     }
 

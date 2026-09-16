@@ -1,6 +1,5 @@
 @model BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 @{
     ViewData["Title"] = "Register New Resident";
     Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
@@ -18,24 +17,21 @@
     <form asp-area="Staff" asp-controller="Residents" asp-action="Create" method="post">
         @Html.AntiForgeryToken()
 
-        <!-- SUMMARY NG ERRORS SA ITAAS PARA KITANG-KITA -->
-        <div asp-validation-summary="All" class="text-danger mb-3 fw-bold"></div>
-
         <!-- ROW 1: NAMES -->
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label asp-for="FirstName" class="form-label fw-semibold">First Name</label>
-                <input asp-for="FirstName" class="form-control" placeholder="e.g., Juan" required />
+                <input asp-for="FirstName" class="form-control text-capitalize" placeholder="e.g., Juan" oninput="autoCapitalizeWords(this)" required />
                 <span asp-validation-for="FirstName" class="text-danger small"></span>
             </div>
             <div class="col-md-4">
                 <label asp-for="MiddleName" class="form-label fw-semibold">Middle Name</label>
-                <input asp-for="MiddleName" class="form-control" placeholder="e.g., Ramos" />
+                <input asp-for="MiddleName" class="form-control text-capitalize" placeholder="e.g., Ramos" oninput="autoCapitalizeWords(this)" />
                 <span asp-validation-for="MiddleName" class="text-danger small"></span>
             </div>
             <div class="col-md-4">
                 <label asp-for="LastName" class="form-label fw-semibold">Last Name</label>
-                <input asp-for="LastName" class="form-control" placeholder="e.g., Dela Cruz" required />
+                <input asp-for="LastName" class="form-control text-capitalize" placeholder="e.g., Dela Cruz" oninput="autoCapitalizeWords(this)" required />
                 <span asp-validation-for="LastName" class="text-danger small"></span>
             </div>
         </div>
@@ -73,7 +69,7 @@
         <div class="row g-3 mb-4">
             <div class="col-md-4">
                 <label asp-for="Address" class="form-label fw-semibold">House No. & Street Address</label>
-                <input asp-for="Address" class="form-control" placeholder="e.g., #14 Ext. St." required />
+                <input asp-for="Address" class="form-control text-capitalize" placeholder="e.g., #14 Ext. St." oninput="autoCapitalizeWords(this)" required />
                 <span asp-validation-for="Address" class="text-danger small"></span>
             </div>
             <div class="col-md-4">
@@ -99,17 +95,39 @@
             </div>
             <div class="col-md-4">
                 <label asp-for="ContactNumber" class="form-label fw-semibold">Contact Number</label>
-                <input asp-for="ContactNumber" class="form-control" placeholder="e.g., 09123456789" />
+                <input asp-for="ContactNumber"
+                       class="form-control"
+                       placeholder="e.g., 09123456789"
+                       maxlength="11"
+                       oninput="validatePhone11Digits(this)" />
                 <span asp-validation-for="ContactNumber" class="text-danger small"></span>
             </div>
         </div>
 
-        <!-- ROW 4: VOTER STATUS SWITCH -->
+        <!-- 🧮 AUTO-COMPUTED DEMOGRAPHIC CLASSIFICATION PREVIEW -->
+        <div class="p-3 rounded-3 border mb-3" style="background: var(--surface-alt);">
+            <h6 class="fw-bold text-muted small text-uppercase mb-2"><i class="bi bi-calculator me-1"></i> Automatic Demographic Classification</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-dark">Age: <span id="agePreview">—</span></span>
+                <span class="badge bg-secondary" id="ageGroupPreview">Age Group: —</span>
+                <span class="badge bg-info text-dark" id="youthPreview">Youth: —</span>
+                <span class="badge bg-warning text-dark" id="seniorPreview">Senior: —</span>
+            </div>
+            <small class="text-muted d-block mt-2">Awtomatikong kinakalkula mula sa Date of Birth (Youth: 15–30, Senior: 60+).</small>
+        </div>
+
+        <!-- 🗳️ ROW 4: VOTER & PWD STATUS SWITCHES -->
         <div class="p-3 rounded-3 border mb-4" style="background: var(--surface-alt);">
-            <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+            <div class="form-check form-switch d-flex align-items-center gap-2 m-0 mb-2">
                 <input asp-for="IsVoter" class="form-check-input fs-5 mt-0" type="checkbox" id="IsVoter" style="cursor: pointer;">
                 <label class="form-check-label fw-semibold" for="IsVoter" style="cursor: pointer;">
                     Rehistradong Botante sa Barangay na ito (Registered Voter)
+                </label>
+            </div>
+            <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                <input asp-for="IsPwd" class="form-check-input fs-5 mt-0" type="checkbox" id="IsPwd" style="cursor: pointer;">
+                <label class="form-check-label fw-semibold" for="IsPwd" style="cursor: pointer;">
+                    Person With Disability (PWD)
                 </label>
             </div>
         </div>
@@ -128,4 +146,64 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        function autoCapitalizeWords(element) {
+            let words = element.value.split(' ');
+            for (let i = 0; i < words.length; i++) {
+                if (words[i].length > 0) {
+                    words[i] = words[i][0].toUpperCase() + words[i].substring(1).toLowerCase();
+                }
+            }
+            element.value = words.join(' ');
+        }
+
+        function validatePhone11Digits(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 11) {
+                input.value = input.value.slice(0, 11);
+            }
+        }
+
+        // 🧮 Live automatic Age + classification preview mula sa Date of Birth
+        (function () {
+            const dob = document.getElementById('BirthDate');
+            const ageEl = document.getElementById('agePreview');
+            const groupEl = document.getElementById('ageGroupPreview');
+            const youthEl = document.getElementById('youthPreview');
+            const seniorEl = document.getElementById('seniorPreview');
+            if (!dob) return;
+
+            function computeAge(birth) {
+                const today = new Date();
+                let age = today.getFullYear() - birth.getFullYear();
+                const m = today.getMonth() - birth.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+                return age < 0 ? 0 : age;
+            }
+
+            function refresh() {
+                if (!dob.value) { return; }
+                const birth = new Date(dob.value);
+                if (isNaN(birth.getTime())) { return; }
+                const age = computeAge(birth);
+                ageEl.textContent = age + ' yrs';
+
+                let group = 'Adult (31-59)';
+                if (age < 15) group = 'Child (0-14)';
+                else if (age <= 30) group = 'Youth (15-30)';
+                else if (age >= 60) group = 'Senior (60+)';
+                groupEl.textContent = 'Age Group: ' + group;
+
+                const isYouth = age >= 15 && age <= 30;
+                const isSenior = age >= 60;
+                youthEl.textContent = 'Youth: ' + (isYouth ? 'Yes' : 'No');
+                seniorEl.textContent = 'Senior: ' + (isSenior ? 'Yes' : 'No');
+            }
+
+            dob.addEventListener('change', refresh);
+            dob.addEventListener('input', refresh);
+            refresh();
+        })();
+    </script>
 }

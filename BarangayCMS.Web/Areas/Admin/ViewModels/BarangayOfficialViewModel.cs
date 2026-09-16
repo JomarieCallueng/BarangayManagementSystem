@@ -24,10 +24,17 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         [Display(Name = "E-Signature / Lagda")]
         public string SignaturePath { get; set; } = string.Empty;
 
+        // Profile photo (filename lang; served mula sa /uploads/officials/).
+        [Display(Name = "Profile Photo")]
+        public string ProfileImagePath { get; set; } = string.Empty;
+
         [Display(Name = "Kasalukuyang Nakaupo (Active)")]
         public bool IsActive { get; set; } = true;
 
         [Display(Name = "I-upload ang Lagda (Image File)")]
         public IFormFile? SignatureFile { get; set; }
+
+        [Display(Name = "I-upload ang Profile Photo")]
+        public IFormFile? ProfileImageFile { get; set; }
     }
 }

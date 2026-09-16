@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.DAL.Context; // Namespace ng iyong DBContext
+using BarangayCMS.DTO;
 using BarangayCMS.Entities;   // Namespace ng iyong Entities
 
 namespace BarangayManagementSystem.Controllers.Admin
@@ -11,10 +13,14 @@ namespace BarangayManagementSystem.Controllers.Admin
     public class AdminCertificateTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICertificateRequirementService _requirementService;
 
-        public AdminCertificateTypesController(ApplicationDbContext context)
+        public AdminCertificateTypesController(
+            ApplicationDbContext context,
+            ICertificateRequirementService requirementService)
         {
             _context = context;
+            _requirementService = requirementService;
         }
 
         // ==========================================
@@ -213,6 +219,66 @@ namespace BarangayManagementSystem.Controllers.Admin
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // ==========================================
+        // REQUIREMENTS MANAGEMENT (per certificate type)
+        // ==========================================
+
+        // GET: /Admin/AdminCertificateTypes/Requirements/5
+        public async Task<IActionResult> Requirements(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var certType = await _context.CertificateTypes.FindAsync(id);
+            if (certType == null) return NotFound();
+
+            ViewBag.CertificateType = certType;
+            var requirements = await _requirementService.GetAllByCertificateTypeIdAsync(id.Value);
+            return View(requirements);
+        }
+
+        // POST: /Admin/AdminCertificateTypes/AddRequirement
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddRequirement(CertificateRequirementDTO model)
+        {
+            if (string.IsNullOrWhiteSpace(model.RequirementName))
+            {
+                TempData["Error"] = "Requirement name is required.";
+            }
+            else
+            {
+                bool ok = await _requirementService.AddAsync(model);
+                TempData[ok ? "Success" : "Error"] = ok
+                    ? "Requirement added."
+                    : "That requirement already exists for this certificate.";
+            }
+
+            return RedirectToAction(nameof(Requirements), new { id = model.CertificateTypeId });
+        }
+
+        // POST: /Admin/AdminCertificateTypes/EditRequirement
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditRequirement(CertificateRequirementDTO model)
+        {
+            bool ok = await _requirementService.UpdateAsync(model);
+            TempData[ok ? "Success" : "Error"] = ok
+                ? "Requirement updated."
+                : "Unable to update requirement (name may be blank or duplicate).";
+
+            return RedirectToAction(nameof(Requirements), new { id = model.CertificateTypeId });
+        }
+
+        // POST: /Admin/AdminCertificateTypes/DeleteRequirement
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteRequirement(int id, int certificateTypeId)
+        {
+            bool ok = await _requirementService.DeleteAsync(id);
+            TempData[ok ? "Success" : "Error"] = ok ? "Requirement removed." : "Requirement not found.";
+            return RedirectToAction(nameof(Requirements), new { id = certificateTypeId });
         }
 
         // ==========================================

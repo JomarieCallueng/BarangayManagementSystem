@@ -178,6 +178,11 @@ namespace BarangayCMS.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("ProfileImagePath")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("SignaturePath")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -287,6 +292,40 @@ namespace BarangayCMS.DAL.Migrations
                     b.ToTable("Certificates");
                 });
 
+            modelBuilder.Entity("BarangayCMS.Entities.CertificateRequirement", b =>
+                {
+                    b.Property<int>("CertificateRequirementId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CertificateRequirementId"));
+
+                    b.Property<int>("CertificateTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RequirementName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CertificateRequirementId");
+
+                    b.HasIndex("CertificateTypeId");
+
+                    b.ToTable("CertificateRequirements");
+                });
+
             modelBuilder.Entity("BarangayCMS.Entities.CertificateType", b =>
                 {
                     b.Property<int>("CertificateTypeId")
@@ -371,6 +410,40 @@ namespace BarangayCMS.DAL.Migrations
                     b.HasIndex("ResidentId");
 
                     b.ToTable("Complaints");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.ContactMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminReply")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RepliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactMessages");
                 });
 
             modelBuilder.Entity("BarangayCMS.Entities.Disaster", b =>
@@ -517,6 +590,44 @@ namespace BarangayCMS.DAL.Migrations
                     b.HasIndex("ResidentId");
 
                     b.ToTable("HealthRecords");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.OfficialServiceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BarangayOfficialId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Committee")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BarangayOfficialId");
+
+                    b.ToTable("OfficialServiceHistories");
                 });
 
             modelBuilder.Entity("BarangayCMS.Entities.Project", b =>
@@ -906,6 +1017,17 @@ namespace BarangayCMS.DAL.Migrations
                     b.Navigation("Resident");
                 });
 
+            modelBuilder.Entity("BarangayCMS.Entities.CertificateRequirement", b =>
+                {
+                    b.HasOne("BarangayCMS.Entities.CertificateType", "CertificateType")
+                        .WithMany("Requirements")
+                        .HasForeignKey("CertificateTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CertificateType");
+                });
+
             modelBuilder.Entity("BarangayCMS.Entities.Complaint", b =>
                 {
                     b.HasOne("BarangayCMS.Entities.Resident", "Resident")
@@ -926,6 +1048,17 @@ namespace BarangayCMS.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Resident");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.OfficialServiceHistory", b =>
+                {
+                    b.HasOne("BarangayCMS.Entities.BarangayOfficial", "BarangayOfficial")
+                        .WithMany("ServiceHistories")
+                        .HasForeignKey("BarangayOfficialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BarangayOfficial");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -977,6 +1110,16 @@ namespace BarangayCMS.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.BarangayOfficial", b =>
+                {
+                    b.Navigation("ServiceHistories");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.CertificateType", b =>
+                {
+                    b.Navigation("Requirements");
                 });
 
             modelBuilder.Entity("BarangayCMS.Entities.Resident", b =>

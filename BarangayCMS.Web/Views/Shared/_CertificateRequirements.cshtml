@@ -1,0 +1,31 @@
+@*
+    Reusable dynamic requirements panel. Rendered beneath a certificate-type
+    <select>; js/certificate-requirements.js loads the requirements from the DB.
+
+    Usage:
+      <partial name="_CertificateRequirements"
+               view-data='@(new ViewDataDictionary(ViewData) {
+                   { "SelectSelector", "#certificateSelect" },
+                   { "By", "name" } })' />
+
+    "By" = "name" sends the certificate name text, "id" sends the CertificateTypeId.
+*@
+@{
+    var selectSelector = ViewData["SelectSelector"] as string ?? "#certificateSelect";
+    var by = ViewData["By"] as string ?? "name";
+}
+<div class="cert-requirements"
+     id="certRequirements"
+     data-endpoint="/CertificateRequest/RequirementsFor"
+     data-select="@selectSelector"
+     data-by="@by">
+    <div class="cert-requirements__head">
+        <i class="bi bi-clipboard-check"></i> Required Documents
+    </div>
+    <div class="cert-requirements__body">
+        <div class="cert-requirements__state">
+            <i class="bi bi-arrow-up-circle"></i>
+            <span>Select a certificate type to see its requirements.</span>
+        </div>
+    </div>
+</div>

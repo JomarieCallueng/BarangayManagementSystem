@@ -1,5 +1,15 @@
+@model IEnumerable<BarangayCMS.Entities.BarangayOfficial>
 @{
     ViewData["Title"] = "About Us - Barangay Tatalon";
+
+    // Maiksing helper para sa initials avatar placeholder (walang photo field ang entity).
+    string Initials(string name)
+    {
+        var parts = (name ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "?";
+        if (parts.Length == 1) return parts[0].Substring(0, 1).ToUpper();
+        return (parts[0].Substring(0, 1) + parts[^1].Substring(0, 1)).ToUpper();
+    }
 }
 
 <style>
@@ -143,6 +153,77 @@
     .about-contact__label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
     .about-contact__value { color: var(--heading); font-weight: 700; margin: .15rem 0 0; }
 
+    /* Barangay Officials — profile (left) + personal history (right) */
+    .official-block {
+        display: grid; grid-template-columns: 300px 1fr; gap: 0;
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        box-shadow: var(--shadow); overflow: hidden;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .official-block:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+    /* LEFT — current profile */
+    .official-block__profile {
+        text-align: center; padding: 1.75rem 1.25rem;
+        background: var(--surface-alt); border-right: 1px solid var(--border);
+        display: flex; flex-direction: column; align-items: center;
+    }
+    .official-block__profile--lead { box-shadow: inset 4px 0 0 0 var(--accent); }
+    .official-photo {
+        width: 108px; height: 108px; border-radius: 50%; overflow: hidden;
+        display: grid; place-items: center; margin-bottom: 1rem;
+        background: var(--accent-soft); color: var(--accent);
+        border: 4px solid var(--surface); box-shadow: 0 0 0 1px var(--border);
+    }
+    .official-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .official-photo__initials { font-weight: 800; font-size: 2.1rem; }
+    .official-name { font-weight: 800; color: var(--heading); font-size: 1.12rem; margin: 0 0 .5rem; }
+    .official-pos {
+        display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .02em;
+        padding: .3rem .8rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+    }
+    .official-committee { margin-top: .6rem; font-size: .84rem; color: var(--muted); }
+    .official-committee i { color: var(--accent); }
+    .official-status {
+        margin-top: .8rem; display: inline-flex; align-items: center; gap: .4rem;
+        font-size: .78rem; font-weight: 700; padding: .28rem .7rem; border-radius: 999px;
+    }
+    .official-status.is-active { background: rgba(22,163,74,.14); color: #16a34a; }
+    .official-status.is-inactive { background: rgba(148,163,184,.18); color: var(--muted); }
+    .official-status__dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .official-sig { margin-top: 1rem; padding-top: .85rem; border-top: 1px dashed var(--border); width: 100%; }
+    .official-sig__label { display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--muted); margin-bottom: .3rem; }
+    .official-sig img { max-height: 48px; width: auto; object-fit: contain; }
+
+    /* RIGHT — personal official history (timeline) */
+    .official-block__history { padding: 1.75rem 1.6rem; }
+    .official-history__title { font-weight: 800; color: var(--heading); font-size: 1.02rem; margin: 0 0 1.15rem; display: flex; align-items: center; }
+    .official-history__title i { color: var(--accent); }
+    .official-timeline { list-style: none; margin: 0; padding: 0 0 0 1.5rem; position: relative; }
+    .official-timeline::before { content: ""; position: absolute; left: 5px; top: .4rem; bottom: .4rem; width: 2px; background: var(--border); }
+    .official-timeline__item { position: relative; padding-bottom: 1.35rem; }
+    .official-timeline__item:last-child { padding-bottom: 0; }
+    .official-timeline__item::before {
+        content: ""; position: absolute; left: -1.5rem; top: .25rem; width: 12px; height: 12px;
+        border-radius: 50%; background: var(--surface); border: 2px solid var(--border);
+    }
+    .official-timeline__item.is-current::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+    .official-timeline__range { font-weight: 800; color: var(--heading); font-size: .92rem; display: flex; align-items: center; gap: .5rem; }
+    .official-timeline__badge { font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #fff; background: var(--accent); border-radius: 999px; padding: .12rem .5rem; }
+    .official-timeline__pos { color: var(--body-text); font-weight: 600; font-size: .9rem; margin-top: .15rem; }
+    .official-timeline__committee { color: var(--muted); font-size: .82rem; margin-top: .1rem; }
+
+    @@media (max-width: 767.98px) {
+        .official-block { grid-template-columns: 1fr; }
+        .official-block__profile { border-right: 0; border-bottom: 1px solid var(--border); }
+    }
+
+    .about-empty {
+        background: var(--surface-alt); border: 1px dashed var(--border); border-radius: var(--radius);
+        padding: 2.25rem 1.25rem; text-align: center; color: var(--muted);
+    }
+    .about-empty i { font-size: 2rem; opacity: .55; display: block; margin-bottom: .5rem; }
+
     /* Scroll reveal */
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
     .reveal.is-in { opacity: 1; transform: none; }
@@ -272,6 +353,114 @@
             </div>
         </div>
     </div>
+
+    <!-- 🏛️ LIST OF BARANGAY OFFICIALS (dynamic, database-driven) -->
+    <div class="text-center mt-5 mb-4 reveal" id="officials">
+        <span class="about-eyebrow">Pamunuan</span>
+        <h2 class="about-h2">List of Barangay Officials</h2>
+        <p class="mb-0" style="color: var(--muted);">Ang kasalukuyang nakaupong opisyal ng Barangay Tatalon.</p>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="d-flex flex-column gap-4">
+            @foreach (var official in Model)
+            {
+                var isLead = (official.Position ?? "").ToLower().Contains("captain") || (official.Position ?? "").ToLower().Contains("punong");
+
+                // Ang history na ito ay pag-aari LAMANG ng taong ito (via BarangayOfficialId).
+                // I-order mula pinakabago → pinakaluma. Kung walang record, gumawa ng
+                // derived na kasalukuyang termino mula sa profile para hindi walang laman.
+                var terms = official.ServiceHistories
+                    .OrderByDescending(h => h.StartDate)
+                    .ToList();
+
+                <div class="official-block reveal">
+                    <!-- LEFT: CURRENT PROFILE -->
+                    <div class="official-block__profile @(isLead ? "official-block__profile--lead" : "")">
+                        <div class="official-photo">
+                            @if (!string.IsNullOrWhiteSpace(official.ProfileImagePath))
+                            {
+                                <img src="~/uploads/officials/@official.ProfileImagePath" alt="Larawan ni @official.FullName" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="official-photo__initials">@Initials(official.FullName)</span>
+                            }
+                        </div>
+                        <h3 class="official-name">@official.FullName</h3>
+                        <span class="official-pos">@official.Position</span>
+                        @if (!string.IsNullOrWhiteSpace(official.Committee))
+                        {
+                            <div class="official-committee"><i class="bi bi-diagram-3-fill me-1"></i>@official.Committee</div>
+                        }
+                        <div class="official-status @(official.IsActive ? "is-active" : "is-inactive")">
+                            <span class="official-status__dot"></span>@(official.IsActive ? "Active in Service" : "Inactive")
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(official.SignaturePath))
+                        {
+                            <div class="official-sig">
+                                <span class="official-sig__label">E-Signature</span>
+                                <img src="~/uploads/signatures/@official.SignaturePath" alt="Lagda ni @official.FullName" loading="lazy" />
+                            </div>
+                        }
+                    </div>
+
+                    <!-- RIGHT: THIS PERSON'S OWN OFFICIAL HISTORY -->
+                    <div class="official-block__history">
+                        <h4 class="official-history__title"><i class="bi bi-clock-history me-2"></i>Official History of @official.FullName</h4>
+
+                        @if (terms.Any())
+                        {
+                            <ul class="official-timeline">
+                                @foreach (var term in terms)
+                                {
+                                    var range = term.StartDate.Year.ToString() + " – " + (term.EndDate.HasValue ? term.EndDate.Value.Year.ToString() : "Present");
+                                    var isCurrent = term.EndDate == null || string.Equals(term.Status, "Current", StringComparison.OrdinalIgnoreCase);
+                                    <li class="official-timeline__item @(isCurrent ? "is-current" : "")">
+                                        <div class="official-timeline__range">
+                                            @range
+                                            @if (isCurrent)
+                                            {
+                                                <span class="official-timeline__badge">Current</span>
+                                            }
+                                        </div>
+                                        <div class="official-timeline__pos">@term.Position</div>
+                                        @if (!string.IsNullOrWhiteSpace(term.Committee))
+                                        {
+                                            <div class="official-timeline__committee">@term.Committee</div>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <!-- Walang naka-record na history — ipakita ang kasalukuyang termino mula sa profile. -->
+                            <ul class="official-timeline">
+                                <li class="official-timeline__item is-current">
+                                    <div class="official-timeline__range">Present <span class="official-timeline__badge">Current</span></div>
+                                    <div class="official-timeline__pos">@official.Position</div>
+                                    @if (!string.IsNullOrWhiteSpace(official.Committee))
+                                    {
+                                        <div class="official-timeline__committee">@official.Committee</div>
+                                    }
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="about-empty reveal">
+            <i class="bi bi-people"></i>
+            Wala pang nakalistang aktibong opisyal sa kasalukuyan.
+        </div>
+    }
 
     <!-- 📜 HISTORICAL BACKGROUND -->
     <div class="about-card mt-5 reveal" id="history">

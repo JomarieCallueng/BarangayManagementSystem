@@ -70,8 +70,11 @@ namespace BarangayCMS.Web.Controllers
             // ========================================================
             // DYNAMIC: 3. TOTOONG LOGIN MULA SA DATABASE (WITH FIX FOR 403)
             // ========================================================
-            // 1. Hanapin ang user gamit ang kanyang Email Address
-            var realUser = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+            // 1. Hanapin ang user gamit ang Email Address; kung wala, subukan
+            //    naman bilang Username (para gumana ang login kahit username
+            //    lang ang inilagay, hal. "jom").
+            var realUser = await _signInManager.UserManager.FindByEmailAsync(model.Email)
+                           ?? await _signInManager.UserManager.FindByNameAsync(model.Email);
             if (realUser != null)
             {
                 // 2. I-verify kung aktibo ang account

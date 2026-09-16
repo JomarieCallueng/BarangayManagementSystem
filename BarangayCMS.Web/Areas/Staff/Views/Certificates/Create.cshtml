@@ -39,15 +39,18 @@
                     <span asp-validation-for="ResidentId" class="text-danger small"></span>
                 </div>
 
-                <!-- Certificate Type -->
+                <!-- Certificate Type (DB-driven) -->
                 <div class="col-md-6">
                     <label asp-for="CertificateType" class="form-label fw-semibold">Certificate Type</label>
-                    <select asp-for="CertificateType" class="form-select" required>
+                    <select asp-for="CertificateType" id="certificateSelect" class="form-select" required>
                         <option value="">-- Uri ng Sertipiko --</option>
-                        <option value="Barangay Clearance">Barangay Clearance</option>
-                        <option value="Certificate of Indigency">Certificate of Indigency</option>
-                        <option value="Certificate of Residency">Certificate of Residency</option>
-                        <option value="Business Permit Clearance">Business Permit Clearance</option>
+                        @if (ViewBag.CertificateTypes != null)
+                        {
+                            foreach (var type in (IEnumerable<BarangayCMS.Entities.CertificateType>)ViewBag.CertificateTypes)
+                            {
+                                <option value="@type.CertificateName" data-price="@type.Price">@type.CertificateName</option>
+                            }
+                        }
                     </select>
                     <span asp-validation-for="CertificateType" class="text-danger small"></span>
                 </div>
@@ -77,6 +80,15 @@
                     <textarea asp-for="Purpose" class="form-control" rows="3" placeholder="Halimbawa: Local Employment, Financial Assistance, atbp." required></textarea>
                     <span asp-validation-for="Purpose" class="text-danger small"></span>
                 </div>
+
+                <!-- Dynamic Requirements (DB-driven) -->
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Certificate Requirements</label>
+                    <partial name="_CertificateRequirements"
+                             view-data='@(new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) {
+                                 { "SelectSelector", "#certificateSelect" },
+                                 { "By", "name" } })' />
+                </div>
             </div>
 
             <!-- Action Buttons -->
@@ -92,4 +104,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/certificate-requirements.js" asp-append-version="true"></script>
 }

@@ -17,20 +17,37 @@ namespace BarangayCMS.Areas.Staff.Controllers
     public class CertificatesController : Controller
     {
         private readonly ICertificateService _certificateService;
+        private readonly ICertificateRequirementService _requirementService;
         private readonly IResidentService _residentService;
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
 
         public CertificatesController(
             ICertificateService certificateService,
+            ICertificateRequirementService requirementService,
             IResidentService residentService,
             ApplicationDbContext context,
             IWebHostEnvironment environment)
         {
             _certificateService = certificateService;
+            _requirementService = requirementService;
             _residentService = residentService;
             _context = context;
             _environment = environment;
+        }
+
+        // Ipuno ang dropdowns para sa Create/Edit form.
+        private async Task PopulateFormListsAsync(int? selectedResidentId = null)
+        {
+            var residents = await _residentService.GetAllResidentsAsync();
+            ViewBag.ResidentsList = new SelectList(residents.Select(r => new {
+                Id = r.Id,
+                FullName = $"{r.LastName}, {r.FirstName} {r.MiddleName}".Trim()
+            }), "Id", "FullName", selectedResidentId);
+
+            ViewBag.CertificateTypes = await _context.CertificateTypes
+                .OrderBy(c => c.CertificateName)
+                .ToListAsync();
         }
 
         // GET: /Staff/Certificates/Index
@@ -158,25 +175,34 @@ namespace BarangayCMS.Areas.Staff.Controllers
         // GET: /Staff/Certificates/Create
         public async Task<IActionResult> Create()
         {
-            var residents = await _residentService.GetAllResidentsAsync();
-            ViewBag.ResidentsList = new SelectList(residents.Select(r => new {
-                Id = r.Id,
-                FullName = $"{r.LastName}, {r.FirstName} {r.MiddleName}".Trim()
-            }), "Id", "FullName");
-
+            await PopulateFormListsAsync();
             return View(new CertificateViewModel());
         }
 
         // POST: /Staff/Certificates/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CertificateViewModel model)
+        public async Task<IActionResult> Create(CertificateViewModel model, int[]? confirmedRequirements)
         {
             // Opsyonal ang mga field na ito para hindi ma-block ng ModelState
             ModelState.Remove("ControlNumber");
             ModelState.Remove("ResidentName");
             ModelState.Remove("IssuedBy");
             ModelState.Remove("OfficialReceiptNumber");
+
+            // 🔒 Server-side validation ng required documents para sa napiling sertipiko.
+            var activeReqs = (await _requirementService
+                .GetActiveByCertificateNameAsync(model.CertificateType ?? string.Empty)).ToList();
+            var confirmed = confirmedRequirements ?? System.Array.Empty<int>();
+            var missing = activeReqs
+                .Where(r => r.IsRequired && !confirmed.Contains(r.Id))
+                .Select(r => r.RequirementName)
+                .ToList();
+
+            foreach (var name in missing)
+            {
+                ModelState.AddModelError("", $"Please complete the following required document: {name}");
+            }
 
             if (ModelState.IsValid)
             {
@@ -218,12 +244,7 @@ namespace BarangayCMS.Areas.Staff.Controllers
 
             TempData["Error"] = "Hindi na-save ang sertipiko. Pakisuri ang mga patlang sa pormularyo.";
 
-            var residents = await _residentService.GetAllResidentsAsync();
-            ViewBag.ResidentsList = new SelectList(residents.Select(r => new {
-                Id = r.Id,
-                FullName = $"{r.LastName}, {r.FirstName} {r.MiddleName}".Trim()
-            }), "Id", "FullName", model.ResidentId);
-
+            await PopulateFormListsAsync(model.ResidentId);
             return View(model);
         }
 

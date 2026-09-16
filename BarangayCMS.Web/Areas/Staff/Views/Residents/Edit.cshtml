@@ -1,101 +1,156 @@
-﻿@model BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel
+@model BarangayCMS.Areas.Staff.ViewModels.ResidentViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Modify Resident Profile";
+    ViewData["Title"] = "Edit Resident";
 }
 
-<div class="container-fluid p-0">
-    <div class="card border-0 shadow-sm rounded-3 p-5 bg-white mx-auto" style="max-width: 800px; margin-top: 2rem;">
-
-        <div class="border-bottom pb-3 mb-4">
-            <h2 class="fw-bold text-dark m-0" style="font-size: 1.6rem;">
-                <i class="bi bi-pencil-square text-primary me-2"></i>Modify Resident Profile
-            </h2>
-            <p class="text-muted small m-0 mt-1">I-update ang mga impormasyon para sa residenteng ito.</p>
+<div class="container mt-4" style="max-width: 700px;">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Resident Information</h4>
         </div>
+        <div class="card-body">
+            <form asp-area="Staff" asp-controller="Residents" asp-action="Edit" asp-route-id="@Model.ResidentId" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <form asp-area="Staff" asp-controller="Residents" asp-action="Edit" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="ResidentId" />
+                <input type="hidden" asp-for="ResidentId" />
 
-            <div class="row g-3">
-                <!-- Last Name -->
-                <div class="col-md-4">
-                    <label asp-for="LastName" class="form-label small fw-semibold text-secondary">Last Name</label>
-                    <input asp-for="LastName" class="form-content form-control" required />
-                    <span asp-validation-for="LastName" class="text-danger small"></span>
-                </div>
-
-                <!-- First Name -->
-                <div class="col-md-4">
-                    <label asp-for="FirstName" class="form-label small fw-semibold text-secondary">First Name</label>
-                    <input asp-for="FirstName" class="form-control" required />
-                    <span asp-validation-for="FirstName" class="text-danger small"></span>
-                </div>
-
-                <!-- Middle Name -->
-                <div class="col-md-4">
-                    <label asp-for="MiddleName" class="form-label small fw-semibold text-secondary">Middle Name</label>
-                    <input asp-for="MiddleName" class="form-control" />
-                </div>
-
-                <!-- Gender -->
-                <div class="col-md-4">
-                    <label asp-for="Gender" class="form-label small fw-semibold text-secondary">Gender</label>
-                    <select asp-for="Gender" class="form-select" required>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-
-                <!-- Civil Status -->
-                <div class="col-md-4">
-                    <label asp-for="CivilStatus" class="form-label small fw-semibold text-secondary">Civil Status</label>
-                    <select asp-for="CivilStatus" class="form-select" required>
-                        <option value="Single">Single</option>
-                        <option value="Married">Married</option>
-                        <option value="Widowed">Widowed</option>
-                        <option value="Legally Separated">Legally Separated</option>
-                    </select>
-                </div>
-
-                <!-- Date of Birth -->
-                <div class="col-md-4">
-                    <label asp-for="BirthDate" class="form-label small fw-semibold text-secondary">Date of Birth</label>
-                    <input asp-for="BirthDate" type="date" class="form-control" required />
-                </div>
-
-                <!-- Contact Number -->
-                <div class="col-md-6">
-                    <label asp-for="ContactNumber" class="form-label small fw-semibold text-secondary">Primary Mobile</label>
-                    <input asp-for="ContactNumber" class="form-control" />
-                </div>
-
-                <!-- Voter Status -->
-                <div class="col-md-6 d-flex align-items-center mt-4">
-                    <div class="form-check form-switch">
-                        <input asp-for="IsVoter" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                        <label class="form-check-label fw-medium text-dark ms-2" for="flexSwitchCheckDefault">Registered Voter Status</label>
+                <!-- NAMES -->
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="FirstName" class="form-label fw-semibold">First Name</label>
+                        <input asp-for="FirstName" class="form-control text-capitalize" oninput="autoCapitalizeWords(this)" />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="LastName" class="form-label fw-semibold">Last Name</label>
+                        <input asp-for="LastName" class="form-control text-capitalize" oninput="autoCapitalizeWords(this)" />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label asp-for="MiddleName" class="form-label fw-semibold">M.I.</label>
+                        <input asp-for="MiddleName" class="form-control text-capitalize" maxlength="5" oninput="autoCapitalizeWords(this)" />
                     </div>
                 </div>
 
-                <!-- Address -->
-                <div class="col-12">
-                    <label asp-for="Address" class="form-label small fw-semibold text-secondary">Registered Home Address</label>
-                    <textarea asp-for="Address" class="form-control" rows="2" required></textarea>
+                <!-- GENDER & BIRTHDATE -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Gender" class="form-label fw-semibold">Gender</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="BirthDate" class="form-label fw-semibold">Birth Date</label>
+                        <input asp-for="BirthDate" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" />
+                        <span asp-validation-for="BirthDate" class="text-danger small"></span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Form Action Buttons -->
-            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                <a asp-action="Details" asp-route-id="@Model.ResidentId" class="btn btn-outline-secondary px-4">
-                    Cancel
-                </a>
-                <button type="submit" class="btn btn-primary px-4 fw-semibold">
-                    Save Changes
-                </button>
-            </div>
-        </form>
+                <!-- PUROK & ADDRESS -->
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="Purok" class="form-label fw-semibold">Purok / Area / Sitio</label>
+                        <select asp-for="Purok" class="form-select" required>
+                            <option value="">Select Area / Purok</option>
+                            <option value="Area 1">Area 1</option>
+                            <option value="Area 2">Area 2</option>
+                            <option value="Area 3">Area 3</option>
+                            <option value="Area 4">Area 4</option>
+                            <option value="Area 5">Area 5</option>
+                            <option value="Area 6">Area 6</option>
+                            <option value="Area 7">Area 7</option>
+                            <option value="Visayan Area">Visayan Area</option>
+                            <option value="Tagalog Area">Tagalog Area</option>
+                            <option value="Chicago / Ohio Area">Chicago / Ohio Area</option>
+                            <option value="Block 245">Block 245</option>
+                            <option value="Kalasag Area">Kalasag Area</option>
+                            <option value="Kubo Area">Kubo Area</option>
+                            <option value="BMA Area">BMA Area</option>
+                        </select>
+                        <span asp-validation-for="Purok" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-7 mb-3">
+                        <label asp-for="Address" class="form-label fw-semibold">House No. & Street Address</label>
+                        <textarea asp-for="Address" class="form-control text-capitalize" rows="1" oninput="autoCapitalizeWords(this)"></textarea>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- CONTACT & CIVIL STATUS -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ContactNumber" class="form-label fw-semibold">Contact Number</label>
+                        <input asp-for="ContactNumber"
+                               class="form-control"
+                               placeholder="e.g., 09123456789"
+                               maxlength="11"
+                               oninput="validatePhone11Digits(this)" />
+                        <span asp-validation-for="ContactNumber" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CivilStatus" class="form-label fw-semibold">Civil Status</label>
+                        <select asp-for="CivilStatus" class="form-select">
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Separated">Separated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 🗳️ VOTER & PWD STATUS TOGGLE SWITCHES -->
+                <div class="p-3 bg-light rounded border mb-4">
+                    <div class="form-check form-switch d-flex align-items-center gap-2 m-0 mb-2">
+                        <input asp-for="IsVoter" class="form-check-input fs-5 mt-0" type="checkbox" id="IsVoterEditSwitch" style="cursor: pointer;">
+                        <label class="form-check-label fw-semibold text-dark" for="IsVoterEditSwitch" style="cursor: pointer;">
+                            Rehistradong Botante sa Barangay na ito (Registered Voter)
+                        </label>
+                    </div>
+                    <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
+                        <input asp-for="IsPwd" class="form-check-input fs-5 mt-0" type="checkbox" id="IsPwdEditSwitch" style="cursor: pointer;">
+                        <label class="form-check-label fw-semibold text-dark" for="IsPwdEditSwitch" style="cursor: pointer;">
+                            Person With Disability (PWD)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-area="Staff" asp-controller="Residents" asp-action="Index" class="btn btn-dark px-3">Back to List</a>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">Save Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function autoCapitalizeWords(element) {
+            let words = element.value.split(' ');
+            for (let i = 0; i < words.length; i++) {
+                if (words[i].length > 0) {
+                    words[i] = words[i][0].toUpperCase() + words[i].substring(1).toLowerCase();
+                }
+            }
+            element.value = words.join(' ');
+        }
+
+        function validatePhone11Digits(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 11) {
+                input.value = input.value.slice(0, 11);
+            }
+        }
+    </script>
+}

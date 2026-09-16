@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BarangayCMS.Entities
 {
@@ -21,7 +22,15 @@ namespace BarangayCMS.Entities
         [MaxLength(255)]
         public string SignaturePath { get; set; } = string.Empty;
 
+        // Profile photo filename (served mula sa /uploads/officials/). Optional.
+        [MaxLength(255)]
+        public string ProfileImagePath { get; set; } = string.Empty;
+
         public bool IsActive { get; set; } = true;
+
+        // --- EF Core Navigation Property ---
+        // Isang tao → maraming termino/service record.
+        public ICollection<OfficialServiceHistory> ServiceHistories { get; set; } = new List<OfficialServiceHistory>();
     }
 }
 

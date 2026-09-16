@@ -4,6 +4,7 @@ using BarangayCMS.DAL.Context;
 using BarangayCMS.Entities;
 using BarangayCMS.Web.Areas.Admin.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     Position = o.Position,
                     Committee = o.Committee,
                     SignaturePath = o.SignaturePath,
+                    ProfileImagePath = o.ProfileImagePath,
                     IsActive = o.IsActive
                 }).ToListAsync();
 
@@ -52,17 +54,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
 
             if (official == null) return NotFound();
 
-            var viewModel = new BarangayOfficialViewModel
-            {
-                Id = official.BarangayOfficialId,
-                FullName = official.FullName,
-                Position = official.Position,
-                Committee = official.Committee,
-                SignaturePath = official.SignaturePath,
-                IsActive = official.IsActive
-            };
-
-            return View(viewModel);
+            return View(ToViewModel(official));
         }
 
         // 3. GET: Admin/BarangayOfficials/Create
@@ -78,32 +70,32 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                string uniqueFileName = string.Empty;
-
-                if (model.SignatureFile != null)
-                {
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "signatures");
-                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.SignatureFile.FileName;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await model.SignatureFile.CopyToAsync(fileStream);
-                    }
-                }
-
                 var official = new BarangayOfficial
                 {
                     FullName = model.FullName,
                     Position = model.Position,
                     Committee = model.Committee ?? string.Empty,
-                    SignaturePath = uniqueFileName,
+                    SignaturePath = await SaveUploadAsync(model.SignatureFile, "signatures"),
+                    ProfileImagePath = await SaveUploadAsync(model.ProfileImageFile, "officials"),
                     IsActive = model.IsActive
                 };
 
-                _context.BarangayOfficials.Add(official); // Tahasang tinukoy ang DbSet (.BarangayOfficials)
+                _context.BarangayOfficials.Add(official);
                 await _context.SaveChangesAsync();
+
+                // Awtomatikong itala ang kasalukuyang termino sa service history ng taong ito
+                // para agad may laman ang public na "Official History" section.
+                _context.OfficialServiceHistories.Add(new OfficialServiceHistory
+                {
+                    BarangayOfficialId = official.BarangayOfficialId,
+                    Position = official.Position,
+                    Committee = official.Committee,
+                    StartDate = DateTime.Now,
+                    EndDate = null,
+                    Status = "Current"
+                });
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -117,17 +109,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             var official = await _context.BarangayOfficials.FindAsync(id.Value);
             if (official == null) return NotFound();
 
-            var viewModel = new BarangayOfficialViewModel
-            {
-                Id = official.BarangayOfficialId,
-                FullName = official.FullName,
-                Position = official.Position,
-                Committee = official.Committee,
-                SignaturePath = official.SignaturePath,
-                IsActive = official.IsActive
-            };
-
-            return View(viewModel);
+            return View(ToViewModel(official));
         }
 
         // 6. POST: Admin/BarangayOfficials/Edit/5
@@ -144,23 +126,18 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     var official = await _context.BarangayOfficials.FindAsync(id);
                     if (official == null) return NotFound();
 
-                    if (model.SignatureFile != null)
+                    // E-Signature: palitan lang kung may bagong in-upload.
+                    if (model.SignatureFile != null && model.SignatureFile.Length > 0)
                     {
-                        // I-delete ang lumang file kung may bago para hindi magsikip ang storage
-                        if (!string.IsNullOrEmpty(official.SignaturePath))
-                        {
-                            string oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "signatures", official.SignaturePath);
-                            if (System.IO.File.Exists(oldFilePath)) System.IO.File.Delete(oldFilePath);
-                        }
+                        DeleteUpload(official.SignaturePath, "signatures");
+                        official.SignaturePath = await SaveUploadAsync(model.SignatureFile, "signatures");
+                    }
 
-                        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "signatures");
-                        string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.SignatureFile.FileName;
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await model.SignatureFile.CopyToAsync(fileStream);
-                        }
-                        official.SignaturePath = uniqueFileName;
+                    // Profile photo: palitan lang kung may bagong in-upload.
+                    if (model.ProfileImageFile != null && model.ProfileImageFile.Length > 0)
+                    {
+                        DeleteUpload(official.ProfileImagePath, "officials");
+                        official.ProfileImagePath = await SaveUploadAsync(model.ProfileImageFile, "officials");
                     }
 
                     official.FullName = model.FullName;
@@ -168,7 +145,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     official.Committee = model.Committee ?? string.Empty;
                     official.IsActive = model.IsActive;
 
-                    _context.BarangayOfficials.Update(official); // Tahasang tinukoy ang DbSet (.BarangayOfficials)
+                    _context.BarangayOfficials.Update(official);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -191,15 +168,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
 
             if (official == null) return NotFound();
 
-            var viewModel = new BarangayOfficialViewModel
-            {
-                Id = official.BarangayOfficialId,
-                FullName = official.FullName,
-                Position = official.Position,
-                IsActive = official.IsActive
-            };
-
-            return View(viewModel);
+            return View(ToViewModel(official));
         }
 
         // 8. POST: Admin/BarangayOfficials/Delete/5
@@ -210,17 +179,159 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             var official = await _context.BarangayOfficials.FindAsync(id);
             if (official != null)
             {
-                // Burahin din ang signature image sa physical folder bago tanggalin ang record sa DB
-                if (!string.IsNullOrEmpty(official.SignaturePath))
-                {
-                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "signatures", official.SignaturePath);
-                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
-                }
+                // Burahin ang mga naka-upload na file (signature + profile photo).
+                DeleteUpload(official.SignaturePath, "signatures");
+                DeleteUpload(official.ProfileImagePath, "officials");
 
+                // Ang service history ay cascade-delete na kasama ng opisyal.
                 _context.BarangayOfficials.Remove(official);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        // ============================================================
+        // SERVICE HISTORY MANAGEMENT (per official)
+        // ============================================================
+
+        // 9. GET: Admin/BarangayOfficials/History/5
+        public async Task<IActionResult> History(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var official = await _context.BarangayOfficials
+                .Include(o => o.ServiceHistories)
+                .FirstOrDefaultAsync(o => o.BarangayOfficialId == id);
+            if (official == null) return NotFound();
+
+            return View(BuildHistoryViewModel(official));
+        }
+
+        // 10. POST: Admin/BarangayOfficials/AddHistory
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddHistory(OfficialHistoryViewModel model)
+        {
+            var official = await _context.BarangayOfficials
+                .Include(o => o.ServiceHistories)
+                .FirstOrDefaultAsync(o => o.BarangayOfficialId == model.OfficialId);
+            if (official == null) return NotFound();
+
+            // Manu-manong validation para sa magkatugmang taon.
+            if (model.NewEndYear.HasValue && model.NewStartYear.HasValue && model.NewEndYear < model.NewStartYear)
+            {
+                ModelState.AddModelError("NewEndYear", "Ang taon ng pagtatapos ay hindi pwedeng mas maaga sa simula.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var vm = BuildHistoryViewModel(official);
+                // Panatilihin ang na-type ng user.
+                vm.NewPosition = model.NewPosition;
+                vm.NewCommittee = model.NewCommittee;
+                vm.NewStartYear = model.NewStartYear;
+                vm.NewEndYear = model.NewEndYear;
+                return View("History", vm);
+            }
+
+            bool isCurrent = !model.NewEndYear.HasValue;
+
+            _context.OfficialServiceHistories.Add(new OfficialServiceHistory
+            {
+                BarangayOfficialId = official.BarangayOfficialId,
+                Position = model.NewPosition.Trim(),
+                Committee = (model.NewCommittee ?? string.Empty).Trim(),
+                StartDate = new DateTime(model.NewStartYear!.Value, 1, 1),
+                EndDate = model.NewEndYear.HasValue ? new DateTime(model.NewEndYear.Value, 12, 31) : (DateTime?)null,
+                Status = isCurrent ? "Current" : "Completed"
+            });
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Naidagdag ang termino sa service history.";
+            return RedirectToAction(nameof(History), new { id = official.BarangayOfficialId });
+        }
+
+        // 11. POST: Admin/BarangayOfficials/DeleteHistory
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteHistory(int historyId, int officialId)
+        {
+            var term = await _context.OfficialServiceHistories
+                .FirstOrDefaultAsync(h => h.Id == historyId && h.BarangayOfficialId == officialId);
+            if (term != null)
+            {
+                _context.OfficialServiceHistories.Remove(term);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Natanggal ang termino sa service history.";
+            }
+            return RedirectToAction(nameof(History), new { id = officialId });
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+
+        private BarangayOfficialViewModel ToViewModel(BarangayOfficial o) => new BarangayOfficialViewModel
+        {
+            Id = o.BarangayOfficialId,
+            FullName = o.FullName,
+            Position = o.Position,
+            Committee = o.Committee,
+            SignaturePath = o.SignaturePath,
+            ProfileImagePath = o.ProfileImagePath,
+            IsActive = o.IsActive
+        };
+
+        private OfficialHistoryViewModel BuildHistoryViewModel(BarangayOfficial official) => new OfficialHistoryViewModel
+        {
+            OfficialId = official.BarangayOfficialId,
+            OfficialName = official.FullName,
+            CurrentPosition = official.Position,
+            Terms = official.ServiceHistories
+                .OrderByDescending(h => h.StartDate)
+                .Select(h => new ServiceHistoryItem
+                {
+                    Id = h.Id,
+                    Position = h.Position,
+                    Committee = h.Committee,
+                    StartDate = h.StartDate,
+                    EndDate = h.EndDate,
+                    Status = h.Status
+                }).ToList()
+        };
+
+        // Ise-save ang isang naka-upload na file gamit ang natatanging pangalan; nagbabalik
+        // ng filename (o "" kung walang file). Ginagamit para sa signatures at officials.
+        private async Task<string> SaveUploadAsync(Microsoft.AspNetCore.Http.IFormFile? file, string subfolder)
+        {
+            if (file == null || file.Length == 0) return string.Empty;
+
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", subfolder);
+            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+            // Natatanging pangalan na hindi umaasa sa buong user-supplied filename (iwas traversal).
+            var ext = Path.GetExtension(file.FileName);
+            string uniqueFileName = Guid.NewGuid().ToString("N") + ext;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            return uniqueFileName;
+        }
+
+        private void DeleteUpload(string? fileName, string subfolder)
+        {
+            if (string.IsNullOrEmpty(fileName)) return;
+            try
+            {
+                // Huling segment lamang — iwas path traversal.
+                var safe = Path.GetFileName(fileName);
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", subfolder, safe);
+                if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+            }
+            catch { /* best-effort */ }
         }
     }
 }

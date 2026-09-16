@@ -18,17 +18,41 @@ namespace BarangayCMS.Web.Controllers
     public class CertificateRequestController : Controller
     {
         private readonly ICertificateService _certificateService;
+        private readonly ICertificateRequirementService _requirementService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly BarangayCMS.DAL.Context.ApplicationDbContext _context;
 
         public CertificateRequestController(
             ICertificateService certificateService,
+            ICertificateRequirementService requirementService,
             IWebHostEnvironment webHostEnvironment,
             BarangayCMS.DAL.Context.ApplicationDbContext context)
         {
             _certificateService = certificateService;
+            _requirementService = requirementService;
             _webHostEnvironment = webHostEnvironment;
             _context = context;
+        }
+
+        // GET: /CertificateRequest/RequirementsFor?certificateType=Barangay%20Clearance
+        // JSON endpoint na ginagamit ng dropdown (public at staff) para dynamic
+        // na ma-load ang requirements ng napiling sertipiko nang walang refresh.
+        [HttpGet("RequirementsFor")]
+        public async Task<IActionResult> RequirementsFor(string? certificateType, int? certificateTypeId)
+        {
+            var items = certificateTypeId.HasValue && certificateTypeId.Value > 0
+                ? await _requirementService.GetActiveByCertificateTypeIdAsync(certificateTypeId.Value)
+                : await _requirementService.GetActiveByCertificateNameAsync(certificateType ?? string.Empty);
+
+            var payload = items.Select(r => new
+            {
+                id = r.Id,
+                name = r.RequirementName,
+                description = r.Description,
+                required = r.IsRequired
+            });
+
+            return Json(payload);
         }
 
         // GET: /CertificateRequest/Requirements
@@ -51,8 +75,31 @@ namespace BarangayCMS.Web.Controllers
         // POST: /CertificateRequest/Create
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CertificateViewModel model, IFormFile? PaymentReceipt)
+        public async Task<IActionResult> Create(CertificateViewModel model, IFormFile? PaymentReceipt, int[]? confirmedRequirements)
         {
+            // 🔒 Server-side validation ng required documents.
+            // Kunin ang required requirements ng napiling sertipiko at tiyaking
+            // na-confirm lahat ng mga ito bago payagan ang pag-submit.
+            var activeReqs = (await _requirementService
+                .GetActiveByCertificateNameAsync(model.CertificateType ?? string.Empty)).ToList();
+
+            var confirmed = confirmedRequirements ?? System.Array.Empty<int>();
+            var missing = activeReqs
+                .Where(r => r.IsRequired && !confirmed.Contains(r.Id))
+                .Select(r => r.RequirementName)
+                .ToList();
+
+            if (missing.Any())
+            {
+                foreach (var name in missing)
+                {
+                    ModelState.AddModelError("", $"Please complete the following required document: {name}");
+                }
+
+                ViewBag.CertificateTypes = await _context.CertificateTypes.ToListAsync();
+                return View("~/Views/CertificateRequest/Create.cshtml", model);
+            }
+
             string? receiptPath = null;
 
             // Handle Payment Receipt Upload

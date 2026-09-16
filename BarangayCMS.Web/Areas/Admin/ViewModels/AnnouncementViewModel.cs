@@ -21,12 +21,16 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         [Display(Name = "Kategorya (Category)")]
         public string Category { get; set; } = "General";
 
+        // Server-generated, application-relative image path (e.g. /uploads/announcements/abc123.png).
+        // Ito ay OUTPUT ng image upload — awtomatikong pinupunan pagkatapos mag-upload,
+        // hindi na mano-manong tine-type ng admin. Iniiwasan ang DataType.Url dahil
+        // ang app-relative path ay hindi absolute URL (ma-re-reject sana ng type="url").
         [MaxLength(500)]
-        [DataType(DataType.Url)]
-        [Display(Name = "Image URL (Optional)")]
+        [Display(Name = "Image URL")]
         public string ImageUrl { get; set; } = string.Empty;
 
-        // Uploaded image file — stored in the database so it opens on any device.
+        // Napiling image file — awtomatikong ina-upload sa server sa pamamagitan ng
+        // AJAX (UploadImage). Ang ibinabalik na path ang naka-store sa ImageUrl.
         [Display(Name = "Upload Image")]
         public IFormFile? ImageFile { get; set; }
 

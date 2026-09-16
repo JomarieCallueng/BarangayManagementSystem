@@ -64,6 +64,14 @@
                                 <span asp-validation-for="CertificateType" class="text-danger small"></span>
                             </div>
 
+                            <!-- Dynamic Requirements (DB-driven) -->
+                            <div class="col-12">
+                                <partial name="_CertificateRequirements"
+                                         view-data='@(new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) {
+                                             { "SelectSelector", "#certificateSelect" },
+                                             { "By", "name" } })' />
+                            </div>
+
                             <!-- Applicant Name -->
                             <div class="col-12">
                                 <label class="form-label fw-semibold small text-muted">Buong Pangalan ng Residente (Full Name) <span class="text-danger">*</span></label>
@@ -128,6 +136,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/certificate-requirements.js" asp-append-version="true"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const certSelect = document.getElementById("certificateSelect");

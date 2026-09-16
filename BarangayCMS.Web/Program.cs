@@ -5,7 +5,6 @@ using BarangayCMS.DAL.Repository;
 using BarangayCMS.DAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,10 +24,12 @@ builder.Services.AddScoped<IHealthRepository, HealthRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
 
 // Business Logic Layer (BLL) Services
 builder.Services.AddScoped<IResidentService, ResidentService>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<ICertificateRequirementService, CertificateRequirementService>();
 builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<IDisasterService, DisasterService>();
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IHealthService, HealthService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IContactMessageService, ContactMessageService>();
 
 // 📱 Semaphore SMS Integration Service Registration
 builder.Services.AddHttpClient<ISemaphoreService, SemaphoreService>();
@@ -61,9 +63,35 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Umasa LAMANG sa tahasang [Required] attributes. Kung hindi, ang mga
+    // non-nullable string properties (hal. SignaturePath, ProfileImagePath,
+    // Committee) ay tumatanggap ng implicit [Required] na tumatanggi sa
+    // empty string — kaya tahimik na nabibigo ang pag-save kapag walang laman
+    // ang field na iyon. (Root cause ng hindi ma-save na Edit forms.)
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
 
 var app = builder.Build();
+
+// Punan ang lahat ng module ng demo data (idempotent — ligtas paulit-ulit).
+// Ginagamit LAMANG ang tatlong pangalan: Jomarie Callueng,
+// Mark Dave Casao Cardenas, at Klarence Alfred Z. Villar.
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        db.Database.Migrate();
+        await BarangayCMS.Web.Data.DbSeeder.SeedDemoDataAsync(db);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[SEED WARNING] Hindi natapos ang seeding: {ex.Message}");
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -86,32 +114,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Auto-open Chrome (falls back to the default browser) once the app is listening.
-// Only in Development so it never runs on a real server.
-if (app.Environment.IsDevelopment())
-{
-    app.Lifetime.ApplicationStarted.Register(() =>
-    {
-        var url = app.Urls.FirstOrDefault() ?? "http://localhost:5199";
-        try
-        {
-            // Try Google Chrome first.
-            Process.Start(new ProcessStartInfo { FileName = "chrome", Arguments = url, UseShellExecute = true });
-        }
-        catch
-        {
-            try
-            {
-                // Chrome not found on PATH — open the system default browser instead.
-                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Could not auto-open a browser: {ex.Message}. Open {url} manually.");
-            }
-        }
-    });
-}
+// NOTE: Ang browser ay awtomatikong binubuksan na ng "launchBrowser": true sa
+// Properties/launchSettings.json. Huwag nang magdagdag ng sariling Process.Start
+// dito dahil magbubukas iyon ng pangalawang tab/window.
 
 try
 {

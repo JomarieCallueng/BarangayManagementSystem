@@ -42,6 +42,21 @@
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="/Admin/Messages?status=Unread" class="text-decoration-none text-reset">
+            <div class="stat-card position-relative">
+                <div class="stat-card__icon"><i class="bi bi-inbox-fill"></i></div>
+                <div>
+                    <p class="stat-card__label">Unread Messages</p>
+                    <p class="stat-card__value">@Model.UnreadMessages.ToString("N0")</p>
+                </div>
+                @if (Model.UnreadMessages > 0)
+                {
+                    <span class="badge rounded-pill bg-danger position-absolute top-0 end-0 m-2">Bago</span>
+                }
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-card__icon"><i class="bi bi-cpu-fill"></i></div>
             <div>

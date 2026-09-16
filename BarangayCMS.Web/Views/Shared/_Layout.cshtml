@@ -89,7 +89,7 @@
                         </li>
                     </ul>
                     <div class="d-flex gap-2">
-                        <a asp-area="" asp-controller="Announcement" asp-action="Index" fragment="emergency-section" class="btn btn-success btn-sm px-3 rounded fw-bold text-white bg-emerald">
+                        <a asp-area="" asp-controller="Home" asp-action="Contact" class="btn btn-success btn-sm px-3 rounded fw-bold text-white bg-emerald">
                             Emergency Alerts
                         </a>
                     </div>
@@ -138,6 +138,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/form-persist.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

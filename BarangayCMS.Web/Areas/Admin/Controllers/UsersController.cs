@@ -163,6 +163,14 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             user.FullName = $"{model.FirstName} {model.LastName}".Trim();
             user.Email = model.Email;
 
+            // I-update din ang Username. Sina-set natin ito dito para tanggapin
+            // ng UpdateAsync ang bagong pangalan (kasama ang normalization at
+            // uniqueness validation ng Identity).
+            if (!string.IsNullOrWhiteSpace(model.Username))
+            {
+                user.UserName = model.Username;
+            }
+
             // Save ang user profile details
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)

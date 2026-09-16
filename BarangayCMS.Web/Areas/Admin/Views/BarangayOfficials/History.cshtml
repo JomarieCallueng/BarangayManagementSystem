@@ -1,0 +1,124 @@
+@model BarangayCMS.Web.Areas.Admin.Models.OfficialHistoryViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Service History";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><i class="bi bi-clock-history"></i> Service History</h1>
+        <p class="page-header__sub mb-0">Mga termino ni <strong>@Model.OfficialName</strong> — kasalukuyan: @Model.CurrentPosition</p>
+    </div>
+    <a href="/Admin/BarangayOfficials" class="btn btn-light border fw-semibold rounded-3"><i class="bi bi-arrow-left me-1"></i> Bumalik sa Officials</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Existing terms -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded">
+            <div class="card-header bg-white fw-bold"><i class="bi bi-list-ul me-1"></i> Mga Naitalang Termino</div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Taon</th>
+                            <th>Posisyon</th>
+                            <th>Komite</th>
+                            <th>Status</th>
+                            <th class="text-end">Aksyon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Terms.Any())
+                        {
+                            @foreach (var t in Model.Terms)
+                            {
+                                var range = t.StartDate.Year + " – " + (t.EndDate.HasValue ? t.EndDate.Value.Year.ToString() : "Present");
+                                <tr>
+                                    <td class="fw-semibold text-nowrap">@range</td>
+                                    <td>@t.Position</td>
+                                    <td class="text-muted small">@(string.IsNullOrEmpty(t.Committee) ? "—" : t.Committee)</td>
+                                    <td>
+                                        @if (t.EndDate == null || t.Status == "Current")
+                                        {
+                                            <span class="badge bg-success">Current</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Completed</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <form method="post" action="/Admin/BarangayOfficials/DeleteHistory" class="d-inline"
+                                              onsubmit="return confirm('Tanggalin ang terminong ito?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="historyId" value="@t.Id" />
+                                            <input type="hidden" name="officialId" value="@Model.OfficialId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted py-4">Wala pang naitalang termino.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add new term -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded">
+            <div class="card-header bg-white fw-bold"><i class="bi bi-plus-circle me-1"></i> Magdagdag ng Termino</div>
+            <div class="card-body">
+                <form method="post" action="/Admin/BarangayOfficials/AddHistory">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="OfficialId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="NewPosition" class="form-label fw-semibold small"></label>
+                        <input asp-for="NewPosition" class="form-control" placeholder="e.g., Barangay Councilor" />
+                        <span asp-validation-for="NewPosition" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewCommittee" class="form-label fw-semibold small"></label>
+                        <input asp-for="NewCommittee" class="form-control" placeholder="e.g., Peace & Order Committee" />
+                        <span asp-validation-for="NewCommittee" class="text-danger small"></span>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6 mb-3">
+                            <label asp-for="NewStartYear" class="form-label fw-semibold small"></label>
+                            <input asp-for="NewStartYear" type="number" min="1900" max="2200" class="form-control" placeholder="2019" />
+                            <span asp-validation-for="NewStartYear" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label asp-for="NewEndYear" class="form-label fw-semibold small"></label>
+                            <input asp-for="NewEndYear" type="number" min="1900" max="2200" class="form-control" placeholder="Blank = Present" />
+                            <span asp-validation-for="NewEndYear" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="form-text mb-3">Iwanang blanko ang End Year kung ito ang kasalukuyang termino (Present).</div>
+                    <button type="submit" class="btn btn-brand w-100"><i class="bi bi-save me-1"></i> Idagdag sa History</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

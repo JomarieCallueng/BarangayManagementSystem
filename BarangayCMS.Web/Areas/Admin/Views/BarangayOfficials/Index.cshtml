@@ -46,7 +46,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.SignaturePath))
                                 {
-                                    <img src="@item.SignaturePath" alt="Signature" style="max-height: 35px; max-width: 100px; object-fit: contain;" class="border rounded bg-light p-1" />
+                                    <img src="~/uploads/signatures/@item.SignaturePath" alt="Signature" style="max-height: 35px; max-width: 100px; object-fit: contain;" class="border rounded bg-light p-1" />
                                 }
                                 else
                                 {
@@ -64,6 +64,7 @@
                                 }
                             </td>
                             <td class="text-end">
+                                <a href="/Admin/BarangayOfficials/History/@item.Id" class="btn btn-sm btn-outline-secondary me-1" title="Manage Service History"><i class="bi bi-clock-history"></i></a>
                                 <a href="/Admin/BarangayOfficials/Edit/@item.Id" class="btn btn-sm btn-outline-primary me-1" title="Edit"><i class="bi bi-pencil"></i></a>
                                 <a href="/Admin/BarangayOfficials/Delete/@item.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
                             </td>
