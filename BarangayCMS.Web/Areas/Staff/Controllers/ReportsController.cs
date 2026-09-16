@@ -130,7 +130,7 @@ namespace BarangayCMS.Areas.Staff.Controllers
             return query.Select(c => new Dictionary<string, string>
             {
                 { "Certificate ID", string.IsNullOrEmpty(c.ControlNumber) ? "CERT-" + c.CertificateId : c.ControlNumber },
-                { "Resident Name", (c.Resident.FirstName + " " + c.Resident.LastName) ?? "Unknown Resident" },
+                { "Resident Name", c.Resident != null ? $"{c.Resident.FirstName} {c.Resident.LastName}".Trim() : "Unknown Resident" },
                 { "Type of Clearance", c.CertificateType },
                 { "Amount Paid", "₱" + c.FeePaid.ToString("N2") },
                 { "Status", c.Status }
@@ -232,7 +232,7 @@ namespace BarangayCMS.Areas.Staff.Controllers
         public IActionResult ExportReportToExcel(string reportType, DateTime? startDate, DateTime? endDate)
         {
             var model = GetBaseSummary();
-            List<Dictionary<string, string>> targetData = null;
+            List<Dictionary<string, string>>? targetData = null;
             string filename = "Barangay_Sub_Report";
 
             switch (reportType?.ToLower())

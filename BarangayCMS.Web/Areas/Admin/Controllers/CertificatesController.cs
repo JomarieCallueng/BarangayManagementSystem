@@ -51,7 +51,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                     displayName = $"{c.Resident.FirstName} {c.Resident.LastName}";
                 }
 
-                string receiptUrl = !string.IsNullOrEmpty(c.PaymentReceiptPath)
+                string? receiptUrl = !string.IsNullOrEmpty(c.PaymentReceiptPath)
                     ? $"/Admin/Certificates/GetPaymentReceipt/{c.CertificateId}"
                     : null;
 

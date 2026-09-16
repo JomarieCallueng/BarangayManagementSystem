@@ -134,10 +134,10 @@ namespace BarangayCMS.Web.Controllers
 
             var dto = new CertificateDTO
             {
-                CertificateType = model.CertificateType,
-                ResidentName = model.ResidentFullName,
+                CertificateType = model.CertificateType ?? string.Empty,
+                ResidentName = model.ResidentFullName ?? string.Empty,
                 ResidentId = model.ResidentId ?? 0,
-                Purpose = model.Purpose,
+                Purpose = model.Purpose ?? string.Empty,
                 PaymentReceiptPath = receiptPath,
                 FeePaid = feePaid
             };
