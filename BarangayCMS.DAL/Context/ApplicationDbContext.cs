@@ -27,6 +27,10 @@ namespace BarangayCMS.DAL.Context
         public DbSet<Announcement> Announcements { get; set; } = null!;
         public DbSet<Budget> Budgets { get; set; } = null!;
         public DbSet<Disaster> Disasters { get; set; } = null!;
+
+        // 🏫 Evacuation module — mga pisikal na center at ang buong-barangay na status.
+        public DbSet<EvacuationCenter> EvacuationCenters { get; set; } = null!;
+        public DbSet<EvacuationStatus> EvacuationStatuses { get; set; } = null!;
         public DbSet<EnvironmentRecord> EnvironmentRecords { get; set; } = null!;
         
         public DbSet<HealthRecord> HealthRecords { get; set; } = null!;

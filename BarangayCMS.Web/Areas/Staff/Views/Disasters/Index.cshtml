@@ -1,9 +1,13 @@
-﻿@model IEnumerable<BarangayCMS.Areas.Staff.ViewModels.DisasterViewModel>
+﻿@using BarangayCMS.DTO
+@model IEnumerable<BarangayCMS.Areas.Staff.ViewModels.DisasterViewModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Disaster Risk & Emergency Response";
+    var evac = ViewBag.Evacuation as PublicEvacuationDTO;
+    var evacStatus = evac?.Status?.NormalizedStatus ?? "NORMAL";
+    string evacBadge = evacStatus == "ACTIVE" ? "bg-danger" : evacStatus == "PREPARED" ? "bg-warning text-dark" : "bg-success";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -18,6 +22,55 @@
         </a>
     </div>
 </div>
+
+@* 🏫 EVACUATION SNAPSHOT (read-only) — mula sa Evacuation module na pinamamahalaan ng Admin *@
+@if (evac != null)
+{
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-house-door-fill text-danger me-2"></i>Evacuation Status</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge @evacBadge">@evacStatus</span>
+                    <a href="/Admin/Disaster/EvacuationCenters" class="btn btn-sm btn-outline-danger fw-semibold"><i class="bi bi-gear-fill me-1"></i>Manage</a>
+                </div>
+            </div>
+
+            @if (evac.ActiveCenters != null && evac.ActiveCenters.Any())
+            {
+                <div class="row g-2 mb-2">
+                    <div class="col-6 col-md-3"><div class="border rounded p-2 text-center"><div class="fw-bold text-dark">@evac.ActiveCenters.Count</div><div class="small text-muted">Active Centers</div></div></div>
+                    <div class="col-6 col-md-3"><div class="border rounded p-2 text-center"><div class="fw-bold text-dark">@evac.TotalCapacity</div><div class="small text-muted">Capacity</div></div></div>
+                    <div class="col-6 col-md-3"><div class="border rounded p-2 text-center"><div class="fw-bold text-warning">@evac.TotalOccupants</div><div class="small text-muted">Occupants</div></div></div>
+                    <div class="col-6 col-md-3"><div class="border rounded p-2 text-center"><div class="fw-bold text-success">@evac.TotalAvailableSlots</div><div class="small text-muted">Available</div></div></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0 small">
+                        <thead class="text-secondary"><tr><th>Center</th><th>Location</th><th class="text-center">Occupants</th><th class="text-center">Available</th><th class="text-center">Status</th></tr></thead>
+                        <tbody>
+                            @foreach (var c in evac.ActiveCenters)
+                            {
+                                var oc = c.OccupancyStatus;
+                                var b = oc == "FULL" ? "bg-danger" : oc == "NEAR CAPACITY" ? "bg-warning text-dark" : oc == "CLOSED" ? "bg-secondary" : "bg-success";
+                                <tr>
+                                    <td class="fw-semibold text-dark">@c.Name</td>
+                                    <td class="text-secondary">@c.Address @(string.IsNullOrWhiteSpace(c.SitioPurok) ? "" : $"({c.SitioPurok})")</td>
+                                    <td class="text-center">@c.CurrentOccupants / @c.Capacity</td>
+                                    <td class="text-center fw-semibold">@c.AvailableSlots</td>
+                                    <td class="text-center"><span class="badge @b">@oc</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i>Walang aktibong evacuation center sa kasalukuyan.</p>
+            }
+        </div>
+    </div>
+}
 
 <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-0">

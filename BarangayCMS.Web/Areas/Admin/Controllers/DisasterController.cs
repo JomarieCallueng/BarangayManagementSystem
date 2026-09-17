@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.DAL.Context;
+using BarangayCMS.DTO;
 using BarangayCMS.Entities;
 using BarangayCMS.Web.Areas.Admin.Models;
 using System;
@@ -17,14 +18,16 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ISemaphoreService _semaphoreService;
+        private readonly IEvacuationService _evacuationService;
 
         // Ang Emergency SMS feature ay para LAMANG sa Admin (RBAC).
         private const string AdminRoles = "Admin,SuperAdmin";
 
-        public DisasterController(ApplicationDbContext context, ISemaphoreService semaphoreService)
+        public DisasterController(ApplicationDbContext context, ISemaphoreService semaphoreService, IEvacuationService evacuationService)
         {
             _context = context;
             _semaphoreService = semaphoreService;
+            _evacuationService = evacuationService;
         }
 
         // Helper: nakikita ba ng kasalukuyang user ang Emergency SMS feature?
@@ -252,10 +255,90 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        // ==========================================================
+        // 🏫 EVACUATION CENTERS MANAGEMENT (database-driven)
+        // Ito ang IISANG pinagmumulan ng datos para sa Public Evacuation view.
+        // ==========================================================
+
         // 7. GET: Admin/Disaster/EvacuationCenters
-        public IActionResult EvacuationCenters()
+        public async Task<IActionResult> EvacuationCenters()
         {
-            return View();
+            var centers = await _evacuationService.GetAllCentersAsync();
+            ViewBag.EvacuationStatus = await _evacuationService.GetStatusAsync();
+            return View(centers);
+        }
+
+        // 7a. POST: Admin/Disaster/CreateEvacuationCenter
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEvacuationCenter(EvacuationCenterDTO model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Address))
+            {
+                TempData["EvacError"] = "Kailangan ang Name at Address ng evacuation center.";
+                return RedirectToAction(nameof(EvacuationCenters));
+            }
+
+            var ok = await _evacuationService.AddCenterAsync(model);
+            TempData[ok ? "EvacSuccess" : "EvacError"] = ok
+                ? $"Naidagdag ang '{model.Name}' sa mga evacuation center."
+                : "Nabigo ang pag-save ng evacuation center.";
+            return RedirectToAction(nameof(EvacuationCenters));
+        }
+
+        // 7b. POST: Admin/Disaster/EditEvacuationCenter
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEvacuationCenter(EvacuationCenterDTO model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.Address))
+            {
+                TempData["EvacError"] = "Kailangan ang Name at Address ng evacuation center.";
+                return RedirectToAction(nameof(EvacuationCenters));
+            }
+
+            var ok = await _evacuationService.UpdateCenterAsync(model);
+            TempData[ok ? "EvacSuccess" : "EvacError"] = ok
+                ? $"Na-update ang '{model.Name}'."
+                : "Nabigo ang pag-update — maaaring wala na ang record.";
+            return RedirectToAction(nameof(EvacuationCenters));
+        }
+
+        // 7c. POST: Admin/Disaster/ToggleEvacuationCenter
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleEvacuationCenter(int id)
+        {
+            var ok = await _evacuationService.ToggleCenterActiveAsync(id);
+            TempData[ok ? "EvacSuccess" : "EvacError"] = ok
+                ? "Na-update ang availability ng center."
+                : "Nabigo ang pag-toggle ng center.";
+            return RedirectToAction(nameof(EvacuationCenters));
+        }
+
+        // 7d. POST: Admin/Disaster/DeleteEvacuationCenter
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEvacuationCenter(int id)
+        {
+            var ok = await _evacuationService.DeleteCenterAsync(id);
+            TempData[ok ? "EvacSuccess" : "EvacError"] = ok
+                ? "Natanggal ang evacuation center."
+                : "Nabigo ang pagtanggal ng center.";
+            return RedirectToAction(nameof(EvacuationCenters));
+        }
+
+        // 7e. POST: Admin/Disaster/UpdateEvacuationStatus
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateEvacuationStatus(EvacuationStatusDTO model)
+        {
+            model.UpdatedBy = User.Identity?.Name ?? "Admin";
+            var ok = await _evacuationService.UpdateStatusAsync(model);
+            TempData[ok ? "EvacSuccess" : "EvacError"] = ok
+                ? "Na-update ang buong-barangay na evacuation status."
+                : "Nabigo ang pag-update ng status.";
+            return RedirectToAction(nameof(EvacuationCenters));
         }
 
         // 8. GET: Admin/Disaster/HazardMaps

@@ -33,7 +33,9 @@ namespace BarangayCMS.Web.Areas.Staff.Controllers
             // Populate dashboard data mula sa Database
             var model = new DashboardViewModel
             {
-                TotalResidents = await _context.Residents.CountAsync(),
+                // Aligned sa Reports at Public Home (bibilangin lamang ang tunay
+                // na residente) para pare-pareho ang bilang sa lahat ng portal.
+                TotalResidents = await _context.Residents.CountAsync(r => r.IsResident),
                 ActiveBlotters = await _context.Complaints.CountAsync(c => c.Status == "Pending"),
                 PendingCertificates = await _context.Certificates.CountAsync(),
                 RecentAnnouncementsCount = await _context.Announcements.CountAsync()

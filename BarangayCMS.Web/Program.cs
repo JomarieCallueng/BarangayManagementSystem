@@ -25,6 +25,7 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
+builder.Services.AddScoped<IEvacuationRepository, EvacuationRepository>();
 
 // Business Logic Layer (BLL) Services
 builder.Services.AddScoped<IResidentService, ResidentService>();
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IContactMessageService, ContactMessageService>();
+builder.Services.AddScoped<IEvacuationService, EvacuationService>();
 
 // 📱 Semaphore SMS Integration Service Registration
 builder.Services.AddHttpClient<ISemaphoreService, SemaphoreService>();

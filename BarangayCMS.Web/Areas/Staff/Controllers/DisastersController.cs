@@ -1,143 +1,206 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using BarangayCMS.Areas.Staff.ViewModels;
+using BarangayCMS.BLL.Interfaces;
+using BarangayCMS.DAL.Context;
+using BarangayCMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BarangayCMS.Areas.Staff.Controllers
 {
     [Area("Staff")]
     public class DisastersController : Controller
     {
-        // In-update na Mock DB engine gamit ang bagong properties para sa magandang UI table mo
-        private static List<DisasterViewModel> _disasters = new List<DisasterViewModel>
+        // ✅ DATABASE-DRIVEN: Ginagamit na ang parehong ApplicationDbContext (at
+        // parehong Disasters table) na ginagamit ng Admin Portal. Wala nang
+        // static/mock na listahan — iisa ang source of truth ang database.
+        private readonly ApplicationDbContext _context;
+        private readonly IEvacuationService _evacuationService;
+
+        // Parehong separator na ginagamit ng Admin/Disaster para i-encode ang
+        // Location sa loob ng IncidentName (walang hiwalay na Location column ang
+        // Disaster entity). Nagbabahagi kami ng eksaktong convention para
+        // magkapareho ang nakikita ng Admin at Staff.
+        private const string LocationSeparator = " | Lokasyon: ";
+
+        public DisastersController(ApplicationDbContext context, IEvacuationService evacuationService)
         {
-            new DisasterViewModel
-            {
-                Id = 1,
-                IncidentName = "Super Typhoon Egay",
-                DisasterType = "Typhoon Flooding",
-                Description = "Baha hanggang tuhod sa mababang bahagi ng Purok 3 dahil sa walang humpay na ulan.",
-                Location = "Purok 3 (Riverside)",
-                OccurrenceDate = DateTime.Now.AddDays(-1),
-                AffectedHouseholdsCount = 45,
-                DisplacedIndividualsCount = 180,
-                EvacuationCenterStatus = "Open",
-                ReliefDistributionStatus = "Ongoing",
-                Status = "Active"
-            },
-            new DisasterViewModel
-            {
-                Id = 2,
-                IncidentName = "Purok 5 Fire Incident",
-                DisasterType = "Residential Fire",
-                Description = "Naapula na ang sunog sa isang residential structure. Walang naiulat na sugatan.",
-                Location = "Purok 5, J.P. Rizal St.",
-                OccurrenceDate = DateTime.Now.AddDays(-3),
-                AffectedHouseholdsCount = 12,
-                DisplacedIndividualsCount = 48,
-                EvacuationCenterStatus = "Closed",
-                ReliefDistributionStatus = "Completed",
-                Status = "Resolved"
-            }
-        };
+            _context = context;
+            _evacuationService = evacuationService;
+        }
 
         // GET: /Staff/Disasters/Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var list = _disasters.OrderByDescending(d => d.OccurrenceDate).ToList();
+            var disasters = await _context.Disasters
+                .OrderByDescending(d => d.OccurrenceDate)
+                .ToListAsync();
+
+            // 🏫 Read-only na evacuation snapshot mula sa parehong Evacuation module
+            // na pinamamahalaan ng Admin (walang hiwalay na Staff data source).
+            ViewBag.Evacuation = await _evacuationService.GetPublicEvacuationInfoAsync();
+
+            var list = disasters.Select(MapToViewModel).ToList();
             return View(list);
         }
 
-        // GET: /Staff/Disasters/Manage/5 (Ito ang tinatawag ng iyong 'Track' button!)
-        public IActionResult Manage(int id)
+        // GET: /Staff/Disasters/Manage/5 (tinatawag ng 'Track' button)
+        public async Task<IActionResult> Manage(int id)
         {
-            var item = _disasters.FirstOrDefault(d => d.Id == id);
+            var item = await _context.Disasters.FindAsync(id);
             if (item == null) return NotFound();
-            return View(item); // Siguraduhing may Manage.cshtml ka o palitan mo ito ng Redirect/Details kung wala pa.
+            return View(MapToViewModel(item));
         }
 
         // GET: /Staff/Disasters/Details/5
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var item = _disasters.FirstOrDefault(d => d.Id == id);
+            var item = await _context.Disasters.FindAsync(id);
             if (item == null) return NotFound();
-            return View(item);
+            return View(MapToViewModel(item));
         }
 
         // GET: /Staff/Disasters/Create
         public IActionResult Create()
         {
-            return View(new DisasterViewModel());
+            return View(new DisasterViewModel { OccurrenceDate = DateTime.Now });
         }
 
         // POST: /Staff/Disasters/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DisasterViewModel model)
+        public async Task<IActionResult> Create(DisasterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                model.Id = _disasters.Count > 0 ? _disasters.Max(d => d.Id) + 1 : 1;
-                _disasters.Add(model);
+                var disaster = new Disaster
+                {
+                    IncidentName = EncodeIncidentName(model),
+                    DisasterType = model.DisasterType,
+                    OccurrenceDate = model.OccurrenceDate,
+                    AffectedHouseholdsCount = model.AffectedHouseholdsCount,
+                    DisplacedIndividualsCount = model.DisplacedIndividualsCount,
+                    CasualtiesCount = 0,
+                    EvacuationCenterStatus = string.IsNullOrWhiteSpace(model.EvacuationCenterStatus) ? "Closed" : model.EvacuationCenterStatus,
+                    ReliefDistributionStatus = string.IsNullOrWhiteSpace(model.ReliefDistributionStatus) ? "Ongoing" : model.ReliefDistributionStatus,
+                    LoggedBy = User.Identity?.Name ?? "Staff",
+                    DateCreated = DateTime.Now
+                };
+
+                _context.Disasters.Add(disaster);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
         }
 
         // GET: /Staff/Disasters/Edit/5
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var item = _disasters.FirstOrDefault(d => d.Id == id);
+            var item = await _context.Disasters.FindAsync(id);
             if (item == null) return NotFound();
-            return View(item);
+            return View(MapToViewModel(item));
         }
 
         // POST: /Staff/Disasters/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, DisasterViewModel model)
+        public async Task<IActionResult> Edit(int id, DisasterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var existing = _disasters.FirstOrDefault(d => d.Id == id);
+                var existing = await _context.Disasters.FindAsync(id);
                 if (existing == null) return NotFound();
 
-                existing.IncidentName = model.IncidentName;
+                existing.IncidentName = EncodeIncidentName(model);
                 existing.DisasterType = model.DisasterType;
-                existing.Description = model.Description;
-                existing.Location = model.Location;
                 existing.OccurrenceDate = model.OccurrenceDate;
                 existing.AffectedHouseholdsCount = model.AffectedHouseholdsCount;
                 existing.DisplacedIndividualsCount = model.DisplacedIndividualsCount;
-                existing.EvacuationCenterStatus = model.EvacuationCenterStatus;
-                existing.ReliefDistributionStatus = model.ReliefDistributionStatus;
-                existing.Status = model.Status;
+                existing.EvacuationCenterStatus = string.IsNullOrWhiteSpace(model.EvacuationCenterStatus) ? "Closed" : model.EvacuationCenterStatus;
+                existing.ReliefDistributionStatus = string.IsNullOrWhiteSpace(model.ReliefDistributionStatus) ? "Ongoing" : model.ReliefDistributionStatus;
+                existing.LoggedBy = User.Identity?.Name ?? "Staff";
+                existing.DateUpdated = DateTime.Now;
 
+                _context.Disasters.Update(existing);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
         }
 
         // GET: /Staff/Disasters/Delete/5
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var item = _disasters.FirstOrDefault(d => d.Id == id);
+            var item = await _context.Disasters.FindAsync(id);
             if (item == null) return NotFound();
-            return View(item);
+            return View(MapToViewModel(item));
         }
 
         // POST: /Staff/Disasters/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var item = _disasters.FirstOrDefault(d => d.Id == id);
+            var item = await _context.Disasters.FindAsync(id);
             if (item != null)
             {
-                _disasters.Remove(item);
+                _context.Disasters.Remove(item);
+                await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        // ==========================================================
+        // Mapping helpers — parehong convention ng Admin/Disaster para
+        // magkatugma ang datos sa dalawang portal.
+        // ==========================================================
+        private static DisasterViewModel MapToViewModel(Disaster d)
+        {
+            var description = d.IncidentName;
+            var location = "Barangay Jurisdiction";
+
+            if (!string.IsNullOrEmpty(d.IncidentName) && d.IncidentName.Contains(LocationSeparator))
+            {
+                var parts = d.IncidentName.Split(new[] { LocationSeparator }, StringSplitOptions.None);
+                description = parts[0];
+                location = parts.Length > 1 ? parts[1] : location;
+            }
+
+            // Ang "Active" ay kapag bukas pa ang evacuation o ongoing ang relief.
+            var isActive = string.Equals(d.EvacuationCenterStatus, "Open", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(d.ReliefDistributionStatus, "Ongoing", StringComparison.OrdinalIgnoreCase);
+
+            return new DisasterViewModel
+            {
+                Id = d.DisasterId,
+                IncidentName = description,
+                DisasterType = d.DisasterType,
+                Description = description,
+                Location = location,
+                OccurrenceDate = d.OccurrenceDate,
+                AffectedHouseholdsCount = d.AffectedHouseholdsCount,
+                DisplacedIndividualsCount = d.DisplacedIndividualsCount,
+                EvacuationCenterStatus = d.EvacuationCenterStatus,
+                ReliefDistributionStatus = d.ReliefDistributionStatus,
+                Status = isActive ? "Active" : "Resolved"
+            };
+        }
+
+        private static string EncodeIncidentName(DisasterViewModel model)
+        {
+            var name = !string.IsNullOrWhiteSpace(model.IncidentName)
+                ? model.IncidentName
+                : $"{model.DisasterType} Incident";
+
+            if (!string.IsNullOrWhiteSpace(model.Location))
+            {
+                name += $"{LocationSeparator}{model.Location}";
+            }
+            return name;
         }
     }
 }

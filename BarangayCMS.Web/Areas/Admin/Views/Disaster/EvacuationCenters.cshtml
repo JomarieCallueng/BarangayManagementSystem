@@ -1,50 +1,256 @@
-﻿@{
+@using BarangayCMS.DTO
+@model IEnumerable<EvacuationCenterDTO>
+@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Evacuation Centers";
+    var status = ViewBag.EvacuationStatus as EvacuationStatusDTO ?? new EvacuationStatusDTO();
+    var centers = Model?.ToList() ?? new List<EvacuationCenterDTO>();
+    var totalCapacity = centers.Where(c => c.IsActive).Sum(c => c.Capacity);
+    var totalOccupants = centers.Where(c => c.IsActive).Sum(c => c.CurrentOccupants);
+    var totalAvailable = centers.Where(c => c.IsActive).Sum(c => c.AvailableSlots);
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2><i class="bi bi-house-door text-dark"></i> Evacuation Centers Status</h2>
-        <a asp-action="Index" class="btn btn-secondary btn-sm">Bumalik sa Monitor</a>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-house-door text-danger me-2"></i>Evacuation Centers</h2>
+        <p class="text-muted small mb-0">Pamahalaan ang mga center at ang buong-barangay na status. Agad itong makikita sa Public Evacuation page.</p>
     </div>
+    <div class="d-flex gap-2">
+        <a href="/Evacuation" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm fw-semibold"><i class="bi bi-box-arrow-up-right me-1"></i> View Public Page</a>
+        <button type="button" class="btn btn-danger shadow-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#createCenterModal"><i class="bi bi-plus-lg me-1"></i> Add Center</button>
+    </div>
+</div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        <!-- Center 1 -->
-        <div class="col">
-            <div class="card h-100 shadow-sm border-danger">
-                <div class="card-body">
-                    <h5 class="card-title text-danger fw-bold">Barangay Gym</h5>
-                    <p class="text-muted small">Location: Phase 1 Main Road</p>
-                    <hr />
-                    <p class="mb-1"><strong>Kapasidad:</strong> 150/200 Pamilya</p>
-                    <p class="mb-0"><strong>Status:</strong> <span class="badge bg-danger">Halos Puno</span></p>
+@if (TempData["EvacSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-1"></i> @TempData["EvacSuccess"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["EvacError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-x-circle-fill me-1"></i> @TempData["EvacError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- 🚦 BARANGAY-WIDE STATUS + INSTRUCTIONS + CONTACTS -->
+<div class="card border-0 shadow-sm rounded mb-4">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-broadcast-pin text-danger me-2"></i>Barangay Evacuation Status</h5>
+        <form action="/Admin/Disaster/UpdateEvacuationStatus" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Overall Status</label>
+                    <select name="OverallStatus" class="form-select">
+                        <option value="Normal" selected="@(status.OverallStatus == "Normal" ? "selected" : null)">🟢 NORMAL</option>
+                        <option value="Prepared" selected="@(status.OverallStatus == "Prepared" ? "selected" : null)">🟡 PREPAREDNESS / ALERT</option>
+                        <option value="Active" selected="@(status.OverallStatus == "Active" ? "selected" : null)">🔴 EVACUATION ACTIVE</option>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label small fw-semibold">Status Message (opsyonal — ipapakita sa public banner)</label>
+                    <input type="text" name="StatusMessage" class="form-control" value="@status.StatusMessage" maxlength="300" placeholder="Hal. Residente sa low-lying areas, lumikas na sa pinakamalapit na center." />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold">Evacuation Instructions <span class="text-muted fw-normal">(isang item kada linya)</span></label>
+                    <textarea name="Instructions" class="form-control" rows="6" placeholder="Stay calm and follow official instructions.&#10;Bring essential medicines and documents.">@status.Instructions</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold">Emergency Contacts <span class="text-muted fw-normal">(format: Label|Number kada linya)</span></label>
+                    <textarea name="EmergencyContacts" class="form-control" rows="6" placeholder="Barangay Emergency Hotline|0917-123-4567&#10;Health Center|0918-000-0000">@status.EmergencyContacts</textarea>
                 </div>
             </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted"><i class="bi bi-clock-history me-1"></i>Last updated: @status.DateUpdated.ToString("MMM d, yyyy • h:mm tt")@(string.IsNullOrEmpty(status.UpdatedBy) ? "" : $" by {status.UpdatedBy}")</small>
+                <button type="submit" class="btn btn-danger fw-semibold"><i class="bi bi-save me-1"></i> Save Status</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 📊 SUMMARY -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded text-center p-3"><div class="fs-3 fw-bold text-dark">@centers.Count(c => c.IsActive)</div><div class="small text-muted">Active Centers</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded text-center p-3"><div class="fs-3 fw-bold text-dark">@totalCapacity</div><div class="small text-muted">Total Capacity</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded text-center p-3"><div class="fs-3 fw-bold text-warning">@totalOccupants</div><div class="small text-muted">Current Occupants</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded text-center p-3"><div class="fs-3 fw-bold text-success">@totalAvailable</div><div class="small text-muted">Available Slots</div></div>
+    </div>
+</div>
+
+<!-- 🏫 CENTERS TABLE -->
+<div class="card border-0 shadow-sm rounded p-4">
+    @if (!centers.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-house-slash fs-1 d-block mb-2"></i>
+            Wala pang naka-rehistrong evacuation center. Mag-click ng <strong>Add Center</strong> para magsimula.
         </div>
-        <!-- Center 2 -->
-        <div class="col">
-            <div class="card h-100 shadow-sm border-success">
-                <div class="card-body">
-                    <h5 class="card-title text-success fw-bold">Elementary School Hall</h5>
-                    <p class="text-muted small">Location: Purok 2, Ilaya</p>
-                    <hr />
-                    <p class="mb-1"><strong>Kapasidad:</strong> 25/300 Pamilya</p>
-                    <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Maraming Bakante</span></p>
-                </div>
-            </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Center</th>
+                        <th>Location</th>
+                        <th class="text-center">Capacity</th>
+                        <th class="text-center">Occupants</th>
+                        <th class="text-center">Available</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in centers)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-semibold text-dark d-block">@c.Name</span>
+                                @if (!string.IsNullOrWhiteSpace(c.ContactNumber))
+                                {
+                                    <small class="text-muted"><i class="bi bi-telephone me-1"></i>@c.ContactNumber</small>
+                                }
+                            </td>
+                            <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>@c.Address @(string.IsNullOrWhiteSpace(c.SitioPurok) ? "" : $"({c.SitioPurok})")</td>
+                            <td class="text-center">@c.Capacity</td>
+                            <td class="text-center">@c.CurrentOccupants</td>
+                            <td class="text-center fw-semibold">@c.AvailableSlots</td>
+                            <td class="text-center">
+                                @{
+                                    var oc = c.OccupancyStatus;
+                                    var badge = oc == "FULL" ? "bg-danger" : oc == "NEAR CAPACITY" ? "bg-warning text-dark" : oc == "CLOSED" ? "bg-secondary" : "bg-success";
+                                }
+                                <span class="badge @badge">@oc</span>
+                            </td>
+                            <td class="text-end">
+                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal" data-bs-target="#editCenterModal"
+                                        data-id="@c.Id" data-name="@c.Name" data-address="@c.Address"
+                                        data-purok="@c.SitioPurok" data-capacity="@c.Capacity"
+                                        data-occupants="@c.CurrentOccupants" data-contact="@c.ContactNumber"
+                                        data-notes="@c.Notes" data-active="@(c.IsActive ? "true" : "false")">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form action="/Admin/Disaster/ToggleEvacuationCenter" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <button type="submit" class="btn btn-sm @(c.IsActive ? "btn-outline-secondary" : "btn-outline-success")" title="@(c.IsActive ? "Deactivate" : "Activate")">
+                                        <i class="bi @(c.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
+                                    </button>
+                                </form>
+                                <form action="/Admin/Disaster/DeleteEvacuationCenter" method="post" class="d-inline" onsubmit="return confirm('Tanggalin ang center na ito? Hindi na ito maibabalik.');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-        <!-- Center 3 -->
-        <div class="col">
-            <div class="card h-100 shadow-sm border-secondary">
-                <div class="card-body">
-                    <h5 class="card-title text-secondary fw-bold">Barangay Day Care</h5>
-                    <p class="text-muted small">Location: Sitio Central</p>
-                    <hr />
-                    <p class="mb-1"><strong>Kapasidad:</strong> 0/50 Pamilya</p>
-                    <p class="mb-0"><strong>Status:</strong> <span class="badge bg-secondary">Bakante / Standby</span></p>
+    }
+</div>
+
+<!-- ➕ CREATE MODAL -->
+<div class="modal fade" id="createCenterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form action="/Admin/Disaster/CreateEvacuationCenter" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle me-2 text-danger"></i>Add Evacuation Center</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Name *</label><input type="text" name="Name" class="form-control" required maxlength="150" /></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Contact Number</label><input type="text" name="ContactNumber" class="form-control" maxlength="50" /></div>
+                        <div class="col-md-8"><label class="form-label small fw-semibold">Address *</label><input type="text" name="Address" class="form-control" required maxlength="250" /></div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Purok / Area</label><input type="text" name="SitioPurok" class="form-control" maxlength="100" /></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Capacity (persons)</label><input type="number" name="Capacity" class="form-control" min="0" value="0" /></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Current Occupants</label><input type="number" name="CurrentOccupants" class="form-control" min="0" value="0" /></div>
+                        <div class="col-12"><label class="form-label small fw-semibold">Notes / Instructions</label><textarea name="Notes" class="form-control" rows="2" maxlength="500"></textarea></div>
+                        <div class="col-12">
+                            <input type="hidden" name="IsActive" value="false" />
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="IsActive" value="true" id="createActive" checked /><label class="form-check-label" for="createActive">Active (ipakita sa publiko)</label></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger fw-semibold">Save Center</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<!-- ✏️ EDIT MODAL -->
+<div class="modal fade" id="editCenterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form action="/Admin/Disaster/EditEvacuationCenter" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="editId" />
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Evacuation Center</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Name *</label><input type="text" name="Name" id="editName" class="form-control" required maxlength="150" /></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Contact Number</label><input type="text" name="ContactNumber" id="editContact" class="form-control" maxlength="50" /></div>
+                        <div class="col-md-8"><label class="form-label small fw-semibold">Address *</label><input type="text" name="Address" id="editAddress" class="form-control" required maxlength="250" /></div>
+                        <div class="col-md-4"><label class="form-label small fw-semibold">Purok / Area</label><input type="text" name="SitioPurok" id="editPurok" class="form-control" maxlength="100" /></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Capacity (persons)</label><input type="number" name="Capacity" id="editCapacity" class="form-control" min="0" /></div>
+                        <div class="col-md-6"><label class="form-label small fw-semibold">Current Occupants</label><input type="number" name="CurrentOccupants" id="editOccupants" class="form-control" min="0" /></div>
+                        <div class="col-12"><label class="form-label small fw-semibold">Notes / Instructions</label><textarea name="Notes" id="editNotes" class="form-control" rows="2" maxlength="500"></textarea></div>
+                        <div class="col-12">
+                            <input type="hidden" name="IsActive" value="false" />
+                            <div class="form-check"><input class="form-check-input" type="checkbox" name="IsActive" value="true" id="editActive" /><label class="form-check-label" for="editActive">Active (ipakita sa publiko)</label></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary fw-semibold">Update Center</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Punan ang Edit modal mula sa data-* attributes ng pinindot na row.
+        var editModal = document.getElementById('editCenterModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function (event) {
+                var b = event.relatedTarget;
+                if (!b) return;
+                document.getElementById('editId').value = b.getAttribute('data-id') || '';
+                document.getElementById('editName').value = b.getAttribute('data-name') || '';
+                document.getElementById('editAddress').value = b.getAttribute('data-address') || '';
+                document.getElementById('editPurok').value = b.getAttribute('data-purok') || '';
+                document.getElementById('editCapacity').value = b.getAttribute('data-capacity') || '0';
+                document.getElementById('editOccupants').value = b.getAttribute('data-occupants') || '0';
+                document.getElementById('editContact').value = b.getAttribute('data-contact') || '';
+                document.getElementById('editNotes').value = b.getAttribute('data-notes') || '';
+                document.getElementById('editActive').checked = (b.getAttribute('data-active') === 'true');
+            });
+        }
+    </script>
+}

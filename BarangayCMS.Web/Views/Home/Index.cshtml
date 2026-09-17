@@ -3,85 +3,90 @@
 }
 
 <!-- 🎠 HERO SECTION WITH SLIDING BACKGROUND CAROUSEL -->
-<section class="hero position-relative overflow-hidden" style="background: transparent !important; min-height: 520px;">
+<section class="hero position-relative overflow-hidden">
 
     <!-- 🖼️ BOOTSTRAP CAROUSEL BACKGROUND SLIDESHOW -->
-    <div id="heroCarousel" class="carousel slide carousel-fade position-absolute top-0 start-0 w-100 h-100" data-bs-ride="carousel" data-bs-interval="3500" style="z-index: 0;">
+    <!-- Autoplay (6s) + manual arrows/indicators + hover-pause + keyboard + touch swipe
+         are all handled by the single Bootstrap carousel instance below. -->
+    <div id="heroCarousel"
+         class="carousel slide carousel-fade hero-carousel"
+         data-bs-ride="carousel"
+         data-bs-interval="6000"
+         data-bs-pause="hover"
+         data-bs-keyboard="true"
+         data-bs-touch="true"
+         aria-roledescription="carousel"
+         aria-label="Barangay Tatalon highlights">
 
-        <!-- Carousel Indicators / Dots (6 Slides Total) -->
-        <div class="carousel-indicators" style="z-index: 3;">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
-        </div>
+        <div class="carousel-inner">
 
-        <div class="carousel-inner h-100">
+            @* Each photo slide shows the WHOLE image (object-fit: contain) so
+               nothing is cropped, with a blurred, zoomed copy of the same image
+               filling the band behind it — no empty side bars, no distortion. *@
 
             <!-- SLIDE 1: Barangay background.jpg -->
-            <div class="carousel-item active h-100">
-                <img src="/images/Barangay%20background.jpg"
-                     class="d-block w-100 h-100"
-                     style="object-fit: cover; object-position: center;"
-                     alt="Barangay Tatalon Banner">
-            </div>
-
-            <!-- SLIDE 2: Kiko Del Mundo.jpg -->
-            <div class="carousel-item h-100">
-                <img src="/images/Kiko%20Del%20Mundo.jpg"
-                     class="d-block w-100 h-100"
-                     style="object-fit: cover; object-position: center;"
-                     alt="Progresibong Tatalon Fleet">
-            </div>
-
-            <!-- SLIDE 3: ALS.jpg -->
-            <div class="carousel-item h-100">
-                <img src="/images/ALS.jpg"
-                     class="d-block w-100 h-100"
-                     style="object-fit: cover; object-position: center;"
-                     alt="Barangay Tatalon ALS Program">
-            </div>
-
-            <!-- SLIDE 4: Kiko Del Mundo Campaign Election.jpg -->
-            <div class="carousel-item h-100">
-                <img src="/images/Kiko%20Del%20Mundo%20Campaign%20Election.jpg"
-                     class="d-block w-100 h-100"
-                     style="object-fit: cover; object-position: center;"
-                     alt="Kiko Del Mundo Campaign Event">
-            </div>
-
-            <!-- SLIDE 5: Progresibong_Tatalon__1_-removebg-preview.png -->
-            <div class="carousel-item h-100">
-                <div class="d-flex align-items-center justify-content-center h-100 w-100" style="background-color: rgba(11, 23, 42, 0.85);">
-                    <img src="/images/Progresibong_Tatalon__1_-removebg-preview.png"
-                         class="img-fluid"
-                         style="max-height: 400px; object-fit: contain;"
-                         alt="Progresibong Tatalon Logo">
+            <div class="carousel-item active">
+                <div class="hero-slide">
+                    <img src="/images/Barangay%20background.jpg" class="hero-slide__bg" alt="" aria-hidden="true">
+                    <img src="/images/Barangay%20background.jpg" class="hero-slide__img" alt="Barangay Tatalon Banner">
                 </div>
             </div>
 
-           
+            <!-- SLIDE 2: Kiko Del Mundo.jpg -->
+            <div class="carousel-item">
+                <div class="hero-slide">
+                    <img src="/images/Kiko%20Del%20Mundo.jpg" class="hero-slide__bg" alt="" aria-hidden="true">
+                    <img src="/images/Kiko%20Del%20Mundo.jpg" class="hero-slide__img" alt="Progresibong Tatalon Fleet">
+                </div>
+            </div>
+
+            <!-- SLIDE 3: ALS.jpg -->
+            <div class="carousel-item">
+                <div class="hero-slide">
+                    <img src="/images/ALS.jpg" class="hero-slide__bg" alt="" aria-hidden="true">
+                    <img src="/images/ALS.jpg" class="hero-slide__img" alt="Barangay Tatalon ALS Program">
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Kiko Del Mundo Campaign Election.jpg -->
+            <div class="carousel-item">
+                <div class="hero-slide">
+                    <img src="/images/Kiko%20Del%20Mundo%20Campaign%20Election.jpg" class="hero-slide__bg" alt="" aria-hidden="true">
+                    <img src="/images/Kiko%20Del%20Mundo%20Campaign%20Election.jpg" class="hero-slide__img" alt="Kiko Del Mundo Campaign Event">
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Progresibong_Tatalon logo (transparent PNG) on a solid brand backdrop -->
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide--logo">
+                    <img src="/images/Progresibong_Tatalon__1_-removebg-preview.png" class="hero-slide__img" alt="Progresibong Tatalon Logo">
+                </div>
+            </div>
 
         </div>
 
-        <!-- ◀️ ▶️ SLIDESHOW CONTROLS -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" style="z-index: 3;">
+        <!-- ⚪ Slide indicators / dots (one per slide) -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Go to slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Go to slide 4"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4" aria-label="Go to slide 5"></button>
+        </div>
+
+        <!-- ◀️ ▶️ Manual navigation controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Previous slide">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
+            <span class="visually-hidden">Previous slide</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" style="z-index: 3;">
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Next slide">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
+            <span class="visually-hidden">Next slide</span>
         </button>
     </div>
 
-    <!-- 🕶️ DARK OVERLAY -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(11, 23, 42, 0.78) !important; z-index: 1;"></div>
-
-    <!-- 📝 HERO CONTENT CONTAINER -->
-    <div class="hero__inner position-relative" style="z-index: 2;">
+    <!-- 📝 HERO CONTENT CONTAINER (sits above the darkened carousel) -->
+    <div class="hero__inner position-relative">
         <div class="hero__content">
 
             <!-- 🏛️ Barangay Official Badge -->
@@ -117,7 +122,7 @@
             <div class="hero__figure-row"><span>Office Hours</span> <strong>Mon&ndash;Fri, 8AM&ndash;5PM</strong></div>
             <div class="hero__figure-row"><span>Emergency Hotline</span> <strong>0912-345-6789</strong></div>
             <div class="hero__figure-row"><span>Public Desk Email</span> <strong>support@barangaytatalon.gov.ph</strong></div>
-            <div class="hero__figure-row"><span>Evacuation Centers</span> <strong>3 Active</strong></div>
+            <a asp-controller="Evacuation" asp-action="Index" class="hero__figure-row text-reset text-decoration-none" style="cursor:pointer;"><span>Evacuation Centers</span> <strong>@(ViewData["ActiveEvacuationCenters"] ?? 0) Active</strong></a>
         </aside>
     </div>
 </section>
@@ -134,7 +139,7 @@
             <span class="stats__label">Registered Residents</span>
         </div>
         <div>
-            <p class="stats__value">3</p>
+            <p class="stats__value">@(ViewData["ActiveEvacuationCenters"] ?? 0)</p>
             <span class="stats__label">Evacuation Centers</span>
         </div>
         <div>

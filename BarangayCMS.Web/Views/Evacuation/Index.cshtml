@@ -1,0 +1,355 @@
+@using BarangayCMS.DTO
+@model PublicEvacuationDTO
+@{
+    ViewData["Title"] = "Evacuation Information - Barangay Portal";
+    var loadFailed = ViewBag.LoadFailed == true;
+
+    // Overall status → visual mapping (hindi umaasa sa kulay lamang).
+    var st = (Model?.Status?.NormalizedStatus) ?? "NORMAL";
+    string bannerClass, bannerIcon, bannerLabel, bannerLead;
+    switch (st)
+    {
+        case "ACTIVE":
+            bannerClass = "evac-banner--danger"; bannerIcon = "bi-exclamation-octagon-fill";
+            bannerLabel = "EVACUATION ACTIVE";
+            bannerLead = "Residents are advised to proceed to the nearest active evacuation center and follow official instructions.";
+            break;
+        case "PREPARED":
+            bannerClass = "evac-banner--warn"; bannerIcon = "bi-exclamation-triangle-fill";
+            bannerLabel = "PREPAREDNESS / ALERT";
+            bannerLead = "Stay alert and prepare your emergency go-bag. Monitor official barangay announcements.";
+            break;
+        default:
+            bannerClass = "evac-banner--ok"; bannerIcon = "bi-shield-check";
+            bannerLabel = "NORMAL";
+            bannerLead = "There is no active evacuation order. Evacuation centers remain on standby for your safety.";
+            break;
+    }
+}
+
+<style>
+    /* ============ PUBLIC EVACUATION — scoped, theme-aware ============ */
+    .evac-wrap { position: relative; }
+
+    /* Loading overlay (nagpapakita sandali, itinatago pagka-render) */
+    .evac-loading {
+        position: absolute; inset: 0; z-index: 20; display: grid; place-items: center;
+        background: var(--surface); border-radius: 20px;
+    }
+    .evac-loading__inner { text-align: center; color: var(--muted); }
+    .evac-spinner {
+        width: 42px; height: 42px; border-radius: 50%;
+        border: 4px solid var(--border); border-top-color: var(--accent);
+        margin: 0 auto .8rem; animation: evac-spin .8s linear infinite;
+    }
+    @@keyframes evac-spin { to { transform: rotate(360deg); } }
+
+    /* Status banner */
+    .evac-banner {
+        border-radius: 20px; padding: 1.9rem 2rem; color: #fff; position: relative; overflow: hidden;
+        display: flex; align-items: flex-start; gap: 1.1rem;
+    }
+    .evac-banner__icon { font-size: 2.4rem; line-height: 1; flex: 0 0 auto; }
+    .evac-banner__label {
+        display: inline-flex; align-items: center; gap: .4rem; font-weight: 800; letter-spacing: .06em;
+        text-transform: uppercase; font-size: 1.35rem; margin: 0 0 .35rem;
+    }
+    .evac-banner__lead { margin: 0; color: rgba(255,255,255,.9); font-size: .98rem; max-width: 48rem; }
+    .evac-banner__meta { margin-top: .7rem; font-size: .82rem; color: rgba(255,255,255,.8); display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; }
+    .evac-banner--ok    { background: linear-gradient(135deg,#15803d,#16a34a); }
+    .evac-banner--warn  { background: linear-gradient(135deg,#b45309,#d97706); }
+    .evac-banner--danger{ background: linear-gradient(135deg,#b91c1c,#dc2626); }
+    .evac-banner--danger { animation: evac-pulse 2.2s ease-in-out infinite; }
+    @@keyframes evac-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.45); } 50% { box-shadow: 0 0 0 12px rgba(220,38,38,0); } }
+
+    .evac-section-title { font-weight: 800; color: var(--heading); display: flex; align-items: center; gap: .55rem; margin: 0; }
+    .evac-section-title i { color: var(--accent); }
+    .evac-count-pill { font-size: .8rem; font-weight: 700; color: var(--accent); background: var(--surface-alt); border: 1px solid var(--border); padding: .25rem .7rem; border-radius: 999px; }
+
+    /* Center card */
+    .evac-card {
+        height: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+        box-shadow: var(--shadow); padding: 1.4rem; display: flex; flex-direction: column; gap: .85rem;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .evac-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .evac-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; }
+    .evac-card__title { font-weight: 800; color: var(--heading); margin: 0; font-size: 1.12rem; display: flex; align-items: center; gap: .5rem; }
+    .evac-card__title i { color: var(--accent); }
+
+    .evac-badge { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: .32rem .6rem; border-radius: 999px; white-space: nowrap; }
+    .evac-badge--open  { background: rgba(22,163,74,.14);  color: #15803d; }
+    .evac-badge--near  { background: rgba(217,119,6,.15);  color: #b45309; }
+    .evac-badge--full  { background: rgba(220,38,38,.14);  color: #b91c1c; }
+    .evac-badge--closed{ background: rgba(107,114,128,.16);color: #4b5563; }
+
+    .evac-meta { display: grid; gap: .5rem; }
+    .evac-meta__row { display: flex; align-items: flex-start; gap: .55rem; font-size: .9rem; color: var(--body-text); }
+    .evac-meta__row i { color: var(--accent); flex: 0 0 auto; margin-top: .12rem; }
+    .evac-meta__row strong { color: var(--heading); }
+
+    /* Capacity bar */
+    .evac-cap { margin-top: .2rem; }
+    .evac-cap__nums { display: flex; justify-content: space-between; font-size: .82rem; color: var(--muted); margin-bottom: .3rem; }
+    .evac-cap__nums b { color: var(--heading); }
+    .evac-cap__track { height: 9px; border-radius: 999px; background: var(--surface-alt); border: 1px solid var(--border); overflow: hidden; }
+    .evac-cap__fill { height: 100%; border-radius: 999px; transition: width .4s ease; }
+    .evac-cap__fill--open  { background: #16a34a; }
+    .evac-cap__fill--near  { background: #d97706; }
+    .evac-cap__fill--full  { background: #dc2626; }
+    .evac-slots { font-weight: 800; }
+    .evac-slots--open { color: #15803d; }
+    .evac-slots--near { color: #b45309; }
+    .evac-slots--full { color: #b91c1c; }
+
+    .evac-card__foot { margin-top: auto; display: flex; gap: .5rem; flex-wrap: wrap; }
+    .evac-btn {
+        display: inline-flex; align-items: center; gap: .4rem; text-decoration: none; font-weight: 600; font-size: .85rem;
+        padding: .55rem .9rem; border-radius: 10px; border: 1px solid var(--border); color: var(--heading);
+        background: var(--surface-alt); transition: border-color .15s ease, transform .15s ease;
+    }
+    .evac-btn:hover { border-color: var(--accent); transform: translateY(-2px); color: var(--heading); }
+    .evac-btn--call { border-left: 4px solid #dc2626; }
+
+    /* Generic surface card (instructions, contacts, empty, error) */
+    .evac-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 1.6rem; }
+
+    .evac-instr { list-style: none; margin: 0; padding: 0; }
+    .evac-instr li { display: flex; gap: .6rem; padding: .55rem 0; color: var(--body-text); font-size: .95rem; line-height: 1.5; }
+    .evac-instr li + li { border-top: 1px dashed var(--border); }
+    .evac-instr li i { color: var(--accent); flex: 0 0 auto; margin-top: .18rem; }
+
+    .evac-hotline { display: block; text-decoration: none; padding: .85rem 1rem; border-radius: 12px; background: var(--surface-alt); border: 1px solid var(--border); border-left: 5px solid #dc2626; transition: transform .15s ease, box-shadow .15s ease; }
+    .evac-hotline:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .evac-hotline__label { display: block; font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+    .evac-hotline__num { font-weight: 800; color: var(--heading); font-size: 1.1rem; margin: .1rem 0 0; display: flex; align-items: center; gap: .4rem; }
+    .evac-hotline__num i { font-size: .8rem; color: var(--accent); }
+
+    .evac-empty { text-align: center; padding: 3rem 1.5rem; }
+    .evac-empty__icon { font-size: 3.4rem; color: var(--muted); }
+    .evac-empty h3 { color: var(--heading); font-weight: 800; margin: .8rem 0 .4rem; }
+    .evac-empty p { color: var(--muted); max-width: 34rem; margin: 0 auto; }
+
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.is-in { opacity: 1; transform: none; }
+    @@media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+        .evac-card:hover, .evac-hotline:hover, .evac-btn:hover { transform: none; }
+        .evac-banner--danger { animation: none; }
+    }
+    @@media (max-width: 575.98px) {
+        .evac-banner { padding: 1.4rem 1.2rem; }
+        .evac-banner__label { font-size: 1.15rem; }
+    }
+</style>
+
+<div class="container py-5 evac-wrap">
+
+    <!-- ⏳ LOADING STATE (itinatago pagkatapos mag-render) -->
+    <div class="evac-loading" id="evacLoading" aria-hidden="true">
+        <div class="evac-loading__inner">
+            <div class="evac-spinner"></div>
+            <div>Loading evacuation information…</div>
+        </div>
+    </div>
+
+    <!-- 🧭 PAGE HEADER -->
+    <div class="mb-4 reveal">
+        <h1 class="fw-bold mb-1" style="color: var(--heading);">
+            <i class="bi bi-buildings-fill" style="color: var(--accent);"></i> Evacuation Information
+        </h1>
+        <p style="color: var(--muted); margin: 0;">Real-time na kalagayan ng paglikas at mga evacuation center sa Barangay Tatalon.</p>
+    </div>
+
+    @if (loadFailed)
+    {
+        <!-- ❌ ERROR STATE -->
+        <div class="evac-panel evac-empty reveal" role="alert">
+            <div class="evac-empty__icon"><i class="bi bi-wifi-off"></i></div>
+            <h3>Unable to load evacuation information</h3>
+            <p class="mb-3">Nagkaroon ng problema sa pagkuha ng datos. Pakisubukang muli mamaya.</p>
+            <a href="@Url.Action("Index", "Evacuation")" class="evac-btn"><i class="bi bi-arrow-clockwise"></i> Try Again</a>
+        </div>
+    }
+    else
+    {
+        <!-- 🚦 STATUS BANNER -->
+        <div class="evac-banner @bannerClass mb-4 reveal" role="status" aria-live="polite">
+            <i class="bi @bannerIcon evac-banner__icon" aria-hidden="true"></i>
+            <div>
+                <p class="evac-banner__label"><span>@bannerLabel</span></p>
+                <p class="evac-banner__lead">@(string.IsNullOrWhiteSpace(Model.Status?.StatusMessage) ? bannerLead : Model.Status?.StatusMessage)</p>
+                <div class="evac-banner__meta">
+                    <span><i class="bi bi-clock-history me-1"></i> Last Updated: @Model.LastUpdated.ToString("MMMM d, yyyy • h:mm tt")</span>
+                    @if (Model.ActiveCenters.Any())
+                    {
+                        <span><i class="bi bi-house-check me-1"></i> @Model.ActiveCenters.Count active center(s)</span>
+                        <span><i class="bi bi-person-check me-1"></i> @Model.TotalAvailableSlots slot(s) available</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 🏫 ACTIVE EVACUATION CENTERS -->
+        <div class="d-flex align-items-center justify-content-between mb-3 reveal">
+            <h2 class="evac-section-title h4"><i class="bi bi-house-door-fill"></i> Active Evacuation Centers</h2>
+            <span class="evac-count-pill">@Model.ActiveCenters.Count total</span>
+        </div>
+
+        @if (!Model.ActiveCenters.Any())
+        {
+            <!-- 📭 EMPTY STATE -->
+            <div class="evac-panel evac-empty reveal">
+                <div class="evac-empty__icon"><i class="bi bi-house-slash"></i></div>
+                <h3>No Active Evacuation Centers</h3>
+                <p>There are currently no active evacuation centers registered in the system. Please monitor official Barangay announcements for further instructions.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+                @foreach (var c in Model.ActiveCenters)
+                {
+                    var status = c.OccupancyStatus; // OPEN / NEAR CAPACITY / FULL / CLOSED
+                    string badgeClass, badgeIcon, tone;
+                    switch (status)
+                    {
+                        case "FULL": badgeClass = "evac-badge--full"; badgeIcon = "bi-x-octagon-fill"; tone = "full"; break;
+                        case "NEAR CAPACITY": badgeClass = "evac-badge--near"; badgeIcon = "bi-exclamation-triangle-fill"; tone = "near"; break;
+                        case "CLOSED": badgeClass = "evac-badge--closed"; badgeIcon = "bi-slash-circle-fill"; tone = "full"; break;
+                        default: badgeClass = "evac-badge--open"; badgeIcon = "bi-check-circle-fill"; tone = "open"; break;
+                    }
+                    var mapQuery = Uri.EscapeDataString($"{c.Name} {c.Address} {c.SitioPurok} Barangay Tatalon Quezon City");
+                    var mapUrl = $"https://www.google.com/maps/search/?api=1&query={mapQuery}";
+
+                    <div class="col reveal">
+                        <div class="evac-card">
+                            <div class="evac-card__head">
+                                <h3 class="evac-card__title"><i class="bi bi-building-fill-check"></i> @c.Name</h3>
+                                <span class="evac-badge @badgeClass"><i class="bi @badgeIcon"></i> @status</span>
+                            </div>
+
+                            <div class="evac-meta">
+                                <div class="evac-meta__row"><i class="bi bi-geo-alt-fill"></i><span><strong>Address:</strong> @c.Address</span></div>
+                                @if (!string.IsNullOrWhiteSpace(c.SitioPurok))
+                                {
+                                    <div class="evac-meta__row"><i class="bi bi-signpost-2-fill"></i><span><strong>Purok/Area:</strong> @c.SitioPurok</span></div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(c.ContactNumber))
+                                {
+                                    <div class="evac-meta__row"><i class="bi bi-telephone-fill"></i><span><strong>Contact:</strong> @c.ContactNumber</span></div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(c.Notes))
+                                {
+                                    <div class="evac-meta__row"><i class="bi bi-info-circle-fill"></i><span>@c.Notes</span></div>
+                                }
+                            </div>
+
+                            @if (c.HasCapacityData)
+                            {
+                                <div class="evac-cap">
+                                    <div class="evac-cap__nums">
+                                        <span><i class="bi bi-people-fill"></i> Occupants: <b>@c.CurrentOccupants</b> / @c.Capacity</span>
+                                        <span class="evac-slots evac-slots--@tone">@c.AvailableSlots available</span>
+                                    </div>
+                                    <div class="evac-cap__track" role="progressbar" aria-valuenow="@c.OccupancyPercent" aria-valuemin="0" aria-valuemax="100" aria-label="Occupancy for @c.Name">
+                                        <div class="evac-cap__fill evac-cap__fill--@tone" style="width:@(c.OccupancyPercent)%;"></div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="evac-meta__row"><i class="bi bi-people-fill"></i><span><strong>Capacity:</strong> Not available</span></div>
+                            }
+
+                            <div class="evac-card__foot">
+                                <a href="@mapUrl" target="_blank" rel="noopener" class="evac-btn"><i class="bi bi-map-fill"></i> View Location</a>
+                                @if (!string.IsNullOrWhiteSpace(c.ContactNumber))
+                                {
+                                    <a href="tel:@c.ContactNumber" class="evac-btn evac-btn--call"><i class="bi bi-telephone-outbound-fill"></i> Call</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="row g-4">
+            <!-- 📋 EVACUATION INSTRUCTIONS -->
+            <div class="col-lg-7 reveal">
+                <div class="evac-panel h-100">
+                    <h2 class="evac-section-title h5 mb-3"><i class="bi bi-list-check"></i> Important Evacuation Instructions</h2>
+                    <ul class="evac-instr">
+                        @if (Model.Instructions.Any())
+                        {
+                            @foreach (var ins in Model.Instructions)
+                            {
+                                <li><i class="bi bi-check-circle-fill"></i><span>@ins</span></li>
+                            }
+                        }
+                        else
+                        {
+                            <li><i class="bi bi-check-circle-fill"></i><span>Stay calm and follow official instructions.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i><span>Bring essential medicines and important documents.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i><span>Follow designated evacuation routes.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i><span>Keep children and vulnerable persons with your family/group.</span></li>
+                            <li><i class="bi bi-check-circle-fill"></i><span>Do not return to restricted areas until authorities announce it is safe.</span></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 📞 EMERGENCY CONTACTS -->
+            <div class="col-lg-5 reveal">
+                <div class="evac-panel h-100">
+                    <h2 class="evac-section-title h5 mb-3" style="color:#dc2626;"><i class="bi bi-telephone-fill" style="color:#dc2626 !important;"></i> Emergency Contacts</h2>
+                    <div class="d-flex flex-column gap-3">
+                        @if (Model.EmergencyContacts.Any())
+                        {
+                            @foreach (var contact in Model.EmergencyContacts)
+                            {
+                                <a href="tel:@contact.Number" class="evac-hotline">
+                                    <span class="evac-hotline__label">@contact.Label</span>
+                                    <p class="evac-hotline__num">@contact.Number <i class="bi bi-telephone-outbound-fill"></i></p>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <a href="tel:911" class="evac-hotline">
+                                <span class="evac-hotline__label">National Emergency Hotline</span>
+                                <p class="evac-hotline__num">911 <i class="bi bi-telephone-outbound-fill"></i></p>
+                            </a>
+                            <p style="color: var(--muted); font-size:.85rem; margin:0;">Wala pang naka-configure na barangay hotline. Makipag-ugnayan sa Barangay Hall.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center mt-4 reveal" style="color: var(--muted); font-size: .85rem;">
+            <i class="bi bi-clock-history me-1"></i> Information last updated: <strong>@Model.LastUpdated.ToString("MMMM d, yyyy • h:mm tt")</strong>
+        </p>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Itago ang loading overlay kapag handa na ang page.
+            var loader = document.getElementById('evacLoading');
+            function hideLoader() { if (loader) { loader.style.display = 'none'; } }
+            if (document.readyState === 'complete') { hideLoader(); }
+            else { window.addEventListener('load', hideLoader); setTimeout(hideLoader, 1500); }
+
+            // Scroll reveal (graceful fallback).
+            var reveals = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) { reveals.forEach(function (el) { el.classList.add('is-in'); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+            }, { threshold: 0.08 });
+            reveals.forEach(function (el) { io.observe(el); });
+        })();
+    </script>
+}

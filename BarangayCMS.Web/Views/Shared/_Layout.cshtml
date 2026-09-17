@@ -48,7 +48,7 @@
 
                         <!-- 🗂️ DROPDOWN MENU PARA SA MGA RESIDENTE -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle px-3 @(currentController == "CertificateRequest" || currentController == "Complaint" || currentController == "Announcement" || currentController == "DisasterPreparedness" ? "active" : "")"
+                            <a class="nav-link dropdown-toggle px-3 @(currentController == "CertificateRequest" || currentController == "Complaint" || currentController == "Announcement" || currentController == "DisasterPreparedness" || currentController == "Evacuation" ? "active" : "")"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Modules
                             </a>
@@ -78,6 +78,11 @@
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="DisasterPreparedness" asp-action="Index">
                                         <i class="bi bi-exclamation-triangle text-danger"></i> Disaster Preparedness
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="Evacuation" asp-action="Index">
+                                        <i class="bi bi-buildings text-danger"></i> Evacuation
                                     </a>
                                 </li>
                             </ul>
@@ -120,6 +125,7 @@
                         <li><a asp-area="" asp-controller="Complaint" asp-action="Create" class="text-reset text-decoration-none hover-white">File a Complaint</a></li>
                         <li><a asp-area="" asp-controller="Announcement" asp-action="Index" class="text-reset text-decoration-none hover-white">Barangay Announcements</a></li>
                         <li><a asp-area="" asp-controller="DisasterPreparedness" asp-action="Index" class="text-reset text-decoration-none hover-white">Disaster Response</a></li>
+                        <li><a asp-area="" asp-controller="Evacuation" asp-action="Index" class="text-reset text-decoration-none hover-white">Evacuation Information</a></li>
                         <li><a asp-area="" asp-controller="Account" asp-action="Login" class="text-reset text-decoration-none hover-white fw-semibold text-info"><i class="bi bi-box-arrow-in-right me-1"></i>Staff Portal Login</a></li>
                     </ul>
                 </div>

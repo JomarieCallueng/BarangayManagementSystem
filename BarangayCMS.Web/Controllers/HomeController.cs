@@ -15,15 +15,20 @@ namespace BarangayCMS.Web.Controllers
     {
         private readonly IContactMessageService _contactMessages;
         private readonly ApplicationDbContext _context;
+        private readonly IEvacuationService _evacuationService;
 
-        public HomeController(IContactMessageService contactMessages, ApplicationDbContext context)
+        public HomeController(IContactMessageService contactMessages, ApplicationDbContext context, IEvacuationService evacuationService)
         {
             _contactMessages = contactMessages;
             _context = context;
+            _evacuationService = evacuationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            // Dynamic na bilang para sa hero/stats (galing sa database, hindi hardcoded).
+            ViewData["TotalResidents"] = await _context.Residents.CountAsync(r => r.IsResident);
+            ViewData["ActiveEvacuationCenters"] = (await _evacuationService.GetPublicEvacuationInfoAsync()).ActiveCenters.Count;
             return View();
         }
 

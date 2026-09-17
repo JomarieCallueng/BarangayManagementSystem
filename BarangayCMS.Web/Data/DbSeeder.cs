@@ -37,6 +37,7 @@ namespace BarangayCMS.Web.Data
             await SeedAnnouncementsAsync(db);
             await SeedBudgetsAsync(db);
             await SeedDisastersAsync(db);
+            await SeedEvacuationAsync(db);
             await SeedEnvironmentAsync(db);
             await SeedProjectsAsync(db);
             await SeedSmsAlertsAsync(db);
@@ -537,6 +538,73 @@ namespace BarangayCMS.Web.Data
                 EndDate = status == "Completed" ? DateTime.Now.AddDays(-5) : (DateTime?)null,
                 DateLogged = DateTime.Now.AddMonths(-2),
                 LastUpdated = DateTime.Now
+            });
+        }
+
+        // ---------------------------------------------------------------
+        // Evacuation Centers + Barangay-wide Evacuation Status
+        // ---------------------------------------------------------------
+        private static async Task SeedEvacuationAsync(ApplicationDbContext db)
+        {
+            // Singleton status (Id = 1). Default: NORMAL na may standard na
+            // tagubilin at emergency contacts (in-uupdate ng Admin/Staff).
+            if (!await db.EvacuationStatuses.AnyAsync())
+            {
+                db.EvacuationStatuses.Add(new EvacuationStatus
+                {
+                    OverallStatus = "Normal",
+                    StatusMessage = null,
+                    Instructions = string.Join("\n", new[]
+                    {
+                        "Stay calm and follow official instructions.",
+                        "Bring essential medicines and important documents.",
+                        "Follow designated evacuation routes.",
+                        "Keep children and vulnerable persons with your family/group.",
+                        "Do not return to restricted areas until authorities announce that it is safe."
+                    }),
+                    EmergencyContacts = string.Join("\n", new[]
+                    {
+                        "Barangay Emergency Hotline|0917-123-4567",
+                        "Barangay Hall|0912-345-6789",
+                        "Health Center|0918-000-0000"
+                    }),
+                    UpdatedBy = "System",
+                    DateUpdated = DateTime.Now
+                });
+            }
+
+            // Mga sample na center — mga lugar (hindi tao), kaya walang epekto
+            // ang three-names rule. Idempotent sa pamamagitan ng Name check.
+            await EnsureEvacuationCenterAsync(db, "Barangay Covered Court",
+                "Barangay Main Road", "Purok 1", 500, 125, "0917-123-4567",
+                "Pangunahing evacuation center na may generator at potable water.", true);
+
+            await EnsureEvacuationCenterAsync(db, "Tatalon Elementary School",
+                "Del Monte Avenue", "Purok 2", 300, 280, "0912-345-6789",
+                "Second-floor classrooms para sa mga pamilyang may sanggol.", true);
+
+            await EnsureEvacuationCenterAsync(db, "Barangay Multi-Purpose Hall",
+                "Sitio Central", "Purok 3", 150, 0, "0918-000-0000",
+                "Standby center — bubuksan kapag lumagpas sa kapasidad ang iba.", true);
+        }
+
+        private static async Task EnsureEvacuationCenterAsync(ApplicationDbContext db, string name,
+            string address, string purok, int capacity, int occupants, string contact, string notes, bool isActive)
+        {
+            if (await db.EvacuationCenters.AnyAsync(c => c.Name == name)) return;
+
+            db.EvacuationCenters.Add(new EvacuationCenter
+            {
+                Name = name,
+                Address = address,
+                SitioPurok = purok,
+                Capacity = capacity,
+                CurrentOccupants = occupants,
+                ContactNumber = contact,
+                Notes = notes,
+                IsActive = isActive,
+                DateCreated = DateTime.Now,
+                DateUpdated = DateTime.Now
             });
         }
 
