@@ -1,0 +1,81 @@
+@model IEnumerable<BarangayCMS.Entities.BarangayOfficial>
+@{
+    var officials = (Model ?? Enumerable.Empty<BarangayCMS.Entities.BarangayOfficial>()).ToList();
+
+    static string Norm(string? s) => (s ?? string.Empty).Trim().ToLowerInvariant();
+
+    // Hinahanap ang aktibong opisyal na naka-assign sa isang komite. Ang lead ay
+    // batay sa TUNAY na committee assignment (o.Committee), kaya hindi mahihila ang
+    // maling opisyal (hal. Treasurer sa "Appropriations & Finance") sa pamamagitan
+    // ng malabong keyword.
+    string? LeadFor(string committeeTitle, params string[] keywords)
+    {
+        var target = Norm(committeeTitle);
+
+        // 1. Eksaktong tugma sa aktwal na naka-assign na committee (pinaka-tumpak).
+        var exact = officials.FirstOrDefault(o => o != null && Norm(o.Committee) == target);
+        if (exact != null) return exact.FullName;
+
+        // 2. Special Rule para sa Barangay "Youth & Sports Development":
+        // Kapag walang direktang assignee, awtomatikong SK Chairperson (Ex-Officio).
+        if (committeeTitle.Equals("Youth & Sports Development", StringComparison.OrdinalIgnoreCase))
+        {
+            var skChair = officials.FirstOrDefault(o =>
+                o != null &&
+                !string.IsNullOrEmpty(o.Position) &&
+                (o.Position.ToLowerInvariant().Contains("sk chair") || o.Position.ToLowerInvariant().Contains("sk chairman")));
+
+            if (skChair != null) return skChair.FullName + " (Ex-Officio)";
+        }
+
+        // 3. Fallback: keyword match sa Committee LAMANG (hindi Position).
+        var loose = officials.FirstOrDefault(o =>
+        {
+            if (o == null) return false;
+            var hay = Norm(o.Committee);
+            return keywords.Any(k => hay.Contains(k.ToLowerInvariant()));
+        });
+        return loose?.FullName;
+    }
+
+    var committees = new (string Title, string Text, string Icon, string[] Keywords)[]
+    {
+        ("Appropriations & Finance", "Pondo, badyet, at taunang gastusin ng barangay.", "bi-cash-coin", new[] { "appropriation", "finance", "budget", "treasur" }),
+        ("Peace and Order & Public Safety", "Seguridad, Barangay Tanod, at kapayapaan sa komunidad.", "bi-shield-check", new[] { "peace", "order", "safety", "tanod" }),
+        ("Health and Sanitation", "Health center, pasilidad ng kalusugan, at kalinisan ng kapaligiran.", "bi-heart-pulse", new[] { "health", "sanitation", "kalusugan" }),
+        ("Infrastructure & Public Works", "Kalsada, gusali, drainages, at mga pampublikong pasilidad.", "bi-cone-striped", new[] { "infrastructure", "public works", "engineering" }),
+        ("Education & Culture", "Mga paaralan, day care centers, at mga pangkulturang aktibidad.", "bi-mortarboard", new[] { "education", "culture", "edukasyon" }),
+        ("Environment & Agriculture", "Waste management, pagtatanim, at pangangalaga sa kalikasan.", "bi-tree", new[] { "environment", "agriculture", "kalikasan" }),
+        ("Women, Family & Social Services", "Proteksyon sa kababaihan, bata, senior citizens, at PWDs.", "bi-people", new[] { "women", "family", "social", "kababaihan" }),
+        ("Youth & Sports Development", "Karaniwang pinangungunahan ng SK Chairperson.", "bi-dribbble", new[] { "youth", "sports", "kabataan" }),
+    };
+}
+
+<div class="people-section-title">
+    <span class="people-eyebrow">Mga Komite</span>
+    <h2>Sangguniang Barangay Standing Committees</h2>
+</div>
+
+<div class="row g-3">
+    @foreach (var c in committees)
+    {
+        var lead = LeadFor(c.Title, c.Keywords);
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="committee-card">
+                <div class="committee-card__icon"><i class="bi @c.Icon"></i></div>
+                <div>
+                    <h3 class="committee-card__title">@c.Title</h3>
+                    <p class="committee-card__text">@c.Text</p>
+                    @if (!string.IsNullOrWhiteSpace(lead))
+                    {
+                        <span class="committee-card__lead"><i class="bi bi-person-check"></i>@lead</span>
+                    }
+                    else
+                    {
+                        <span class="committee-card__lead text-muted"><i class="bi bi-person-x"></i>No current assignee</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

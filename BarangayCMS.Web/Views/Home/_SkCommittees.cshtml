@@ -1,0 +1,69 @@
+@model IEnumerable<BarangayCMS.Entities.BarangayOfficial>
+@{
+    var members = (Model ?? Enumerable.Empty<BarangayCMS.Entities.BarangayOfficial>()).ToList();
+
+    static string Norm(string? s) => (s ?? string.Empty).Trim().ToLowerInvariant();
+
+    // Ang lead ay batay sa TUNAY na committee assignment ng bawat SK member
+    // (o.Committee). Ginagamit ang eksaktong pangalan ng komite kaya ang SK
+    // Chairperson ay HINDI awtomatikong nakukuha ng "Sports Development" dahil
+    // lang sa kanyang ex-officio na "…Youth and Sports Development" (tingnan §14).
+    string? LeadFor(string committeeTitle, params string[] keywords)
+    {
+        var target = Norm(committeeTitle);
+
+        // 1. Eksaktong tugma sa aktwal na naka-assign na committee.
+        var exact = members.FirstOrDefault(o => o != null && Norm(o.Committee) == target);
+        if (exact != null) return exact.FullName;
+
+        // 2. Fallback: keyword match sa Committee LAMANG (hindi Position), para
+        //    hindi mahila ang SK Chair sa pamamagitan ng kanyang titulo.
+        var loose = members.FirstOrDefault(o =>
+        {
+            if (o == null) return false;
+            var hay = Norm(o.Committee);
+            return keywords.Any(k => hay.Contains(k.ToLowerInvariant()));
+        });
+        return loose?.FullName;
+    }
+
+    var committees = new (string Title, string Text, string Icon, string[] Keywords)[]
+    {
+        ("Education and Culture", "Scholarships, student assistance, and arts/cultural activities.", "bi-mortarboard", new[] { "education", "culture" }),
+        ("Environmental Protection, Climate Change & DRRM", "Environmental protection, tree planting, climate awareness, and disaster preparedness.", "bi-tree", new[] { "environment", "climate", "drrm", "disaster" }),
+        ("Youth Employment and Livelihood", "Livelihood training, job fairs, employment opportunities, and youth entrepreneurship.", "bi-briefcase", new[] { "employment", "livelihood", "kabuhayan" }),
+        ("Health, Health Services & Anti-Drug Abuse", "Health awareness, adolescent health, mental health awareness, and anti-drug programs.", "bi-heart-pulse", new[] { "health", "drug", "kalusugan" }),
+        ("Gender and Development", "Programs supporting gender equality, protection, inclusion, and youth welfare.", "bi-people", new[] { "gender", "development", "gad" }),
+        ("Sports Development", "Sports activities, leagues, recreation, and physical fitness programs.", "bi-dribbble", new[] { "sports", "palaro" }),
+        ("Active Citizenship & Capability Building", "Leadership training, volunteerism, civic participation, and youth governance.", "bi-megaphone", new[] { "citizenship", "capability", "leadership", "governance" }),
+    };
+}
+
+<div class="people-section-title">
+    <span class="people-eyebrow">Mga Komite</span>
+    <h2>Sangguniang Kabataan Standing Committees</h2>
+</div>
+
+<div class="row g-3">
+    @foreach (var c in committees)
+    {
+        var lead = LeadFor(c.Title, c.Keywords);
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="committee-card">
+                <div class="committee-card__icon"><i class="bi @c.Icon"></i></div>
+                <div>
+                    <h3 class="committee-card__title">@c.Title</h3>
+                    <p class="committee-card__text">@c.Text</p>
+                    @if (!string.IsNullOrWhiteSpace(lead))
+                    {
+                        <span class="committee-card__lead"><i class="bi bi-person-check"></i>@lead</span>
+                    }
+                    else
+                    {
+                        <span class="committee-card__lead text-muted"><i class="bi bi-person-x"></i>No current assignee</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

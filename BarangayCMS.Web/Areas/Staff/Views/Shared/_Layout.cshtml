@@ -41,6 +41,7 @@
                 <a asp-area="Staff" asp-controller="Health" asp-action="Index" class="app-nav__link"><i class="bi bi-heart-pulse-fill"></i> Health Center</a>
                 <a asp-area="Staff" asp-controller="Announcements" asp-action="Index" class="app-nav__link"><i class="bi bi-megaphone-fill"></i> Announcements</a>
                 <a asp-area="Staff" asp-controller="Reports" asp-action="Index" class="app-nav__link"><i class="bi bi-graph-up"></i> Reports</a>
+                <a asp-area="Staff" asp-controller="Help" asp-action="Index" class="app-nav__link"><i class="bi bi-life-preserver"></i> Help System</a>
 
                 <hr class="app-nav__divider" />
                 <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal" class="app-nav__link app-nav__link--danger">
@@ -128,6 +129,7 @@
             if (best) { best.classList.add("active"); }
         })();
     </script>
+    <script src="~/js/sidebar-scroll.js" asp-append-version="true"></script>
     <script src="~/js/form-persist.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

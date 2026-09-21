@@ -37,20 +37,6 @@
                         <span class="text-danger fw-bold"><i class="bi bi-circle-fill small"></i> Tapos na ang Termino</span>
                     }
                 </dd>
-
-                <dt class="col-sm-4 text-muted mt-3">Digital Signature:</dt>
-                <dd class="col-sm-8 mt-2">
-                    @if (!string.IsNullOrEmpty(Model.SignaturePath))
-                    {
-                        <div class="p-2 border rounded bg-white" style="width: fit-content;">
-                            <img src="~/uploads/signatures/@Model.SignaturePath" alt="Official Signature" style="max-height: 80px;" />
-                        </div>
-                    }
-                    else
-                    {
-                        <span class="text-muted italic small">Walang na-upload na lagda.</span>
-                    }
-                </dd>
             </dl>
         </div>
         <div class="card-footer d-flex justify-content-between bg-white border-top-0">

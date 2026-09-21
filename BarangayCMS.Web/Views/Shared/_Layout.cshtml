@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
+    @* Section Styles *@
+    @await RenderSectionAsync("Styles", required: false)
+
     @* Loaded in <head>, before the body paints, so the saved palette is applied with no flash of the default theme. *@
     <script src="~/js/theme-switcher.js" asp-append-version="true"></script>
 </head>
@@ -31,29 +34,61 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
+                @{
+                    var isOfficials = currentController == "Home" && currentAction == "Officials";
+                    var isSk = currentController == "Home" && currentAction == "SK";
+                    var isHistory = currentController == "Home" && currentAction == "History";
+                    var isFaq = currentController == "Home" && currentAction == "Faq";
+                    var isAboutSection = isOfficials || isSk || isHistory || isFaq;
+                    var isModulesSection = currentController == "CertificateRequest" || currentController == "Complaint" || currentController == "Announcement" || currentController == "DisasterPreparedness" || currentController == "Evacuation";
+                }
+                <div class="collapse navbar-collapse" id="navbarNav">
 
+                    <!-- 🧭 ALL FOUR MAIN LINKS IN ONE GROUP (centered): Home → About Us → Modules → Contact -->
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                         <!-- 🏠 HOME LINK -->
                         <li class="nav-item">
                             <a class="nav-link px-3 @(currentController == "Home" && currentAction == "Index" ? "active" : "")"
                                asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
-                        <!-- 🌟 UPDATED: ABOUT US LINK (Pumupunta na sa sariling View /Home/About) -->
-                        <li class="nav-item">
-                            <a class="nav-link px-3 @(currentController == "Home" && currentAction == "About" ? "active" : "")"
-                               asp-area="" asp-controller="Home" asp-action="About">About Us</a>
+                        <!-- 🌟 ABOUT US DROPDOWN — separate pages -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-3 @(isAboutSection ? "active" : "")"
+                               href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                About Us
+                            </a>
+                            <ul class="dropdown-menu shadow border-0 rounded-3 mt-2">
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isHistory ? "active" : "")" asp-area="" asp-controller="Home" asp-action="History">
+                                        <i class="bi bi-info-circle text-success"></i> About Barangay
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isOfficials ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Officials">
+                                        <i class="bi bi-person-badge text-primary"></i> Barangay Officials
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isSk ? "active" : "")" asp-area="" asp-controller="Home" asp-action="SK">
+                                        <i class="bi bi-people text-info"></i> SK Officials
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isFaq ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Faq">
+                                        <i class="bi bi-question-circle text-warning"></i> FAQs
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
-                        <!-- 🗂️ DROPDOWN MENU PARA SA MGA RESIDENTE -->
+                        <!-- 🗂️ MODULES DROPDOWN -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle px-3 @(currentController == "CertificateRequest" || currentController == "Complaint" || currentController == "Announcement" || currentController == "DisasterPreparedness" || currentController == "Evacuation" ? "active" : "")"
+                            <a class="nav-link dropdown-toggle px-3 @(isModulesSection ? "active" : "")"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Modules
                             </a>
                             <ul class="dropdown-menu shadow border-0 rounded-3 mt-2">
-                                <!-- 📄 ONLINE SERVICES SECTION -->
                                 <li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">Online Services</h6></li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="CertificateRequest" asp-action="Create">
@@ -68,7 +103,6 @@
 
                                 <li><hr class="dropdown-divider opacity-50"></li>
 
-                                <!-- 📢 INFORMATION SECTION -->
                                 <li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">Information</h6></li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="Announcement" asp-action="Index">
@@ -93,7 +127,9 @@
                                asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
                         </li>
                     </ul>
-                    <div class="d-flex gap-2">
+
+                    <!-- Emergency Alerts — CTA button -->
+                    <div class="d-flex mt-2 mt-lg-0">
                         <a asp-area="" asp-controller="Home" asp-action="Contact" class="btn btn-success btn-sm px-3 rounded fw-bold text-white bg-emerald">
                             Emergency Alerts
                         </a>
@@ -112,28 +148,28 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-5">
-                    <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center text-white">
                         <img src="~/images/Barangay Tatalon Logo-modified.png" alt="Barangay Tatalon Logo" class="me-2" style="height: 30px; width: auto; object-fit: contain;">
                         Barangay Management System
                     </h5>
                     <p class="text-white-50 small pe-md-5">A centralized digital platform improving governance, public service delivery, and community welfare.</p>
                 </div>
                 <div class="col-md-3">
-                    <h6 class="text-uppercase fw-bold text-muted small mb-3">Quick Links</h6>
-                    <ul class="list-unstyled text-white-50 small lh-lg">
-                        <li><a asp-area="" asp-controller="CertificateRequest" asp-action="Create" class="text-reset text-decoration-none hover-white">Request Certificate</a></li>
-                        <li><a asp-area="" asp-controller="Complaint" asp-action="Create" class="text-reset text-decoration-none hover-white">File a Complaint</a></li>
-                        <li><a asp-area="" asp-controller="Announcement" asp-action="Index" class="text-reset text-decoration-none hover-white">Barangay Announcements</a></li>
-                        <li><a asp-area="" asp-controller="DisasterPreparedness" asp-action="Index" class="text-reset text-decoration-none hover-white">Disaster Response</a></li>
-                        <li><a asp-area="" asp-controller="Evacuation" asp-action="Index" class="text-reset text-decoration-none hover-white">Evacuation Information</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="Login" class="text-reset text-decoration-none hover-white fw-semibold text-info"><i class="bi bi-box-arrow-in-right me-1"></i>Staff Portal Login</a></li>
+                    <h6 class="text-uppercase fw-bold text-white small mb-3" style="letter-spacing: 0.8px;">Quick Links</h6>
+                    <ul class="list-unstyled text-light small lh-lg">
+                        <li><a asp-area="" asp-controller="CertificateRequest" asp-action="Create" class="footer-link">Request Certificate</a></li>
+                        <li><a asp-area="" asp-controller="Complaint" asp-action="Create" class="footer-link">File a Complaint</a></li>
+                        <li><a asp-area="" asp-controller="Announcement" asp-action="Index" class="footer-link">Barangay Announcements</a></li>
+                        <li><a asp-area="" asp-controller="DisasterPreparedness" asp-action="Index" class="footer-link">Disaster Response</a></li>
+                        <li><a asp-area="" asp-controller="Evacuation" asp-action="Index" class="footer-link">Evacuation Information</a></li>
+                        <li class="mt-2"><a asp-area="" asp-controller="Account" asp-action="Login" class="footer-link fw-semibold text-info"><i class="bi bi-box-arrow-in-right me-1"></i>Staff Portal Login</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h6 class="text-uppercase fw-bold text-muted small mb-3">Contact Info</h6>
-                    <p class="text-white-50 small mb-2"><i class="bi bi-telephone me-2"></i> 0912-345-6789</p>
-                    <p class="text-white-50 small mb-2"><i class="bi bi-envelope me-2"></i> barangay@email.com</p>
-                    <p class="text-white-50 small"><i class="bi bi-clock me-2"></i> Mon–Fri, 8:00 AM – 5:00 PM</p>
+                    <h6 class="text-uppercase fw-bold text-white small mb-3" style="letter-spacing: 0.8px;">Contact Info</h6>
+                    <p class="text-light small mb-2"><i class="bi bi-telephone text-info me-2"></i> 0912-345-6789</p>
+                    <p class="text-light small mb-2"><i class="bi bi-envelope text-info me-2"></i> barangay@email.com</p>
+                    <p class="text-light small"><i class="bi bi-clock text-info me-2"></i> Mon–Fri, 8:00 AM – 5:00 PM</p>
                 </div>
             </div>
             <hr class="border-white border-opacity-10 my-4" />
@@ -143,8 +179,101 @@
         </div>
     </footer>
 
+    <!-- ⬆️ BACK TO TOP BUTTON -->
+    <button id="backToTopBtn" type="button" class="back-to-top-btn" title="Bumalik sa Itaas" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- 🎨 THEME / APPEARANCE SWITCHER PARTIAL (Para lumabas sa LAHAT ng pahina at sub-menus) -->
+    <partial name="_ThemeSwitcher" />
+
+    <style>
+        /* Footer Links */
+        .footer-link {
+            color: #e2e8f0 !important;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .footer-link:hover {
+            color: #38bdf8 !important;
+            text-decoration: underline;
+        }
+
+        /* ----------------------------------------------------
+           BACK TO TOP BUTTON (Naka-pwesto sa bottom: 85px para hindi matakpan ang Theme Switcher button)
+           ---------------------------------------------------- */
+        html body #backToTopBtn,
+        html body button#backToTopBtn,
+        html body .back-to-top-btn {
+            position: fixed !important;
+            bottom: 85px !important;
+            right: 30px !important;
+            width: 46px !important;
+            height: 46px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 50% !important;
+            background-color: #0f5132 !important; /* Solid Dark Green */
+            background-image: none !important;
+            color: #ffffff !important;
+            border: none !important;
+            outline: none !important;
+            
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+            filter: none !important;
+            backdrop-filter: none !important;
+            overflow: hidden !important;
+            
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 99999 !important;
+            cursor: pointer !important;
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+
+        html body #backToTopBtn::before,
+        html body #backToTopBtn::after,
+        html body .back-to-top-btn::before,
+        html body .back-to-top-btn::after {
+            content: none !important;
+            display: none !important;
+        }
+
+        /* Hover Effect */
+        html body #backToTopBtn:hover,
+        html body .back-to-top-btn:hover {
+            background-color: #146c43 !important;
+            color: #ffffff !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        /* Icon Fix */
+        html body #backToTopBtn i,
+        html body .back-to-top-btn i {
+            display: inline-block !important;
+            color: #ffffff !important;
+            font-size: 1.25rem !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/form-persist.js" asp-append-version="true"></script>
+
+    <script>
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

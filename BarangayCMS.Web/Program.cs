@@ -1,18 +1,26 @@
+using System.Globalization;
 using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.BLL.Services;
 using BarangayCMS.DAL.Context;
 using BarangayCMS.DAL.Repository;
 using BarangayCMS.DAL.Repository.Interfaces;
+using BarangayCMS.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContext
+// ============================================================
+// 1. DATABASE CONFIGURATION
+// ============================================================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Data Access Layer (DAL) Repositories
+// ============================================================
+// 2. DATA ACCESS LAYER (DAL) REPOSITORIES
+// ============================================================
 builder.Services.AddScoped<IResidentRepository, ResidentRepository>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
@@ -27,7 +35,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
 builder.Services.AddScoped<IEvacuationRepository, EvacuationRepository>();
 
-// Business Logic Layer (BLL) Services
+// ============================================================
+// 3. BUSINESS LOGIC LAYER (BLL) SERVICES
+// ============================================================
 builder.Services.AddScoped<IResidentService, ResidentService>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICertificateRequirementService, CertificateRequirementService>();
@@ -43,11 +53,16 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IContactMessageService, ContactMessageService>();
 builder.Services.AddScoped<IEvacuationService, EvacuationService>();
 
-// 📱 Semaphore SMS Integration Service Registration
+// 📱 Semaphore SMS Integration Service
 builder.Services.AddHttpClient<ISemaphoreService, SemaphoreService>();
 
-// Identity Configuration
-builder.Services.AddIdentity<BarangayCMS.Entities.ApplicationUser, IdentityRole>(options =>
+// Helper for HttpContext access (Opsyonal ngunit inirerekomenda para sa Claims/User sessions)
+builder.Services.AddHttpContextAccessor();
+
+// ============================================================
+// 4. IDENTITY & AUTHENTICATION CONFIGURATION
+// ============================================================
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
@@ -57,7 +72,8 @@ builder.Services.AddIdentity<BarangayCMS.Entities.ApplicationUser, IdentityRole>
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
 })
-.AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -65,29 +81,55 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
+// ============================================================
+// 5. LOCALIZATION (i18n) CONFIGURATION
+// ============================================================
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
 builder.Services.AddControllersWithViews(options =>
 {
-    // Umasa LAMANG sa tahasang [Required] attributes. Kung hindi, ang mga
-    // non-nullable string properties (hal. SignaturePath, ProfileImagePath,
-    // Committee) ay tumatanggap ng implicit [Required] na tumatanggi sa
-    // empty string — kaya tahimik na nabibigo ang pag-save kapag walang laman
-    // ang field na iyon. (Root cause ng hindi ma-save na Edit forms.)
+    // Umasa LAMANG sa tahasang [Required] attributes para sa non-nullable reference types.
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+})
+.AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+.AddDataAnnotationsLocalization(options =>
+{
+    options.DataAnnotationLocalizerProvider = (type, factory) =>
+        factory.Create(typeof(BarangayCMS.Web.SharedResource));
+});
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("en"),   // English (default / fallback)
+        new CultureInfo("fil")   // Filipino / Tagalog
+    };
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+
+    // Unahin ang Cookie provider para mag-persist ang napiling wika
+    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
 
 var app = builder.Build();
 
-// Punan ang lahat ng module ng demo data (idempotent — ligtas paulit-ulit).
-// Ginagamit LAMANG ang tatlong pangalan: Jomarie Callueng,
-// Mark Dave Casao Cardenas, at Klarence Alfred Z. Villar.
+// ============================================================
+// 6. DATABASE MIGRATION & DEMO DATA SEEDING
+// ============================================================
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var db = services.GetRequiredService<ApplicationDbContext>();
-        db.Database.Migrate();
-        await BarangayCMS.Web.Data.DbSeeder.SeedDemoDataAsync(db);
+
+        // Asynchronous migration para sa mas magandang performance
+        await db.Database.MigrateAsync();
+
+        // Patakbuhin ang DbSeeder
+        await DbSeeder.SeedDemoDataAsync(db);
     }
     catch (Exception ex)
     {
@@ -95,6 +137,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// ============================================================
+// 7. MIDDLEWARE PIPELINE
+// ============================================================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -103,23 +148,28 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// I-apply ang napiling culture sa bawat HTTP Request
+app.UseRequestLocalization();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Area-based routes
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
+// Default route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// NOTE: Ang browser ay awtomatikong binubuksan na ng "launchBrowser": true sa
-// Properties/launchSettings.json. Huwag nang magdagdag ng sariling Process.Start
-// dito dahil magbubukas iyon ng pangalawang tab/window.
-
+// ============================================================
+// 8. APPLICATION EXECUTION
+// ============================================================
 try
 {
     app.Run();

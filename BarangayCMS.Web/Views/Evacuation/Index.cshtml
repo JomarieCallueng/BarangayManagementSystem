@@ -266,7 +266,7 @@
                                 <a href="@mapUrl" target="_blank" rel="noopener" class="evac-btn"><i class="bi bi-map-fill"></i> View Location</a>
                                 @if (!string.IsNullOrWhiteSpace(c.ContactNumber))
                                 {
-                                    <a href="tel:@c.ContactNumber" class="evac-btn evac-btn--call"><i class="bi bi-telephone-outbound-fill"></i> Call</a>
+                                    <span class="evac-btn evac-btn--call" style="cursor: default;"><i class="bi bi-telephone-fill"></i> @c.ContactNumber</span>
                                 }
                             </div>
                         </div>
@@ -309,18 +309,18 @@
                         {
                             @foreach (var contact in Model.EmergencyContacts)
                             {
-                                <a href="tel:@contact.Number" class="evac-hotline">
+                                <div class="evac-hotline">
                                     <span class="evac-hotline__label">@contact.Label</span>
-                                    <p class="evac-hotline__num">@contact.Number <i class="bi bi-telephone-outbound-fill"></i></p>
-                                </a>
+                                    <p class="evac-hotline__num">@contact.Number</p>
+                                </div>
                             }
                         }
                         else
                         {
-                            <a href="tel:911" class="evac-hotline">
+                            <div class="evac-hotline">
                                 <span class="evac-hotline__label">National Emergency Hotline</span>
-                                <p class="evac-hotline__num">911 <i class="bi bi-telephone-outbound-fill"></i></p>
-                            </a>
+                                <p class="evac-hotline__num">911</p>
+                            </div>
                             <p style="color: var(--muted); font-size:.85rem; margin:0;">Wala pang naka-configure na barangay hotline. Makipag-ugnayan sa Barangay Hall.</p>
                         }
                     </div>

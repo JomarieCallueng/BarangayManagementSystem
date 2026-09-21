@@ -1,0 +1,115 @@
+@model IEnumerable<BarangayCMS.Entities.BarangayOfficial>
+@using BarangayCMS.Web.Areas.Admin.Services
+@{
+    ViewData["Title"] = "Barangay Officials - Barangay Tatalon";
+
+    // Ang controller ay nagpapasa ng LAHAT ng active officials (kasama ang SK Chair)
+    // dahil kailangan ito ng _BarangayCommittees para matukoy ang Ex-Officio lead sa
+    // "Youth & Sports Development". Ngunit ang PAGE na ito ay para LAMANG sa
+    // Sangguniang Barangay — hindi dito ipinapakita ang buong SK council.
+    var officials = (Model ?? Enumerable.Empty<BarangayCMS.Entities.BarangayOfficial>()).ToList();
+
+    bool IsCaptain(BarangayCMS.Entities.BarangayOfficial o)
+    {
+        var p = (o.Position ?? string.Empty).ToLowerInvariant();
+        return p.Contains("captain") || p.Contains("punong");
+    }
+    bool IsSk(BarangayCMS.Entities.BarangayOfficial o) => OfficialStructure.IsSk(o.Position);
+
+    var captain = officials.FirstOrDefault(IsCaptain);
+
+    // Sangguniang Barangay = mga HINDI SK, maliban sa Captain (featured na siya).
+    var sbOthers = officials.Where(o => o != captain && !IsSk(o)).ToList();
+
+    // ViewData copy na nagmamarka sa featured card (Barangay Captain).
+    var featuredData = new ViewDataDictionary(ViewData) { ["Featured"] = true };
+
+    // SK Chairperson bilang Ex-Officio Member sa konteksto ng Sangguniang Barangay.
+    // Ito ang TANGING SK na lumalabas dito — hindi bilang SK official kundi bilang
+    // Ex-Officio member ng Barangay council. Ang buong SK ay nasa SK Officials page.
+    var exOfficio = ViewData["ExOfficio"] as BarangayCMS.Entities.BarangayOfficial;
+    var exOfficioData = new ViewDataDictionary(ViewData) { ["ExOfficio"] = true };
+
+    // Person-specific history modals — para LAMANG sa mga opisyal na ipinapakita dito.
+    var shownOfficials = new List<BarangayCMS.Entities.BarangayOfficial>();
+    if (captain != null) shownOfficials.Add(captain);
+    shownOfficials.AddRange(sbOthers);
+    if (exOfficio != null && !shownOfficials.Any(o => o.BarangayOfficialId == exOfficio.BarangayOfficialId))
+        shownOfficials.Add(exOfficio);
+
+    var hasBarangayOfficials = captain != null || sbOthers.Any() || exOfficio != null;
+}
+
+<!-- HERO -->
+<section class="people-hero">
+    <div class="people-hero__inner">
+        <span class="people-hero__eyebrow"><i class="bi bi-person-badge-fill"></i> Pamunuan ng Barangay</span>
+        <h1 class="people-hero__title">Barangay Officials</h1>
+        <p class="people-hero__sub">
+            The elected and appointed officials responsible for the administration and
+            governance of Barangay Tatalon. Ang kasalukuyang nakaupong pamunuan ng ating komunidad.
+        </p>
+    </div>
+</section>
+
+<div class="container people-wrap py-5">
+
+    @if (!hasBarangayOfficials)
+    {
+        <!-- EMPTY STATE -->
+        <div class="people-empty">
+            <i class="bi bi-people"></i>
+            No current barangay officials have been assigned.
+        </div>
+    }
+    else
+    {
+        @if (captain != null)
+        {
+            <div class="people-section-title mb-3">
+                <span class="people-eyebrow">Punong Barangay</span>
+                <h2>Barangay Captain</h2>
+            </div>
+            <partial name="_PublicOfficialCard" model="captain" view-data="featuredData" />
+        }
+
+        @if (sbOthers.Any())
+        {
+            <div class="people-section-title">
+                <span class="people-eyebrow">Sangguniang Barangay</span>
+                <h2>@(captain != null ? "Other Barangay Officials" : "Barangay Officials")</h2>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var official in sbOthers)
+                {
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <partial name="_PublicOfficialCard" model="official" />
+                    </div>
+                }
+            </div>
+        }
+
+        @if (exOfficio != null)
+        {
+            <div class="people-section-title">
+                <span class="people-eyebrow">Ex-Officio</span>
+                <h2>SK Chairperson — Ex-Officio Member</h2>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <partial name="_PublicOfficialCard" model="exOfficio" view-data="exOfficioData" />
+                </div>
+            </div>
+        }
+
+        <!-- Sangguniang Barangay standing committees (leads mula sa DB kapag may tugma) -->
+        <partial name="_BarangayCommittees" model="officials" />
+    }
+</div>
+
+<!-- PERSON-SPECIFIC HISTORY MODALS (mga opisyal na ipinapakita sa pahinang ito lamang) -->
+@foreach (var official in shownOfficials)
+{
+    <partial name="_OfficialHistoryModal" model="official" />
+}

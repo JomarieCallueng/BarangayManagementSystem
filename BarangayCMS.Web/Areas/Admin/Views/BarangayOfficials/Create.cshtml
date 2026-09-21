@@ -1,9 +1,12 @@
 @model BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using BarangayCMS.Web.Areas.Admin.Services
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Magdagdag ng Opisyal";
+    var counts = ViewBag.SlotCounts as Dictionary<OfficialSlot, int> ?? new Dictionary<OfficialSlot, int>();
+    var summary = ViewBag.Summary as StructureSummary;
 }
 
 <div class="page-header">
@@ -14,6 +17,10 @@
 </div>
 
 <div class="form-page">
+    @if (summary != null)
+    {
+        @await Html.PartialAsync("_StructureSummary", summary)
+    }
     <form asp-action="Create" enctype="multipart/form-data">
         <div class="app-card app-card--pad">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -28,32 +35,32 @@
                 <label asp-for="Position" class="form-label fw-bold"></label>
                 <select asp-for="Position" class="form-select">
                     <option value="">-- Pumili ng Posisyon --</option>
-                    <option value="Barangay Captain">Barangay Captain (Kapitan)</option>
-                    <option value="Barangay Kagawad">Barangay Kagawad</option>
-                    <option value="SK Chairman">SK Chairman</option>
-                    <option value="Barangay Secretary">Barangay Secretary</option>
-                    <option value="Barangay Treasurer">Barangay Treasurer</option>
-                    <option value="Barangay Tanod (Chief)">Barangay Tanod (Chief)</option>
+                    @foreach (var opt in OfficialStructure.Options)
+                    {
+                        var used = counts.TryGetValue(opt.Slot, out var c) ? c : 0;
+                        var limit = OfficialStructure.Limit(opt.Slot);
+                        var full = limit != int.MaxValue && used >= limit;
+                        var suffix = limit == int.MaxValue ? "" : $" ({used}/{limit})" + (full ? " — Puno na" : "");
+                        <option value="@opt.Value" disabled="@full">@opt.Label@suffix</option>
+                    }
                 </select>
                 <span asp-validation-for="Position" class="text-danger"></span>
+                <div class="form-text">Ang mga posisyong <strong>puno na</strong> ay naka-disable. I-deactivate muna ang kasalukuyang nakaupo bago magdagdag ng bago.</div>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Committee" class="form-label fw-bold"></label>
-                <input asp-for="Committee" class="form-control" placeholder="e.g., Committee on Peace & Order (Optional)" />
+                <select asp-for="Committee" id="committeeField" class="form-select" data-current="@Model.Committee">
+                    <option value="">-- Walang tiyak na komite --</option>
+                </select>
                 <span asp-validation-for="Committee" class="text-danger"></span>
+                <div id="committeeNote" class="form-text"></div>
             </div>
 
             <div class="mb-3">
                 <label asp-for="ProfileImageFile" class="form-label fw-bold"></label>
                 <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" />
                 <div class="form-text">Larawan ng opisyal na ipapakita sa public "About the Barangay" page. (Optional — kung wala, initials ang ipapakita.)</div>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="SignatureFile" class="form-label fw-bold"></label>
-                <input asp-for="SignatureFile" type="file" class="form-control" accept="image/*" />
-                <div class="form-text">I-upload ang malinaw na transparent PNG na pirma para sa mga digital certificates.</div>
             </div>
 
             <div class="mb-3 form-check form-switch pt-2">
@@ -73,4 +80,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <partial name="_CommitteeAssignmentScript" />
 }

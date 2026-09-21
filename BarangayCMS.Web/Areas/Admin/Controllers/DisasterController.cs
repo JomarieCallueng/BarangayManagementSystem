@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.DAL.Context;
 using BarangayCMS.DTO;
@@ -19,15 +21,24 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ISemaphoreService _semaphoreService;
         private readonly IEvacuationService _evacuationService;
+        private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly ILogger<DisasterController> _logger;
 
         // Ang Emergency SMS feature ay para LAMANG sa Admin (RBAC).
         private const string AdminRoles = "Admin,SuperAdmin";
 
-        public DisasterController(ApplicationDbContext context, ISemaphoreService semaphoreService, IEvacuationService evacuationService)
+        public DisasterController(
+            ApplicationDbContext context,
+            ISemaphoreService semaphoreService,
+            IEvacuationService evacuationService,
+            IStringLocalizer<SharedResource> localizer,
+            ILogger<DisasterController> logger)
         {
             _context = context;
             _semaphoreService = semaphoreService;
             _evacuationService = evacuationService;
+            _localizer = localizer;
+            _logger = logger;
         }
 
         // Helper: nakikita ba ng kasalukuyang user ang Emergency SMS feature?
@@ -389,6 +400,84 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         // Bahagi ng Disaster Risk Management module.
         // ==========================================================
 
+        // ==========================================================
+        // Helper: resolve recipients mula sa DB base sa napiling scope.
+        // Ibinabalik ang lahat ng non-blank contact numbers, ang label ng
+        // recipient group, at (kung meron) ang validation error message.
+        // Iisang source ito para sa Preview at Send — walang duplicate logic.
+        // ==========================================================
+        private async Task<(List<string> Numbers, string Label, string? Error)> ResolveRecipientsAsync(EmergencySmsViewModel model)
+        {
+            var residentsQuery = _context.Residents.Where(r => r.IsResident);
+            string label;
+
+            switch (model.RecipientGroup)
+            {
+                case "Purok":
+                    if (string.IsNullOrWhiteSpace(model.Purok))
+                        return (new List<string>(), string.Empty, "Pumili ng Purok/Area para sa recipient group na ito.");
+                    residentsQuery = residentsQuery.Where(r => r.SitioPurok == model.Purok);
+                    label = $"Purok: {model.Purok}";
+                    break;
+
+                case "Selected":
+                    if (model.SelectedResidentIds == null || model.SelectedResidentIds.Count == 0)
+                        return (new List<string>(), string.Empty, "Pumili ng kahit isang residente para sa 'Selected Residents'.");
+                    residentsQuery = residentsQuery.Where(r => model.SelectedResidentIds.Contains(r.ResidentId));
+                    label = $"Selected Residents ({model.SelectedResidentIds.Count})";
+                    break;
+
+                default: // "All Residents"
+                    label = "All Residents";
+                    break;
+            }
+
+            var numbers = await residentsQuery
+                .Select(r => r.ContactNumber)
+                .Where(n => n != null && n != "")
+                .ToListAsync();
+
+            return (numbers, label, null);
+        }
+
+        // Bumubuo ng label ng emergency type na may kasamang severity (kung meron).
+        private static string BuildEmergencyLabel(EmergencySmsViewModel model) =>
+            string.IsNullOrWhiteSpace(model.Severity)
+                ? model.EmergencyType
+                : $"{model.EmergencyType} — {model.Severity}";
+
+        // 11a. POST: Admin/Disaster/PreviewEmergencyAlert (JSON — para sa recipient count preview)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = AdminRoles)]
+        public async Task<IActionResult> PreviewEmergencyAlert(EmergencySmsViewModel model)
+        {
+            var (numbers, label, error) = await ResolveRecipientsAsync(model);
+            if (error != null)
+            {
+                return Json(new { success = false, message = error });
+            }
+
+            // Bilangin gamit ang parehong validation na gagamitin sa aktwal na pagpapadala.
+            var distinct = numbers.Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => n.Trim()).Distinct().ToList();
+            var totalMatching = distinct.Count;
+            var validCount = distinct.Count(n => _semaphoreService.IsValidPhoneNumber(n));
+            var invalidCount = totalMatching - validCount;
+
+            return Json(new
+            {
+                success = true,
+                recipientGroup = label,
+                totalMatching,
+                validCount,
+                invalidCount,
+                smsToSend = validCount,
+                isAllResidents = model.RecipientGroup == "All Residents",
+                severity = model.Severity ?? "",
+                emergencyType = model.EmergencyType ?? ""
+            });
+        }
+
         // 11. POST: Admin/Disaster/SendEmergencyAlert
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -402,41 +491,16 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            var sentBy = User.Identity?.Name ?? "Admin";
+            var emergencyLabel = BuildEmergencyLabel(model);
+
             // 1. Kunin ang mga contact number base sa napiling recipient group
-            var residentsQuery = _context.Residents.Where(r => r.IsResident);
-            string recipientGroupLabel;
-
-            switch (model.RecipientGroup)
+            var (numbers, recipientGroupLabel, error) = await ResolveRecipientsAsync(model);
+            if (error != null)
             {
-                case "Purok":
-                    if (string.IsNullOrWhiteSpace(model.Purok))
-                    {
-                        TempData["SmsError"] = "Pumili ng Purok/Area para sa recipient group na ito.";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    residentsQuery = residentsQuery.Where(r => r.SitioPurok == model.Purok);
-                    recipientGroupLabel = $"Purok: {model.Purok}";
-                    break;
-
-                case "Selected":
-                    if (model.SelectedResidentIds == null || model.SelectedResidentIds.Count == 0)
-                    {
-                        TempData["SmsError"] = "Pumili ng kahit isang residente para sa 'Selected Residents'.";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    residentsQuery = residentsQuery.Where(r => model.SelectedResidentIds.Contains(r.ResidentId));
-                    recipientGroupLabel = $"Selected Residents ({model.SelectedResidentIds.Count})";
-                    break;
-
-                default: // "All Residents"
-                    recipientGroupLabel = "All Residents";
-                    break;
+                TempData["SmsError"] = error;
+                return RedirectToAction(nameof(Index));
             }
-
-            var numbers = await residentsQuery
-                .Select(r => r.ContactNumber)
-                .Where(n => n != null && n != "")
-                .ToListAsync();
 
             if (numbers.Count == 0)
             {
@@ -444,20 +508,39 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // 1b. 🔒 DUPLICATE PROTECTION (idempotency): iwasan ang aksidenteng dobleng
+            // blast mula sa double-click o network timeout retry. Kung may kaparehong
+            // broadcast (parehong sender, mensahe, at recipient group) sa nakaraang 2
+            // minuto, huwag nang magpadala ulit. Pinapayagan pa rin ang sadyang
+            // follow-up alert (ibang mensahe o pagkalipas ng 2 minuto).
+            var duplicateWindow = DateTime.Now.AddMinutes(-2);
+            bool isDuplicate = await _context.SmsAlerts.AnyAsync(a =>
+                a.SentBy == sentBy &&
+                a.Message == model.Message &&
+                a.RecipientGroup == recipientGroupLabel &&
+                a.SentAt >= duplicateWindow);
+
+            if (isDuplicate)
+            {
+                TempData["SmsWarning"] = "Naiwasan ang dobleng pagpapadala — kaka-broadcast lang ng kaparehong alert. Maghintay ng ilang sandali o baguhin ang mensahe para sa bagong alert.";
+                return RedirectToAction(nameof(Index));
+            }
+
             // 2. Ipadala gamit ang Semaphore (may validation + error handling sa service)
             var result = await _semaphoreService.SendBulkSmsAsync(numbers, model.Message);
 
-            // 3. I-record sa SMS Alert History (WALANG API key na itinatago dito)
+            // 3. I-record sa SMS Alert History (WALANG API key na itinatago dito).
+            //    Ito rin ang audit trail: sino (SentBy), kailan (SentAt), ano, at resulta.
             var alert = new SmsAlert
             {
-                EmergencyType = model.EmergencyType,
+                EmergencyType = emergencyLabel,
                 Message = model.Message,
                 RecipientGroup = recipientGroupLabel,
                 RecipientCount = result.TotalRecipients,
                 SuccessCount = result.SuccessCount,
                 FailedCount = result.FailedCount + result.InvalidNumbers.Count,
                 Status = result.Status,
-                SentBy = User.Identity?.Name ?? "Admin",
+                SentBy = sentBy,
                 SentAt = DateTime.Now
             };
             _context.SmsAlerts.Add(alert);
@@ -503,6 +586,42 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 .ToListAsync();
 
             return View(history);
+        }
+
+        // 13. POST: Admin/Disaster/DeleteSmsAlert — burahin ang IISANG SMS Alert
+        // History record gamit ang tunay na primary key (SmsAlertId). Admin-only,
+        // may anti-forgery, at hindi ito nakakaapekto sa Semaphore/SMS sending.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = AdminRoles)]
+        public async Task<IActionResult> DeleteSmsAlert(int id)
+        {
+            try
+            {
+                // Hanapin gamit ang PK. Ang SmsAlert ay standalone log — walang
+                // related/child records kaya ligtas ang direktang pagbura.
+                var alert = await _context.SmsAlerts.FindAsync(id);
+                if (alert == null)
+                {
+                    // Wala na ang record (hal. dobleng submit / na-delete na) — huwag
+                    // magbagsak ng exception; ibalik lang nang malinis.
+                    TempData["SmsError"] = _localizer["Sms.DeleteError"].Value;
+                    return RedirectToAction(nameof(Index));
+                }
+
+                _context.SmsAlerts.Remove(alert);
+                await _context.SaveChangesAsync();
+
+                TempData["SmsSuccess"] = _localizer["Sms.DeleteSuccess"].Value;
+            }
+            catch (Exception ex)
+            {
+                // I-log ang tunay na teknikal na error; HUWAG ipakita sa user.
+                _logger.LogError(ex, "Failed to delete SmsAlert {SmsAlertId}", id);
+                TempData["SmsError"] = _localizer["Sms.DeleteError"].Value;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

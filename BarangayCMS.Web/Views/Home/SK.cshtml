@@ -1,0 +1,82 @@
+@model IEnumerable<BarangayCMS.Entities.BarangayOfficial>
+@{
+    ViewData["Title"] = "SK Members - Barangay Tatalon";
+
+    var members = (Model ?? Enumerable.Empty<BarangayCMS.Entities.BarangayOfficial>()).ToList();
+
+    // Featured = SK Chairperson/Chairman, kung mayroon.
+    bool IsChair(BarangayCMS.Entities.BarangayOfficial o)
+    {
+        var p = (o.Position ?? string.Empty).ToLowerInvariant();
+        return p.Contains("chair");
+    }
+
+    var chair = members.FirstOrDefault(IsChair);
+    var kagawads = members.Where(o => o != chair).ToList();
+
+    // ViewData copy na nagmamarka sa featured card (SK Chairperson).
+    var featuredData = new ViewDataDictionary(ViewData) { ["Featured"] = true };
+}
+
+<!-- HERO -->
+<section class="people-hero">
+    <div class="people-hero__inner">
+        <span class="people-hero__eyebrow"><i class="bi bi-people-fill"></i> Sangguniang Kabataan</span>
+        <h1 class="people-hero__title">Sangguniang Kabataan (SK)</h1>
+        <p class="people-hero__sub">
+            The youth council representing young people and supporting youth development
+            programs in the community. Ang tinig ng kabataan ng Barangay Tatalon.
+        </p>
+    </div>
+</section>
+
+<div class="container people-wrap py-5">
+
+    @if (!members.Any())
+    {
+        <!-- EMPTY STATE -->
+        <div class="people-empty">
+            <i class="bi bi-people"></i>
+            No SK members have been assigned.
+        </div>
+    }
+    else
+    {
+        @if (chair != null)
+        {
+            <!-- FEATURED: SK CHAIRPERSON -->
+            <div class="people-section-title mb-3">
+                <span class="people-eyebrow">Pinuno ng Kabataan</span>
+                <h2>SK Chairperson</h2>
+            </div>
+            <partial name="_PublicOfficialCard" model="chair" view-data="featuredData" />
+        }
+
+        @if (kagawads.Any())
+        {
+            <!-- SK KAGAWADS / MEMBERS -->
+            <div class="people-section-title">
+                <span class="people-eyebrow">Mga Kasapi</span>
+                <h2>@(chair != null ? "SK Members" : "Sangguniang Kabataan Members")</h2>
+            </div>
+
+            <div class="row g-4">
+                @foreach (var member in kagawads)
+                {
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <partial name="_PublicOfficialCard" model="member" />
+                    </div>
+                }
+            </div>
+        }
+    }
+
+    <!-- SK STANDING COMMITTEES -->
+    <partial name="_SkCommittees" model="members" />
+</div>
+
+<!-- PERSON-SPECIFIC HISTORY MODALS -->
+@foreach (var member in members)
+{
+    <partial name="_OfficialHistoryModal" model="member" />
+}

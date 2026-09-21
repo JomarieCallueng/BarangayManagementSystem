@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BarangayCMS.Entities
 {
@@ -45,5 +46,9 @@ namespace BarangayCMS.Entities
 
         // Petsa at oras ng pagpapadala
         public DateTime SentAt { get; set; } = DateTime.Now;
+
+        // Alias para sa DateSent (NotMapped para hindi na mag-migration sa DB)
+        [NotMapped]
+        public DateTime DateSent => SentAt;
     }
 }

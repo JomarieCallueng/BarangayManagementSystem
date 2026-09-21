@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- ===== Navigation ===== -->
+  <data name="Nav.Dashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="Nav.Residents" xml:space="preserve"><value>Mga Residente</value></data>
+  <data name="Nav.Certificates" xml:space="preserve"><value>Mga Sertipiko</value></data>
+  <data name="Nav.Complaints" xml:space="preserve"><value>Mga Reklamo</value></data>
+  <data name="Nav.Messages" xml:space="preserve"><value>Mga Mensahe</value></data>
+  <data name="Nav.Projects" xml:space="preserve"><value>Mga Proyekto</value></data>
+  <data name="Nav.Budget" xml:space="preserve"><value>Badyet</value></data>
+  <data name="Nav.Disaster" xml:space="preserve"><value>Panganib sa Kalamidad</value></data>
+  <data name="Nav.Health" xml:space="preserve"><value>Sentro ng Kalusugan</value></data>
+  <data name="Nav.Environment" xml:space="preserve"><value>Kapaligiran</value></data>
+  <data name="Nav.Officials" xml:space="preserve"><value>Mga Opisyal</value></data>
+  <data name="Nav.Announcements" xml:space="preserve"><value>Mga Anunsyo</value></data>
+  <data name="Nav.Reports" xml:space="preserve"><value>Mga Ulat</value></data>
+  <data name="Nav.Users" xml:space="preserve"><value>Mga User Account</value></data>
+  <data name="Nav.Settings" xml:space="preserve"><value>Mga Setting</value></data>
+  <data name="Nav.Help" xml:space="preserve"><value>Tulong (Help)</value></data>
+  <data name="Nav.Logout" xml:space="preserve"><value>Mag-log Out</value></data>
+  <!-- ===== Brand / Topbar ===== -->
+  <data name="Brand.AdminTitle" xml:space="preserve"><value>Barangay Admin</value></data>
+  <data name="Brand.StaffTitle" xml:space="preserve"><value>Barangay Staff</value></data>
+  <data name="Brand.CorePortal" xml:space="preserve"><value>Pangunahing Portal</value></data>
+  <data name="Brand.StaffPortal" xml:space="preserve"><value>Portal ng Staff</value></data>
+  <data name="Topbar.SessionActive" xml:space="preserve"><value>Aktibo ang Session ng Sistema</value></data>
+  <data name="Topbar.Administrator" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Topbar.Staff" xml:space="preserve"><value>Staff</value></data>
+  <data name="Common.Language" xml:space="preserve"><value>Wika</value></data>
+  <data name="Common.English" xml:space="preserve"><value>Ingles</value></data>
+  <data name="Common.Filipino" xml:space="preserve"><value>Filipino</value></data>
+  <!-- ===== Logout confirmation ===== -->
+  <data name="Logout.Title" xml:space="preserve"><value>Kumpirmahin ang Pag-log Out</value></data>
+  <data name="Logout.Message" xml:space="preserve"><value>Sigurado ka bang tatapusin ang iyong session?</value></data>
+  <data name="Logout.Confirm" xml:space="preserve"><value>Oo, Mag-log Out</value></data>
+  <!-- ===== Common buttons / states ===== -->
+  <data name="Common.Save" xml:space="preserve"><value>I-save ang Pagbabago</value></data>
+  <data name="Common.Cancel" xml:space="preserve"><value>Kanselahin</value></data>
+  <data name="Common.Edit" xml:space="preserve"><value>I-edit</value></data>
+  <data name="Common.Delete" xml:space="preserve"><value>Burahin</value></data>
+  <data name="Common.View" xml:space="preserve"><value>Tingnan</value></data>
+  <data name="Common.Download" xml:space="preserve"><value>I-download</value></data>
+  <data name="Common.Submit" xml:space="preserve"><value>Isumite</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>Isara</value></data>
+  <data name="Common.Next" xml:space="preserve"><value>Susunod</value></data>
+  <data name="Common.Previous" xml:space="preserve"><value>Nakaraan</value></data>
+  <data name="Common.Back" xml:space="preserve"><value>Bumalik</value></data>
+  <data name="Common.Yes" xml:space="preserve"><value>Oo</value></data>
+  <data name="Common.No" xml:space="preserve"><value>Hindi</value></data>
+  <data name="Common.Add" xml:space="preserve"><value>Magdagdag</value></data>
+  <data name="Common.Search" xml:space="preserve"><value>Maghanap</value></data>
+  <data name="Common.NoRecords" xml:space="preserve"><value>Walang nahanap na rekord</value></data>
+  <data name="Common.Loading" xml:space="preserve"><value>Naglo-load...</value></data>
+  <!-- ===== Help System ===== -->
+  <data name="Help.Title" xml:space="preserve"><value>Help System</value></data>
+  <data name="Help.Subtitle" xml:space="preserve"><value>Ano ang ginagawa ng bawat module at paano ito gamitin.</value></data>
+  <data name="Help.InfoNote" xml:space="preserve"><value>Ang gabay na ito ay sumasaklaw lamang sa mga module na aktwal na umiiral sa kasalukuyang sistema.</value></data>
+  <data name="Help.SearchPlaceholder" xml:space="preserve"><value>Maghanap ng paksa ng tulong…</value></data>
+  <data name="Help.DownloadManual" xml:space="preserve"><value>I-download ang User Manual</value></data>
+  <data name="Help.NoResults" xml:space="preserve"><value>Walang nahanap na paksa ng tulong.</value></data>
+  <data name="Help.ClearSearch" xml:space="preserve"><value>I-clear ang paghahanap</value></data>
+  <data name="Help.TipsTitle" xml:space="preserve"><value>Mga karaniwang tip</value></data>
+  <data name="Help.TopicCount" xml:space="preserve"><value>paksa</value></data>
+  <data name="Help.TopicCountOne" xml:space="preserve"><value>paksa</value></data>
+  <!-- ===== Help topic descriptions (Admin) ===== -->
+  <data name="Help.Desc.Dashboard" xml:space="preserve"><value>Buod ng mga pangunahing bilang at aktibidad ng barangay (residents, requests, reports).</value></data>
+  <data name="Help.Desc.Residents" xml:space="preserve"><value>Pamamahala ng resident records — magdagdag, mag-edit, at maghanap ng residente.</value></data>
+  <data name="Help.Desc.Certificates" xml:space="preserve"><value>Pagproseso ng certificate requests at pamamahala ng certificate types + dynamic requirements.</value></data>
+  <data name="Help.Desc.Complaints" xml:space="preserve"><value>Pagtanggap at pag-asikaso ng mga reklamo ng residente.</value></data>
+  <data name="Help.Desc.Messages" xml:space="preserve"><value>Inbox ng mga mensaheng ipinadala sa pamamagitan ng public Contact form. May unread badge sa sidebar at header.</value></data>
+  <data name="Help.Desc.Projects" xml:space="preserve"><value>Pagsubaybay sa mga proyekto ng barangay at ang kanilang status.</value></data>
+  <data name="Help.Desc.Budget" xml:space="preserve"><value>Pagtatala ng badyet, pondo, at mga gastusin ng barangay.</value></data>
+  <data name="Help.Desc.Disaster" xml:space="preserve"><value>Pamamahala ng disaster incidents, evacuation centers/status, at Emergency SMS alerts.</value></data>
+  <data name="Help.Desc.Health" xml:space="preserve"><value>Mga health records at serbisyong pangkalusugan ng barangay.</value></data>
+  <data name="Help.Desc.Environment" xml:space="preserve"><value>Mga aktibidad at programa ukol sa kalikasan at kalinisan.</value></data>
+  <data name="Help.Desc.Officials" xml:space="preserve"><value>Pamamahala ng Barangay at SK officials — profile, committee, at service history. May structure validation (limits, unique names/committees).</value></data>
+  <data name="Help.Desc.Announcements" xml:space="preserve"><value>Pag-post at pamamahala ng mga anunsyo para sa publiko.</value></data>
+  <data name="Help.Desc.Reports" xml:space="preserve"><value>Pagbuo ng mga ulat/summary mula sa datos ng barangay.</value></data>
+  <data name="Help.Desc.Users" xml:space="preserve"><value>Pamamahala ng mga user account at roles (Admin/Staff).</value></data>
+  <data name="Help.Desc.Settings" xml:space="preserve"><value>Mga configuration tulad ng certificate templates at system settings.</value></data>
+  <data name="Help.Desc.StaffDashboard" xml:space="preserve"><value>Buod ng mga gawain at datos na naa-access ng Staff/Encoder.</value></data>
+  <data name="Help.Desc.StaffResidents" xml:space="preserve"><value>Pag-encode at pag-update ng resident records.</value></data>
+  <data name="Help.Desc.StaffCertificates" xml:space="preserve"><value>Pag-encode at pagproseso ng certificate requests ng residente.</value></data>
+  <data name="Help.Desc.StaffComplaints" xml:space="preserve"><value>Pagtanggap at pag-log ng mga reklamo ng residente.</value></data>
+  <data name="Help.Desc.StaffDisaster" xml:space="preserve"><value>Pag-encode ng disaster incidents at lokasyon para sa records ng barangay.</value></data>
+  <data name="Help.Desc.StaffEnvironment" xml:space="preserve"><value>Pagtatala ng mga aktibidad at programang pangkalikasan.</value></data>
+  <data name="Help.Desc.StaffHealth" xml:space="preserve"><value>Pag-encode ng mga health records/serbisyo.</value></data>
+  <data name="Help.Desc.StaffAnnouncements" xml:space="preserve"><value>Pag-encode ng mga anunsyo para sa publiko.</value></data>
+  <data name="Help.Desc.StaffReports" xml:space="preserve"><value>Pagtingin/pagbuo ng mga ulat mula sa naka-encode na datos.</value></data>
+  <!-- ===== Help tips ===== -->
+  <data name="Help.Tip.Refresh" xml:space="preserve"><value>Kapag hindi lumalabas ang mga pagbabago, i-refresh ang pahina.</value></data>
+  <data name="Help.Tip.OfficialsFull" xml:space="preserve"><value>Sa Officials, ang mga posisyong puno na ay naka-disable — i-deactivate muna ang kasalukuyan bago magdagdag ng bago.</value></data>
+  <data name="Help.Tip.Blocked" xml:space="preserve"><value>Kung na-block ang isang aksyon, basahin ang pulang mensahe sa itaas ng form para sa dahilan.</value></data>
+  <data name="Help.Tip.MessagesBadge" xml:space="preserve"><value>Ang Messages badge ay galing sa aktwal na unread na mensahe sa database.</value></data>
+  <data name="Help.Tip.StaffEncode" xml:space="preserve"><value>Siguraduhing kumpleto at wasto ang na-encode bago i-save.</value></data>
+  <data name="Help.Tip.StaffRefresh" xml:space="preserve"><value>Kapag hindi lumabas ang bagong record, i-refresh ang listahan.</value></data>
+  <data name="Help.Tip.StaffContactAdmin" xml:space="preserve"><value>Para sa mga gawaing hindi kasama sa iyong access, makipag-ugnayan sa Admin.</value></data>
+  <data name="Help.InfoNoteStaff" xml:space="preserve"><value>Ang gabay na ito ay para sa mga module na aktwal na naa-access ng Staff/Encoder.</value></data>
+  <!-- ===== SMS Alert History ===== -->
+  <data name="Sms.Action" xml:space="preserve"><value>Aksyon</value></data>
+  <data name="Sms.DeleteAlert" xml:space="preserve"><value>Burahin ang Alert</value></data>
+  <data name="Sms.DeleteTitle" xml:space="preserve"><value>Burahin ang SMS Alert?</value></data>
+  <data name="Sms.DeleteConfirm" xml:space="preserve"><value>Sigurado ka bang gusto mong burahin ang emergency SMS alert na ito?</value></data>
+  <data name="Sms.DeleteWarning" xml:space="preserve"><value>Hindi na mababawi ang aksyong ito.</value></data>
+  <data name="Sms.Deleting" xml:space="preserve"><value>Binubura...</value></data>
+  <data name="Sms.DeleteSuccess" xml:space="preserve"><value>Matagumpay na nabura ang SMS alert.</value></data>
+  <data name="Sms.DeleteError" xml:space="preserve"><value>Hindi mabura ang SMS alert. Pakisubukang muli.</value></data>
+  <data name="Sms.NoHistory" xml:space="preserve"><value>Walang natagpuang SMS alert history.</value></data>
+  <data name="Sms.LabelEmergency" xml:space="preserve"><value>Emergency</value></data>
+  <data name="Sms.LabelDate" xml:space="preserve"><value>Petsa</value></data>
+  <data name="Sms.LabelRecipients" xml:space="preserve"><value>Mga Tatanggap</value></data>
+</root>

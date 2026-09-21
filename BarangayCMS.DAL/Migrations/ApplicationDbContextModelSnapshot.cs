@@ -352,6 +352,77 @@ namespace BarangayCMS.DAL.Migrations
                     b.ToTable("CertificateTypes");
                 });
 
+            modelBuilder.Entity("BarangayCMS.Entities.Committee", b =>
+                {
+                    b.Property<int>("CommitteeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommitteeId"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("CommitteeId");
+
+                    b.ToTable("Committees");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.CommitteeAssignment", b =>
+                {
+                    b.Property<int>("CommitteeAssignmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommitteeAssignmentId"));
+
+                    b.Property<DateTime>("AssignedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BarangayOfficialId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CommitteeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("CommitteeAssignmentId");
+
+                    b.HasIndex("BarangayOfficialId");
+
+                    b.HasIndex("CommitteeId");
+
+                    b.ToTable("CommitteeAssignments");
+                });
+
             modelBuilder.Entity("BarangayCMS.Entities.Complaint", b =>
                 {
                     b.Property<int>("ComplaintId")
@@ -1109,6 +1180,25 @@ namespace BarangayCMS.DAL.Migrations
                     b.Navigation("CertificateType");
                 });
 
+            modelBuilder.Entity("BarangayCMS.Entities.CommitteeAssignment", b =>
+                {
+                    b.HasOne("BarangayCMS.Entities.BarangayOfficial", "BarangayOfficial")
+                        .WithMany()
+                        .HasForeignKey("BarangayOfficialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BarangayCMS.Entities.Committee", "Committee")
+                        .WithMany("Assignments")
+                        .HasForeignKey("CommitteeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BarangayOfficial");
+
+                    b.Navigation("Committee");
+                });
+
             modelBuilder.Entity("BarangayCMS.Entities.Complaint", b =>
                 {
                     b.HasOne("BarangayCMS.Entities.Resident", "Resident")
@@ -1201,6 +1291,11 @@ namespace BarangayCMS.DAL.Migrations
             modelBuilder.Entity("BarangayCMS.Entities.CertificateType", b =>
                 {
                     b.Navigation("Requirements");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.Committee", b =>
+                {
+                    b.Navigation("Assignments");
                 });
 
             modelBuilder.Entity("BarangayCMS.Entities.Resident", b =>

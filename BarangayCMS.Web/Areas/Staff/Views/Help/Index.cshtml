@@ -1,0 +1,166 @@
+@{
+    Layout = "~/Areas/Staff/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Help System";
+
+    var modules = new (string Icon, string Name, string Desc)[]
+    {
+        ("bi-grid-1x2-fill", "Dashboard", "Buod ng mga gawain at datos na naa-access ng Staff/Encoder."),
+        ("bi-people-fill", "Residents", "Pag-encode at pag-update ng resident records."),
+        ("bi-file-earmark-text-fill", "Certificates", "Pag-encode at pagproseso ng certificate requests ng residente."),
+        ("bi-chat-left-text-fill", "Complaints", "Pagtanggap at pag-log ng mga reklamo ng residente."),
+        ("bi-exclamation-triangle-fill", "Disaster Risk", "Pag-encode ng disaster incidents at lokasyon para sa records ng barangay."),
+        ("bi-tree-fill", "Environment", "Pagtatala ng mga aktibidad at programang pangkalikasan."),
+        ("bi-heart-pulse-fill", "Health Center", "Pag-encode ng mga health records/serbisyo."),
+        ("bi-megaphone-fill", "Announcements", "Pag-encode ng mga anunsyo para sa publiko."),
+        ("bi-graph-up", "Reports", "Pagtingin/pagbuo ng mga ulat mula sa naka-encode na datos."),
+    };
+}
+
+@section Styles {
+    <style>
+        /* Help System — subtle, professional interactivity (light + dark safe). */
+        .help-search .input-group-text,
+        .help-search .form-control { border-color: var(--border, #dee2e6); }
+        .help-search .form-control:focus {
+            box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+            border-color: #86b7fe;
+        }
+        .help-item { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+        .help-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 .35rem .9rem rgba(0, 0, 0, .06);
+        }
+        .help-item .accordion-button { transition: background-color .2s ease, color .2s ease; }
+        .help-item .accordion-button:not(.collapsed) {
+            background-color: rgba(13, 110, 253, .08);
+            color: var(--bs-primary, #0d6efd);
+            font-weight: 600;
+        }
+        .help-item .accordion-button:focus { box-shadow: none; }
+        /* Red PDF download button — white icon/text, subtle hover lift. */
+        .help-manual-btn {
+            transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+        }
+        .help-manual-btn:hover,
+        .help-manual-btn:focus-visible {
+            transform: translateY(-1px);
+            box-shadow: 0 .4rem .9rem rgba(220, 53, 69, .35);
+        }
+        @@media (max-width: 575.98px) {
+            .help-toolbar { flex-direction: column; align-items: stretch !important; }
+            .help-toolbar .help-count { text-align: right; }
+        }
+    </style>
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><i class="bi bi-life-preserver"></i> Help System</h1>
+        <p class="page-header__sub mb-0">Ano ang ginagawa ng bawat module at paano ito gamitin.</p>
+    </div>
+    <a asp-area="Staff" asp-controller="Help" asp-action="Manual" download="User-Manual.pdf"
+       class="btn btn-danger help-manual-btn fw-semibold rounded-3">
+        <i class="bi bi-file-earmark-pdf-fill me-2"></i>Download User Manual
+    </a>
+</div>
+
+<div class="alert alert-info border-0 shadow-sm small">
+    <i class="bi bi-info-circle me-1"></i> Ang gabay na ito ay para sa mga module na aktwal na naa-access ng Staff/Encoder.
+</div>
+
+<!-- 🔎 SEARCH — live filter ng mga help topics (walang page reload) -->
+<div class="card border-0 shadow-sm rounded p-3 mb-3 help-search">
+    <div class="help-toolbar d-flex align-items-center gap-2">
+        <div class="input-group flex-grow-1">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="helpSearch" class="form-control border-start-0"
+                   placeholder="Search help topics…" autocomplete="off" aria-label="Search help topics" />
+            <button type="button" id="helpSearchClear" class="btn btn-outline-secondary border-start-0 d-none"
+                    title="Clear" aria-label="Clear search"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <span id="helpResultCount" class="text-muted small help-count text-nowrap"></span>
+    </div>
+</div>
+
+<div class="accordion" id="helpAccordion">
+    @{ var idx = 0; }
+    @foreach (var m in modules)
+    {
+        idx++;
+        <div class="accordion-item help-item" data-help-item
+             data-help-title="@m.Name" data-help-text="@m.Desc">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#help-item-@(idx)"
+                        aria-expanded="false" aria-controls="help-item-@(idx)">
+                    <i class="bi @m.Icon text-primary me-2"></i> <span class="help-item__title">@m.Name</span>
+                </button>
+            </h2>
+            <div id="help-item-@(idx)" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                <div class="accordion-body small help-item__body">@m.Desc</div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Empty state kapag walang tugma -->
+<div id="helpNoResults" class="alert alert-light border text-center text-muted d-none mt-3">
+    <i class="bi bi-search me-1"></i> No help topics found. <a href="#" id="helpNoResultsReset" class="alert-link">Clear search</a>
+</div>
+
+<div class="card border-0 shadow-sm rounded mt-4">
+    <div class="card-body small">
+        <h6 class="fw-bold mb-2"><i class="bi bi-lightbulb text-warning me-1"></i> Mga karaniwang tip</h6>
+        <ul class="mb-0">
+            <li>Siguraduhing kumpleto at wasto ang na-encode bago i-save.</li>
+            <li>Kapag hindi lumabas ang bagong record, i-refresh ang listahan.</li>
+            <li>Para sa mga gawaing hindi kasama sa iyong access, makipag-ugnayan sa Admin.</li>
+        </ul>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Live, case-insensitive filter over the EXISTING help topics. Selectors use
+            // only static IDs and data-attributes — never dynamic/unsafe id selectors.
+            var search = document.getElementById('helpSearch');
+            var clearBtn = document.getElementById('helpSearchClear');
+            var noResults = document.getElementById('helpNoResults');
+            var resetLink = document.getElementById('helpNoResultsReset');
+            var counter = document.getElementById('helpResultCount');
+            var items = Array.prototype.slice.call(document.querySelectorAll('[data-help-item]'));
+            if (!search) return;
+
+            function apply() {
+                var q = search.value.trim().toLowerCase();
+                // Flexible search: split into words and match a topic when EVERY word
+                // appears somewhere in its title or description, in any order.
+                var terms = q.split(/\s+/).filter(Boolean);
+                var visible = 0;
+                items.forEach(function (it) {
+                    var hay = ((it.getAttribute('data-help-title') || '') + ' ' +
+                               (it.getAttribute('data-help-text') || '')).toLowerCase();
+                    var match = terms.length === 0 || terms.every(function (t) { return hay.indexOf(t) !== -1; });
+                    it.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                noResults.classList.toggle('d-none', visible !== 0);
+                clearBtn.classList.toggle('d-none', q.length === 0);
+                if (counter) counter.textContent = q ? (visible + (visible === 1 ? ' topic' : ' topics')) : '';
+            }
+
+            function reset(ev) {
+                if (ev) ev.preventDefault();
+                search.value = '';
+                apply();
+                search.focus();
+            }
+
+            search.addEventListener('input', apply);
+            clearBtn.addEventListener('click', reset);
+            if (resetLink) resetLink.addEventListener('click', reset);
+            apply();
+        })();
+    </script>
+}

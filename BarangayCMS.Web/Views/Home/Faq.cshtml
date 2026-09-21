@@ -1,0 +1,144 @@
+@model IEnumerable<BarangayCMS.Entities.CertificateType>
+@{
+    ViewData["Title"] = "FAQs - Barangay Tatalon";
+    var certificates = (Model ?? Enumerable.Empty<BarangayCMS.Entities.CertificateType>()).ToList();
+}
+
+<!-- HERO -->
+<section class="people-hero">
+    <div class="people-hero__inner">
+        <span class="people-hero__eyebrow"><i class="bi bi-question-circle-fill"></i> Frequently Asked Questions</span>
+        <h1 class="people-hero__title">Mga Madalas Itanong (FAQs)</h1>
+        <p class="people-hero__sub">
+            Mabilis na sagot sa mga karaniwang tanong tungkol sa mga serbisyo ng Barangay Tatalon —
+            sertipiko, reklamo, mensahe, sakuna, at pakikipag-ugnayan.
+        </p>
+    </div>
+</section>
+
+<div class="container people-wrap py-5" style="max-width: 900px;">
+    <div class="accordion" id="faqAccordion">
+
+        <!-- 1. CERTIFICATES (dynamic mula sa DB) -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    <i class="bi bi-file-earmark-text text-primary me-2"></i> Paano humiling ng barangay certificate?
+                </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <p>Pumunta sa <strong>Modules → Request Certificate</strong>, piliin ang uri ng sertipiko, at punan ang form. Ipapakita ng form ang eksaktong mga kailangang dokumento (requirements) para sa napiling sertipiko.</p>
+                    @if (certificates.Any())
+                    {
+                        <p class="mb-2 fw-semibold">Mga available na sertipiko at ang kanilang requirements:</p>
+                        <div class="row g-3">
+                            @foreach (var c in certificates)
+                            {
+                                var reqs = (c.Requirements ?? new List<BarangayCMS.Entities.CertificateRequirement>())
+                                    .Where(r => r.IsActive).OrderBy(r => r.DisplayOrder).ToList();
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100" style="background: var(--surface-alt);">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="fw-bold" style="color: var(--heading);">@c.CertificateName</span>
+                                            <span class="badge bg-success">₱@c.Price.ToString("N2")</span>
+                                        </div>
+                                        @if (reqs.Any())
+                                        {
+                                            <ul class="small mb-0 ps-3">
+                                                @foreach (var r in reqs)
+                                                {
+                                                    <li>@r.RequirementName @(r.IsRequired ? "" : "(optional)")</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Walang partikular na requirement.</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Wala pang naka-configure na certificate types sa kasalukuyan.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. STATUS / TRACKING -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    <i class="bi bi-hourglass-split text-info me-2"></i> Paano ko malalaman ang status ng aking request?
+                </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Ang bawat request ay dumadaan sa pagproseso ng barangay staff (halimbawa: <em>Pending → Approved → Released</em>).
+                    Maaari kang bumalik sa barangay o makipag-ugnayan gamit ang <strong>Contact</strong> page para sa update. Dalhin ang mga kinakailangang dokumento sa pagkuha ng sertipiko.
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. COMPLAINTS -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                    <i class="bi bi-chat-left-text text-warning me-2"></i> Paano magsumite ng reklamo (complaint)?
+                </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Pumunta sa <strong>Modules → File a Complaint</strong> at ilarawan ang iyong isyu. Matatanggap ito ng barangay para sa mediation o aksyon. Panatilihing malinaw at kumpleto ang detalye para mas mabilis maasikaso.
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. MESSAGES / NOTIFICATIONS -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                    <i class="bi bi-envelope text-success me-2"></i> Paano magpadala ng mensahe sa barangay?
+                </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Gamitin ang <strong>Contact</strong> page — kailangan lang ng iyong <em>Contact Number</em> at <em>Message</em> (walang account na kailangan). Direktang mapupunta ang mensahe sa admin inbox ng barangay. Para sa mabilisang alerto, tingnan ang <strong>Emergency Alerts</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. DISASTER / EVACUATION -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                    <i class="bi bi-exclamation-triangle text-danger me-2"></i> Saan makikita ang disaster at evacuation info?
+                </button>
+            </h2>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Tingnan ang <strong>Modules → Disaster Preparedness</strong> para sa mga paalala at gabay, at ang <strong>Modules → Evacuation</strong> para sa listahan ng mga aktibong evacuation center at ang kanilang kasalukuyang status. Ina-update ito ng barangay tuwing may emergency.
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. CONTACT -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                    <i class="bi bi-telephone text-primary me-2"></i> Paano makikipag-ugnayan sa barangay?
+                </button>
+            </h2>
+            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Bisitahin ang <strong>Contact</strong> page para sa hotline, email, at oras ng opisina (karaniwang Lunes–Biyernes, 8:00 AM – 5:00 PM). Maaari ka ring magpadala ng mensahe online gamit ang Contact form.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

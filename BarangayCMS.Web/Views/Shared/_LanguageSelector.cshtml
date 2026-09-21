@@ -1,0 +1,20 @@
+@using System.Globalization
+@{
+    // Current UI culture -> "en" or "fil". Return to the SAME page after switching.
+    var current = CultureInfo.CurrentUICulture.Name.StartsWith("fil") ? "fil" : "en";
+    var req = ViewContext.HttpContext.Request;
+    var returnUrl = req.Path + req.QueryString;
+}
+<form method="post" asp-area="" asp-controller="Culture" asp-action="Set" class="app-lang m-0">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    <label class="visually-hidden" for="appLangSelect">@L["Common.Language"]</label>
+    <div class="input-group input-group-sm app-lang__group" title="@L["Common.Language"]">
+        <span class="input-group-text bg-transparent border-0 px-1"><i class="bi bi-translate"></i></span>
+        <select id="appLangSelect" name="culture" class="form-select form-select-sm app-lang__select"
+                onchange="this.form.submit()" aria-label="@L["Common.Language"]">
+            <option value="en" selected="@(current == "en")">@L["Common.English"]</option>
+            <option value="fil" selected="@(current == "fil")">@L["Common.Filipino"]</option>
+        </select>
+    </div>
+</form>

@@ -4,14 +4,16 @@
         <div class="card-header bg-primary text-white"><h4>Barangay Information</h4></div>
         <div class="card-body">
             <form asp-action="BarangayProfile" method="post">
-                <div class="mb-3"><label asp-for="BarangayName" class="form-label"></label><input asp-for="BarangayName" class="form-control" /></div>
+                @Html.AntiForgeryToken()
+                <div class="mb-3"><label asp-for="OfficialBarangayName" class="form-label"></label><input asp-for="OfficialBarangayName" class="form-control" /></div>
                 <div class="row">
-                    <div class="col-6 mb-3"><label asp-for="Municipality" class="form-label"></label><input asp-for="Municipality" class="form-control" /></div>
+                    <div class="col-6 mb-3"><label asp-for="MunicipalityCity" class="form-label"></label><input asp-for="MunicipalityCity" class="form-control" /></div>
                     <div class="col-6 mb-3"><label asp-for="Province" class="form-label"></label><input asp-for="Province" class="form-control" /></div>
                 </div>
                 <div class="mb-3"><label asp-for="ContactEmail" class="form-label"></label><input asp-for="ContactEmail" class="form-control" /></div>
                 <hr />
-                <div class="mb-3"><label class="form-label">Mission</label><textarea asp-for="Mission" class="form-control"></textarea></div>
+                <div class="mb-3"><label class="form-label">Vision</label><textarea asp-for="Vision" class="form-control" rows="2"></textarea></div>
+                <div class="mb-3"><label class="form-label">Mission</label><textarea asp-for="Mission" class="form-control" rows="2"></textarea></div>
                 <div class="text-end"><a asp-action="Index" class="btn btn-secondary">Back</a> <button class="btn btn-primary">Save Changes</button></div>
             </form>
         </div>

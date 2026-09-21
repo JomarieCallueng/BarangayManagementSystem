@@ -13,6 +13,11 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         [Display(Name = "Disaster / Emergency Type")]
         public string EmergencyType { get; set; } = string.Empty;
 
+        // Severity level ng alert (Info, Low, Moderate, High, Critical).
+        // Isinasama sa log at sa preview; opsyonal para hindi masira ang lumang flow.
+        [Display(Name = "Severity")]
+        public string? Severity { get; set; }
+
         [Required(ErrorMessage = "Pumili ng recipients.")]
         [Display(Name = "Recipients")]
         public string RecipientGroup { get; set; } = "All Residents"; // All Residents | Purok | Selected

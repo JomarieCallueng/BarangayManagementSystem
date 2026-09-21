@@ -6,12 +6,13 @@
 <section class="hero position-relative overflow-hidden">
 
     <!-- 🖼️ BOOTSTRAP CAROUSEL BACKGROUND SLIDESHOW -->
-    <!-- Autoplay (6s) + manual arrows/indicators + hover-pause + keyboard + touch swipe
-         are all handled by the single Bootstrap carousel instance below. -->
+    <!-- Autoplay (3s) + manual arrows/indicators + hover-pause + keyboard + touch swipe
+         are all handled by the single Bootstrap carousel instance below.
+         Manual navigation restarts the auto timer (see Scripts). -->
     <div id="heroCarousel"
          class="carousel slide carousel-fade hero-carousel"
          data-bs-ride="carousel"
-         data-bs-interval="6000"
+         data-bs-interval="3000"
          data-bs-pause="hover"
          data-bs-keyboard="true"
          data-bs-touch="true"
@@ -271,6 +272,25 @@
                 brgyImg.onerror = function() {
                     this.outerHTML = `<i class="bi bi-shield-fill-check text-warning fs-5 me-1"></i>`;
                 };
+            }
+
+            // 🎠 HERO CAROUSEL — reuse the single Bootstrap instance (no 2nd carousel).
+            // Bootstrap already gives auto-advance (3s), hover-pause, keyboard at touch.
+            // Idinadagdag lang natin ang timer-RESET pagkatapos ng manual navigation,
+            // para hindi biglang lumipat ang slide kaagad matapos mag-click ang user.
+            const heroEl = document.getElementById("heroCarousel");
+            if (heroEl && window.bootstrap && bootstrap.Carousel) {
+                const hero = bootstrap.Carousel.getOrCreateInstance(heroEl);
+
+                // Restart the auto timer after a manual control click. cycle() clears any
+                // existing interval first, kaya walang doble/overlapping na timer.
+                heroEl.querySelectorAll("[data-bs-slide], [data-bs-slide-to]").forEach(function (ctrl) {
+                    ctrl.addEventListener("click", function () { hero.cycle(); });
+                });
+
+                // I-pause habang hinahawakan sa touch device; ituloy pagkatapos.
+                heroEl.addEventListener("touchstart", function () { hero.pause(); }, { passive: true });
+                heroEl.addEventListener("touchend", function () { hero.cycle(); }, { passive: true });
             }
         });
     </script>

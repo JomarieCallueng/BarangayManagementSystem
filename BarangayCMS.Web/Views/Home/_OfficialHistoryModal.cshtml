@@ -1,0 +1,62 @@
+@model BarangayCMS.Entities.BarangayOfficial
+@{
+    // Ang timeline na ito ay galing LAMANG sa service history ng partikular na taong
+    // ito (via BarangayOfficialId) — hindi kailanman naghahalo sa ibang opisyal.
+    var terms = (Model.ServiceHistories ?? new List<BarangayCMS.Entities.OfficialServiceHistory>())
+        .OrderByDescending(h => h.StartDate)
+        .ToList();
+}
+
+<div class="modal fade" id="historyModal-@Model.BarangayOfficialId" tabindex="-1"
+     aria-labelledby="historyModalLabel-@Model.BarangayOfficialId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="historyModalLabel-@Model.BarangayOfficialId">
+                    <i class="bi bi-clock-history me-2 text-success"></i>Service History of @Model.FullName
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (terms.Any())
+                {
+                    <ul class="official-timeline">
+                        @foreach (var term in terms)
+                        {
+                            var range = term.StartDate.Year.ToString() + " – " + (term.EndDate.HasValue ? term.EndDate.Value.Year.ToString() : "Present");
+                            var isCurrent = term.EndDate == null || string.Equals(term.Status, "Current", StringComparison.OrdinalIgnoreCase);
+                            <li class="official-timeline__item @(isCurrent ? "is-current" : "")">
+                                <div class="official-timeline__range">
+                                    @range
+                                    @if (isCurrent)
+                                    {
+                                        <span class="official-timeline__badge">Current</span>
+                                    }
+                                </div>
+                                <div class="official-timeline__pos">@term.Position</div>
+                                @if (!string.IsNullOrWhiteSpace(term.Committee))
+                                {
+                                    <div class="official-timeline__committee">@term.Committee</div>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <!-- Walang naka-record na history — ipakita ang kasalukuyang termino mula sa profile. -->
+                    <ul class="official-timeline">
+                        <li class="official-timeline__item is-current">
+                            <div class="official-timeline__range">Present <span class="official-timeline__badge">Current</span></div>
+                            <div class="official-timeline__pos">@Model.Position</div>
+                            @if (!string.IsNullOrWhiteSpace(Model.Committee))
+                            {
+                                <div class="official-timeline__committee">@Model.Committee</div>
+                            }
+                        </li>
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

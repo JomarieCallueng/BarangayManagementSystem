@@ -1,0 +1,440 @@
+@{
+    ViewData["Title"] = "About Barangay Tatalon | Tungkol sa Barangay Tatalon";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --brand-green: #0f5132;
+            --brand-green-light: #e8f5e9;
+            --brand-green-hover: #146c43;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --card-border: #e2e8f0;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: var(--text-dark);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url('/images/tatalon-bg.jpg') center/cover no-repeat;
+            color: #ffffff;
+            padding: 5.5rem 1.5rem;
+            text-align: center;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Interactive Pill Badges */
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            padding: 0.45rem 1.2rem;
+            border-radius: 50rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+            .pill-badge:hover {
+                transform: translateY(-2px) scale(1.03);
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+        .pill-badge-green {
+            background: #e8f5e9;
+            color: #0f5132;
+            border: 1px solid #c8e6c9;
+        }
+
+            .pill-badge-green:hover {
+                background: #d4edda;
+            }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+        }
+
+            .section-header h2 {
+                font-weight: 800;
+                font-size: 2.25rem;
+                color: var(--text-dark);
+                margin-top: 0.5rem;
+                letter-spacing: -0.02em;
+            }
+
+            .section-header p {
+                color: var(--text-muted);
+                font-size: 1.05rem;
+            }
+
+        /* 🎨 INTERACTIVE CUSTOM CARDS (Hover Effects) */
+        .custom-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+            .custom-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 16px 32px rgba(15, 81, 50, 0.12);
+                border-color: #a3cfbb;
+            }
+
+        .custom-card-gray {
+            background: #f8fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .custom-card-gray:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+            }
+
+        /* 🌟 INTERACTIVE ICON BOX */
+        .card-icon-box {
+            width: 3.25rem;
+            height: 3.25rem;
+            border-radius: 50%;
+            background: var(--brand-green-light);
+            color: var(--brand-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.25rem;
+            transition: transform 0.4s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .custom-card:hover .card-icon-box {
+            transform: scale(1.15) rotate(8deg);
+            background: var(--brand-green);
+            color: #ffffff;
+        }
+
+        /* Sub-cards hover animation */
+        .interactive-subcard {
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+            .interactive-subcard:hover {
+                transform: translateX(6px);
+                border-color: #a3cfbb !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+        /* Quote Section */
+        .quote-section {
+            text-align: center;
+            padding: 3.5rem 1rem;
+            margin: 2rem 0;
+            cursor: default;
+        }
+
+        .quote-text {
+            font-size: 1.55rem;
+            font-style: italic;
+            font-weight: 500;
+            color: #334155;
+            max-width: 850px;
+            margin: 0 auto;
+            line-height: 1.45;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .quote-section:hover .quote-text {
+            color: var(--brand-green);
+            transform: scale(1.015);
+        }
+
+        .quote-author {
+            color: var(--brand-green);
+            font-weight: 600;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+        }
+
+        /* Updated Typography for Enhanced Readability */
+        .bilingual-tag {
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--brand-green);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .translation-text {
+            font-size: 0.95rem;
+            color: #334155;
+            font-style: italic;
+            line-height: 1.5;
+        }
+    </style>
+}
+
+<!-- 1. HERO SECTION -->
+<div class="hero-section">
+    <div class="container">
+        <div class="pill-badge">
+            <i class="bi bi-geo-alt-fill"></i> District 4, Quezon City • Metro Manila
+        </div>
+        <h1 class="display-4 fw-bold mb-2">Barangay Tatalon</h1>
+        <p class="fs-4 text-warning fw-semibold mb-3">Community Heritage, History & Local Governance</p>
+        <p class="lead max-w-2xl mx-auto text-white-50 mb-4" style="max-width: 800px;">
+            A resilient urban community built on grassroots unity, historical land reform, and dedicated public service across 107 active puroks.
+            <br>
+            <span class="small fst-italic text-white-50">(Isang matatag na pamayanan na nakatayo sa pagkakaisa, reporma sa lupa, at tapat na paglilingkod sa 107 purok.)</span>
+        </p>
+        <div class="pill-badge">
+            <i class="bi bi-calendar-check"></i> Officially Established: October 12, 1939 (Commonwealth Act No. 502)
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- 2. MISSION & VISION SECTION -->
+    <div class="section-header">
+        <div class="pill-badge pill-badge-green">
+            <i class="bi bi-compass"></i> Governance Framework / Ating Gabay
+        </div>
+        <h2>Mission & Vision Statements</h2>
+        <p>The core values guiding transparent governance and community development in Barangay Tatalon.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Mission Card -->
+        <div class="col-md-6">
+            <div class="custom-card h-100">
+                <div class="card-icon-box">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+                <span class="bilingual-tag">OUR MISSION • ANG ATING LAYUNIN</span>
+                <h3 class="fw-bold text-success mb-3">Dedicated Service to All</h3>
+                <p class="fw-semibold text-dark mb-3 fs-5" style="line-height: 1.5;">
+                    "To deliver honest, accessible, and compassionate public service that guarantees safety, health, and order for all families across our 107 puroks."
+                </p>
+                <div class="border-top pt-3 mt-3">
+                    <p class="translation-text mb-0">
+                        "Maghatid ng matapat, mabilis, at may malasakit na serbisyo publiko upang itaguyod ang kaligtasan, kalusugan, at kaayusan ng bawat pamilya sa Barangay Tatalon."
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vision Card -->
+        <div class="col-md-6">
+            <div class="custom-card h-100">
+                <div class="card-icon-box">
+                    <i class="bi bi-eye"></i>
+                </div>
+                <span class="bilingual-tag">OUR VISION • ANG ATING PANANAW</span>
+                <h3 class="fw-bold text-success mb-3">Model & Progressive Barangay</h3>
+                <p class="fw-semibold text-dark mb-3 fs-5" style="line-height: 1.5;">
+                    "A progressive, safe, and youth-empowered community in Quezon City recognized for good governance, civic participation, and disaster resilience."
+                </p>
+                <div class="border-top pt-3 mt-3">
+                    <p class="translation-text mb-0">
+                        "Isang maunlad, ligtas, at huwarang pamayanan sa Quezon City na may disiplina, aktibong partisipasyon ng kabataan, at matatag na pamamahala."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. GUIDING PHILOSOPHY QUOTE -->
+    <div class="quote-section">
+        <p class="quote-text">
+            "True community strength is forged through shared responsibility, mutual care, and honest governance."
+        </p>
+        <p class="text-muted small mb-0">("Ang tunay na lakas ng pamayanan ay nagmumula sa pagtutulungan, malasakit sa kapwa, at tapat na pamamahala.")</p>
+        <div class="quote-author">— Barangay Tatalon Leadership Philosophy</div>
+    </div>
+
+    <!-- 4. SECTION HEADER: OVERVIEW & HISTORY -->
+    <div class="section-header mt-5">
+        <h2>Barangay Profile & Historical Roots</h2>
+        <p>A comprehensive overview of Tatalon's geography, demographic profile, and historical legal milestones in Quezon City.</p>
+    </div>
+
+    <!-- 5. COMMUNITY PROFILE OVERVIEW -->
+    <div class="custom-card-gray mb-4">
+        <div class="d-flex align-items-center gap-2 mb-2 text-success fw-bold">
+            <i class="bi bi-bookmark-star-fill fs-5"></i>
+            <span class="fs-5 text-dark">Executive Profile (Pangkalahatang Profile)</span>
+        </div>
+        <p class="text-secondary leading-relaxed mb-2">
+            <strong>Barangay Tatalon</strong> is a major urban barangay situated in <strong>District 4 of Quezon City</strong>. Flanked by prominent thoroughfares such as Quezon Avenue, G. Araneta Avenue, and E. Rodriguez Sr. Avenue, Tatalon serves as an important residential, commercial, and social housing corridor in the city.
+        </p>
+        <p class="text-secondary leading-relaxed mb-0">
+            To manage its high population density effectively, the barangay operates through an organized network of <strong>107 active puroks</strong>, ensuring grassroots representation, rapid disaster response, and direct social welfare assistance.
+        </p>
+    </div>
+
+    <!-- 6. GEOGRAPHIC & DEMOGRAPHIC CONTEXT -->
+    <div class="custom-card-gray mb-4">
+        <h4 class="fw-bold mb-4 text-dark">Geographic & Demographic Profile</h4>
+        <div class="row g-4">
+            <!-- Location Subcard -->
+            <div class="col-md-6">
+                <div class="custom-card h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3 text-success">
+                        <i class="bi bi-map-fill fs-5"></i>
+                        <h5 class="fw-bold text-dark mb-0">Location & Boundaries (Lokasyon)</h5>
+                    </div>
+                    <p class="text-muted small mb-2">
+                        Positioned in central-western Quezon City, Barangay Tatalon is bounded by:
+                    </p>
+                    <ul class="text-muted small ps-3 mb-3">
+                        <li><strong>North:</strong> Quezon Avenue & Barangay Sto. Domingo</li>
+                        <li><strong>East:</strong> G. Araneta Avenue (C-3 Corridor)</li>
+                        <li><strong>South & West:</strong> San Juan River, Barangay Damayan, and Santol</li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        Its location provides direct access to major healthcare institutions, university belts, public transport hubs, and trading centers connecting Manila and Quezon City.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Demographics Subcard -->
+            <div class="col-md-6">
+                <div class="custom-card h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3 text-success">
+                        <i class="bi bi-people-fill fs-5"></i>
+                        <h5 class="fw-bold text-dark mb-0">Population & Households (Demograpiya)</h5>
+                    </div>
+                    <p class="text-muted small mb-2">
+                        Tatalon consistently stands as one of the most populous areas in District 4:
+                    </p>
+                    <ul class="text-muted small ps-3 mb-3">
+                        <li><strong>Census Population:</strong> Estimated 55,000 to 58,000+ residents (PSA POPCEN)</li>
+                        <li><strong>Total Households:</strong> ~11,800 to 15,000+ families</li>
+                        <li><strong>Governance Structure:</strong> Divided into 107 active puroks</li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        With an average household size of 4 to 5 members, Tatalon maintains a strong family-centered urban character.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. HISTORY & LAND REFORM LEGACY -->
+    <div class="custom-card-gray mb-4">
+        <h4 class="fw-bold mb-4 text-dark">Historical Development & Land Reform Legacy</h4>
+        <div class="row g-4 mb-4">
+            <!-- History Subcard 1 -->
+            <div class="col-md-6">
+                <div class="custom-card h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3 text-success">
+                        <i class="bi bi-hourglass-split fs-5"></i>
+                        <h5 class="fw-bold text-dark mb-0">Establishment in 1939 (Pagtatag)</h5>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Barangay Tatalon was originally part of Caloocan before being integrated into Quezon City upon its founding on <strong>October 12, 1939 through Commonwealth Act No. 502</strong>. Local oral history suggests the name "Tatalon" derived from the Tagalog root word <em>"talon"</em>, referencing historical natural springs and streams that once flowed through the area.
+                    </p>
+                </div>
+            </div>
+
+            <!-- History Subcard 2 -->
+            <div class="col-md-6">
+                <div class="custom-card h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3 text-success">
+                        <i class="bi bi-bank2 fs-5"></i>
+                        <h5 class="fw-bold text-dark mb-0">The Tatalon Estate Landmark</h5>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Tatalon holds a significant place in Philippine urban housing history. Following World War II, residents and veterans organized a long-standing movement for land tenure. This led to <strong>Republic Act No. 2616</strong> (Expropriation of the Tatalon Estate) and landmark Supreme Court decisions that shaped national socialized housing policies implemented by the National Housing Authority (NHA).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORICAL TIMELINE SUB-SECTION -->
+        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-clock-history text-success me-2"></i> Timeline ng Kasaysayan (Historical Milestones)</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="p-3 bg-white rounded-3 border h-100 interactive-subcard">
+                    <span class="badge bg-success mb-2">1939</span>
+                    <h6 class="fw-bold text-dark">Pagtatag sa QC</h6>
+                    <p class="small text-muted mb-0">Inilipat mula Caloocan patungong Quezon City sa ilalim ng Commonwealth Act No. 502.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-white rounded-3 border h-100 interactive-subcard">
+                    <span class="badge bg-success mb-2">1959</span>
+                    <h6 class="fw-bold text-dark">Republic Act No. 2616</h6>
+                    <p class="small text-muted mb-0">Isinabatas ang expropriation ng Tatalon Estate para sa socialized housing ng mga residente.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-white rounded-3 border h-100 interactive-subcard">
+                    <span class="badge bg-success mb-2">1980s–1990s</span>
+                    <h6 class="fw-bold text-dark">NHA Land Titling</h6>
+                    <p class="small text-muted mb-0">Pormal na pagpoproseso at pagpapatitulo ng mga lupa sa ilalim ng National Housing Authority.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-white rounded-3 border h-100 interactive-subcard">
+                    <span class="badge bg-success mb-2">Kasalukuyan</span>
+                    <h6 class="fw-bold text-dark">107 Active Puroks</h6>
+                    <p class="small text-muted mb-0">Isang modernong barangay na may matatag na BDRRM at localized community governance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. GOVERNANCE & COMMUNITY SERVICES -->
+    <div class="custom-card-gray">
+        <div class="d-flex align-items-center gap-2 mb-3 text-success fw-bold">
+            <i class="bi bi-gear-wide-connected fs-5"></i>
+            <span class="fs-5 text-dark">Key Governance Pillars (Mga Haligi ng Pamamahala)</span>
+        </div>
+        <div class="row g-3 text-secondary small">
+            <div class="col-md-4">
+                <div class="p-3 bg-white rounded-3 border interactive-subcard">
+                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-diagram-3-fill text-success me-1"></i> 107-Purok Network</h6>
+                    <p class="mb-0 text-muted">A grassroots administrative model enabling localized census, swift relief distribution, and direct resident representation.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-white rounded-3 border interactive-subcard">
+                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-shield-exclamation text-success me-1"></i> BDRRM & Flood Preparedness</h6>
+                    <p class="mb-0 text-muted">Given its proximity to the San Juan River, the barangay maintains a 24/7 disaster monitoring and early evacuation protocol.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-white rounded-3 border interactive-subcard">
+                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-heart-pulse-fill text-success me-1"></i> Public Health & Welfare</h6>
+                    <p class="mb-0 text-muted">Continuous health center programs, youth development initiatives, and specialized support for senior citizens.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

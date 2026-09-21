@@ -13,14 +13,6 @@
     <a href="/Admin/BarangayOfficials" class="btn btn-light border fw-semibold rounded-3"><i class="bi bi-arrow-left me-1"></i> Bumalik sa Officials</a>
 </div>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-
 <div class="row g-4">
     <!-- Existing terms -->
     <div class="col-lg-7">
@@ -34,7 +26,7 @@
                             <th>Posisyon</th>
                             <th>Komite</th>
                             <th>Status</th>
-                            <th class="text-end">Aksyon</th>
+                            <th class="text-center">Aksyon</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,14 +49,20 @@
                                             <span class="badge bg-secondary">Completed</span>
                                         }
                                     </td>
-                                    <td class="text-end">
-                                        <form method="post" action="/Admin/BarangayOfficials/DeleteHistory" class="d-inline"
-                                              onsubmit="return confirm('Tanggalin ang terminong ito?');">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="historyId" value="@t.Id" />
-                                            <input type="hidden" name="officialId" value="@Model.OfficialId" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                                        </form>
+                                    <td>
+                                        <div class="official-actions">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" aria-label="Edit this term"
+                                                    data-bs-toggle="modal" data-bs-target="#editHistoryModal-@t.Id">
+                                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                                            </button>
+                                            <form method="post" action="/Admin/BarangayOfficials/DeleteHistory" class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to delete this service history record?');">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="historyId" value="@t.Id" />
+                                                <input type="hidden" name="officialId" value="@Model.OfficialId" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" aria-label="Delete this term"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -119,6 +117,64 @@
     </div>
 </div>
 
+@* ----- EDIT MODALS (isa bawat termino; ina-update ang parehong record) ----- *@
+@foreach (var t in Model.Terms)
+{
+    <div class="modal fade" id="editHistoryModal-@t.Id" tabindex="-1" aria-labelledby="editHistoryLabel-@t.Id" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <form method="post" action="/Admin/BarangayOfficials/EditHistory" class="history-edit-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="historyId" value="@t.Id" />
+                    <input type="hidden" name="officialId" value="@Model.OfficialId" />
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="editHistoryLabel-@t.Id"><i class="bi bi-pencil-square me-2 text-primary"></i>I-edit ang Termino</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Posisyon</label>
+                            <input name="editPosition" class="form-control" value="@t.Position" maxlength="100" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Komite (Committee)</label>
+                            <input name="editCommittee" class="form-control" value="@t.Committee" maxlength="100" placeholder="Opsyonal" />
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6 mb-1">
+                                <label class="form-label fw-semibold small">Start Year</label>
+                                <input name="editStartYear" type="number" min="1900" max="2200" class="form-control" value="@t.StartDate.Year" required />
+                            </div>
+                            <div class="col-6 mb-1">
+                                <label class="form-label fw-semibold small">End Year</label>
+                                <input name="editEndYear" type="number" min="1900" max="2200" class="form-control" value="@(t.EndDate?.Year)" placeholder="Blank = Present" />
+                            </div>
+                        </div>
+                        <div class="form-text">Iwanang blanko ang End Year kung ito ang kasalukuyang termino (Present).</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Kanselahin</button>
+                        <button type="submit" class="btn btn-brand"><i class="bi bi-save me-1"></i>I-save ang Pagbabago</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        // Client-side guard (backend ang panghuling awtoridad): Start Year <= End Year.
+        document.querySelectorAll('.history-edit-form').forEach(function (f) {
+            f.addEventListener('submit', function (e) {
+                var s = parseInt(f.querySelector('[name="editStartYear"]').value, 10);
+                var eRaw = f.querySelector('[name="editEndYear"]').value;
+                if (eRaw !== '' && !isNaN(s) && parseInt(eRaw, 10) < s) {
+                    e.preventDefault();
+                    alert('Ang End Year ay hindi pwedeng mas maaga sa Start Year.');
+                }
+            });
+        });
+    </script>
 }

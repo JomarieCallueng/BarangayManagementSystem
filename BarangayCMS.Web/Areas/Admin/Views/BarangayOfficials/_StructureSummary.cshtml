@@ -1,0 +1,54 @@
+@model BarangayCMS.Web.Areas.Admin.Services.StructureSummary
+@{
+    if (Model == null) { return; }
+
+    string BadgeClass(BarangayCMS.Web.Areas.Admin.Services.SlotStatus s)
+        => s.Over ? "bg-danger" : (s.Complete ? "bg-success" : "bg-warning text-dark");
+
+    var rows = new (string Title, string Icon, List<BarangayCMS.Web.Areas.Admin.Services.SlotStatus> Items)[]
+    {
+        ("Sangguniang Barangay", "bi-building", Model.Barangay),
+        ("Sangguniang Kabataan", "bi-people", Model.SK),
+    };
+}
+
+<div class="card border-0 shadow-sm rounded mb-4">
+    <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="fw-bold mb-0"><i class="bi bi-clipboard-check text-primary me-2"></i>Officials Structure</h6>
+            <span class="text-muted small">Active slots (used / required)</span>
+        </div>
+        <div class="row g-4">
+            @foreach (var group in rows)
+            {
+                <div class="col-md-6">
+                    <div class="fw-semibold text-uppercase text-muted small mb-2" style="letter-spacing:.04em;">
+                        <i class="bi @group.Icon me-1"></i>@group.Title
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var s in group.Items)
+                        {
+                            <li class="list-group-item d-flex align-items-center justify-content-between px-0 py-2">
+                                <span class="small">
+                                    @s.Label
+                                    @if (!s.Complete)
+                                    {
+                                        <span class="text-warning ms-1" title="Incomplete"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                                    }
+                                    else if (s.Over)
+                                    {
+                                        <span class="text-danger ms-1" title="Over the allowed limit"><i class="bi bi-x-octagon-fill"></i></span>
+                                    }
+                                </span>
+                                <span class="badge rounded-pill @BadgeClass(s)">@s.Used/@s.Limit</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+        <div class="text-muted small mt-2">
+            <i class="bi bi-info-circle me-1"></i>Ang SK Chairperson ay iisang record lamang — lumalabas ito bilang Ex-Officio sa Sangguniang Barangay.
+        </div>
+    </div>
+</div>

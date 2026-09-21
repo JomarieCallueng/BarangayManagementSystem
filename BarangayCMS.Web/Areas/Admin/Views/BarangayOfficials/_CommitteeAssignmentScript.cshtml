@@ -1,0 +1,100 @@
+@using BarangayCMS.Web.Areas.Admin.Services
+@using System.Text.Json
+@{
+    
+    var cfg = new
+    {
+        modes = OfficialStructure.Options.ToDictionary(o => o.Value, o => OfficialStructure.CommitteeMode(o.Slot)),
+        barangay = OfficialStructure.BarangayCommittees,
+        sk = OfficialStructure.SkCommittees,
+        fixedSk = OfficialStructure.SkChairCommittee,
+        usedBarangay = (ViewBag.UsedBarangayCommittees as List<string>) ?? new List<string>(),
+        usedSk = (ViewBag.UsedSkCommittees as List<string>) ?? new List<string>(),
+        activeNames = (ViewBag.ActiveNames as List<string>) ?? new List<string>()
+    };
+    var cfgJson = JsonSerializer.Serialize(cfg);
+}
+<script>
+    (function () {
+        var CFG = @Html.Raw(cfgJson);
+        var posSel = document.querySelector('select[name="Position"]');
+        var field = document.getElementById('committeeField');
+        var note = document.getElementById('committeeNote');
+        var nameInput = document.querySelector('input[name="FullName"]');
+        var form = posSel ? posSel.closest('form') : null;
+
+        function norm(s) { return (s || '').trim().replace(/\s+/g, ' ').toLowerCase(); }
+        function opt(v, label, disabled) {
+            var o = document.createElement('option');
+            o.value = v; o.textContent = label;
+            if (disabled) o.disabled = true;
+            return o;
+        }
+
+        
+        if (posSel && field) {
+            var ownCommittee = field.getAttribute('data-current') || '';
+            function isUsed(list, c) {
+                c = c.toLowerCase();
+                return list.some(function (u) { return u.trim().toLowerCase() === c; });
+            }
+            function apply(preserve) {
+                var mode = CFG.modes[posSel.value] || 'free';
+                field.innerHTML = '';
+                if (mode === 'none') {
+                    field.appendChild(opt('', 'No specific committee'));
+                    field.value = ''; field.disabled = true;
+                    note.textContent = 'Walang tiyak na komite para sa posisyong ito.';
+                } else if (mode === 'fixed') {
+                    field.appendChild(opt(CFG.fixedSk, CFG.fixedSk));
+                    field.value = CFG.fixedSk; field.disabled = true;
+                    note.textContent = 'Awtomatikong nakatalaga bilang Ex-Officio Member (naka-lock).';
+                } else {
+                    field.appendChild(opt('', '-- Pumili ng komite (opsyonal) --'));
+                    var isSk = (mode === 'sk');
+                    var list = isSk ? CFG.sk : CFG.barangay;
+                    var used = isSk ? CFG.usedSk : CFG.usedBarangay;
+                    if (preserve && list.indexOf(preserve) === -1) {
+                        field.appendChild(opt(preserve, preserve + ' (kasalukuyan)'));
+                    }
+                    list.forEach(function (c) {
+                        
+                        var taken = isUsed(used, c) && norm(c) !== norm(ownCommittee);
+                        field.appendChild(opt(c, taken ? (c + ' — Already Assigned') : c, taken));
+                    });
+                    field.disabled = false;
+                    field.value = preserve || '';
+                    note.textContent = isSk
+                        ? 'Piliin ang SK standing committee. Ang nakalaan na sa ibang aktibong Kagawad ay naka-disable.'
+                        : 'Piliin ang Barangay standing committee. Ang nakalaan na sa ibang aktibong Kagawad ay naka-disable.';
+                }
+            }
+            posSel.addEventListener('change', function () { apply(''); });
+            apply(ownCommittee);
+        }
+
+       
+        if (form && nameInput) {
+            var warn = document.createElement('div');
+            warn.className = 'text-danger small mt-1';
+            warn.style.display = 'none';
+            warn.textContent = 'An active official with this name already exists.';
+            nameInput.insertAdjacentElement('afterend', warn);
+
+            function nameClash() {
+                var activeChk = document.querySelector('input[name="IsActive"]');
+                var isActive = activeChk ? activeChk.checked : true;
+                return isActive && CFG.activeNames.indexOf(norm(nameInput.value)) !== -1;
+            }
+            function refresh() {
+                var clash = nameClash();
+                warn.style.display = clash ? 'block' : 'none';
+                nameInput.classList.toggle('is-invalid', clash);
+            }
+            nameInput.addEventListener('input', refresh);
+            form.addEventListener('submit', function (e) {
+                if (nameClash()) { e.preventDefault(); refresh(); nameInput.focus(); }
+            });
+        }
+    })();
+</script>

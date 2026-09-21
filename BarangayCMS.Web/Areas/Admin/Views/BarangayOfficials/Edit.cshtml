@@ -1,80 +1,99 @@
-﻿@model BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel
+@model BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using BarangayCMS.Web.Areas.Admin.Services
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "I-edit ang Opisyal";
+    var counts = ViewBag.SlotCounts as Dictionary<OfficialSlot, int> ?? new Dictionary<OfficialSlot, int>();
+    var summary = ViewBag.Summary as StructureSummary;
+    // Ang kasalukuyang slot ng opisyal na ito ay hindi dapat maka-disable ng sarili nito.
+    var currentSlot = OfficialStructure.Classify(Model.Position);
 }
 
-<div class="container mt-4" style="max-width: 650px;">
-    <div class="card shadow">
-        <div class="card-header bg-warning text-dark">
-            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Baguhin ang Impormasyon ng Opisyal</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="SignaturePath" />
-
-                <div class="mb-3">
-                    <label asp-for="FullName" class="form-label fw-bold"></label>
-                    <input asp-for="FullName" class="form-control" />
-                    <span asp-validation-for="FullName" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Position" class="form-label fw-bold"></label>
-                    <input asp-for="Position" class="form-control" />
-                    <span asp-validation-for="Position" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Committee" class="form-label fw-bold"></label>
-                    <input asp-for="Committee" class="form-control" />
-                    <span asp-validation-for="Committee" class="text-danger"></span>
-                </div>
-
-                <input type="hidden" asp-for="ProfileImagePath" />
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold d-block">Kasalukuyang Profile Photo</label>
-                    @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-                    {
-                        <div class="p-2 border rounded bg-light mb-2" style="width: fit-content;">
-                            <img src="~/uploads/officials/@Model.ProfileImagePath" style="height: 80px; width: 80px; object-fit: cover; border-radius: 8px;" alt="Profile Photo" />
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-muted small mb-2"><i class="bi bi-person-circle me-1"></i>Walang naka-upload na larawan (initials ang ipapakita sa public page).</div>
-                    }
-                    <label asp-for="ProfileImageFile" class="form-label small text-muted">Palitan ang profile photo (Pumili kung babaguhin):</label>
-                    <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold d-block">Kasalukuyang Pirma</label>
-                    @if (!string.IsNullOrEmpty(Model.SignaturePath))
-                    {
-                        <div class="p-2 border rounded bg-light mb-2" style="width: fit-content;">
-                            <img src="~/uploads/signatures/@Model.SignaturePath" style="height: 60px;" alt="Signature" />
-                        </div>
-                    }
-                    <label asp-for="SignatureFile" class="form-label small text-muted">Palitan ang lagda (Pumili kung babaguhin):</label>
-                    <input asp-for="SignatureFile" type="file" class="form-control" accept="image/*" />
-                </div>
-
-                <div class="mb-3 form-check form-switch pt-2">
-                    <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch">
-                    <label class="form-check-label fw-bold" for="isActiveSwitch">Aktibo sa Serbisyo</label>
-                </div>
-
-                <div class="mt-4 d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">I-cancel</a>
-                    <button type="submit" class="btn btn-warning px-4 fw-bold">I-update ang Record</button>
-                </div>
-            </form>
-        </div>
+<div class="page-header">
+    <div>
+        <h1 class="page-header__title"><i class="bi bi-pencil-square"></i> Baguhin ang Impormasyon ng Opisyal</h1>
+        <p class="page-header__sub mb-0">Ina-update ang record ni <strong>@Model.FullName</strong>.</p>
     </div>
+    <a asp-action="Index" class="btn btn-light border fw-semibold rounded-3"><i class="bi bi-arrow-left me-1"></i> Bumalik</a>
 </div>
+
+<div class="form-page">
+    @if (summary != null)
+    {
+        @await Html.PartialAsync("_StructureSummary", summary)
+    }
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <div class="app-card app-card--pad">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label fw-bold"></label>
+                <input asp-for="FullName" class="form-control" placeholder="Juan D. Dela Cruz" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Position" class="form-label fw-bold"></label>
+                <select asp-for="Position" class="form-select">
+                    <option value="">-- Pumili ng Posisyon --</option>
+                    @foreach (var opt in OfficialStructure.Options)
+                    {
+                        var used = counts.TryGetValue(opt.Slot, out var c) ? c : 0;
+                        var limit = OfficialStructure.Limit(opt.Slot);
+                        // Puno na ANG slot at HINDI ito ang kasalukuyang slot ng opisyal.
+                        var full = limit != int.MaxValue && used >= limit && opt.Slot != currentSlot;
+                        var suffix = limit == int.MaxValue ? "" : $" ({used}/{limit})" + (full ? " — Puno na" : "");
+                        <option value="@opt.Value" disabled="@full">@opt.Label@suffix</option>
+                    }
+                </select>
+                <span asp-validation-for="Position" class="text-danger"></span>
+                <div class="form-text">Ang bilang ay hindi kasama ang opisyal na ito. Ang mga posisyong <strong>puno na</strong> ay naka-disable.</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Committee" class="form-label fw-bold"></label>
+                <select asp-for="Committee" id="committeeField" class="form-select" data-current="@Model.Committee">
+                    <option value="">-- Walang tiyak na komite --</option>
+                </select>
+                <span asp-validation-for="Committee" class="text-danger"></span>
+                <div id="committeeNote" class="form-text"></div>
+            </div>
+
+            <input type="hidden" asp-for="ProfileImagePath" />
+
+            <div class="mb-3">
+                <label class="form-label fw-bold d-block">Kasalukuyang Profile Photo</label>
+                @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                {
+                    <div class="p-2 border rounded bg-light mb-2" style="width: fit-content;">
+                        <img src="~/uploads/officials/@Model.ProfileImagePath" style="height: 80px; width: 80px; object-fit: cover; border-radius: 8px;" alt="Profile photo ni @Model.FullName" />
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted small mb-2"><i class="bi bi-person-circle me-1"></i>Walang naka-upload na larawan (initials ang ipapakita sa public page).</div>
+                }
+                <label asp-for="ProfileImageFile" class="form-label small text-muted">Palitan ang profile photo (Pumili kung babaguhin):</label>
+                <input asp-for="ProfileImageFile" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" />
+            </div>
+
+            <div class="mb-3 form-check form-switch pt-2">
+                <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch">
+                <label class="form-check-label fw-bold" for="isActiveSwitch">Kasalukuyang Aktibo sa Serbisyo</label>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end border-top pt-3 mt-4">
+                <a asp-action="Index" class="btn btn-light border px-4">Kanselahin</a>
+                <button type="submit" class="btn btn-brand px-4"><i class="bi bi-save me-1"></i> I-update ang Record</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <partial name="_CommitteeAssignmentScript" />
+}

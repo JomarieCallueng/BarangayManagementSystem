@@ -21,7 +21,9 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         [Display(Name = "Komite (Committee)")]
         public string Committee { get; set; } = string.Empty;
 
-        [Display(Name = "E-Signature / Lagda")]
+        // Pinananatili para sa umiiral na data/DB compatibility. Inalis na ang
+        // E-Signature sa Officials UI (walang upload/preview) kaya hindi na ito
+        // isinusulat mula sa form — mananatili ang dating halaga sa database.
         public string SignaturePath { get; set; } = string.Empty;
 
         // Profile photo (filename lang; served mula sa /uploads/officials/).
@@ -30,9 +32,6 @@ namespace BarangayCMS.Web.Areas.Admin.Models
 
         [Display(Name = "Kasalukuyang Nakaupo (Active)")]
         public bool IsActive { get; set; } = true;
-
-        [Display(Name = "I-upload ang Lagda (Image File)")]
-        public IFormFile? SignatureFile { get; set; }
 
         [Display(Name = "I-upload ang Profile Photo")]
         public IFormFile? ProfileImageFile { get; set; }

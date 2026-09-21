@@ -140,7 +140,8 @@ body {
 
 .navbar .nav-link.active {
     color: #fff !important;
-    box-shadow: inset 0 -2px 0 var(--accent);
+    /* No persistent underline on the active link — the underline is a hover-only
+       effect (see .navbar-nav .nav-link::before). */
 }
 
 .dropdown-menu {
@@ -1176,6 +1177,58 @@ body {
     gap: .75rem;
 }
 
+/* Topbar message/notification icon — matches the topbar button sizing/theme tokens */
+.app-topbar__icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: var(--heading);
+    font-size: 1.05rem;
+    line-height: 1;
+    text-decoration: none;
+    transition: background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.app-topbar__icon-btn:hover,
+.app-topbar__icon-btn:focus-visible {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.app-topbar__icon-btn:active {
+    transform: translateY(1px);
+}
+
+.app-topbar__icon-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Unread badge — sits on the top-right corner without covering the glyph */
+.app-topbar__badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #dc3545;
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    box-shadow: 0 0 0 2px var(--surface);
+}
+
 .app-content {
     flex: 1 1 auto;
     padding: 1.75rem;
@@ -1449,11 +1502,14 @@ body {
     border-bottom: 0;
 }
 
-/* SHAPE — every scrollable table reads as one rounded, bordered card */
+/* SHAPE — every scrollable table reads as one rounded, bordered card.
+   Use overflow-x:auto (not the `overflow:hidden` shorthand) so wide tables
+   scroll horizontally instead of hard-clipping their right-most column
+   (e.g. the Budget actions buttons); the border-radius still rounds corners. */
 .app-content .table-responsive {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    overflow: hidden;
+    overflow-x: auto;
     background: var(--surface);
 }
 
@@ -1648,5 +1704,688 @@ body {
 
     .app-content {
         padding: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   PUBLIC "ABOUT US" PEOPLE PAGES — Barangay Officials & SK Members
+   Theme-aware (uses palette tokens), responsive 3/2/1 grid, no fixed widths.
+   ========================================================================== */
+.people-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    padding: 3rem 1rem 3.5rem;
+    text-align: center;
+}
+.people-hero::after {
+    content: "";
+    position: absolute;
+    top: -45%;
+    right: -8%;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+.people-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+}
+.people-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .35rem .85rem;
+    margin-bottom: 1rem;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .28);
+}
+.people-hero__title {
+    font-weight: 800;
+    font-size: clamp(1.9rem, 3.6vw, 2.8rem);
+    margin: 0 0 .65rem;
+}
+.people-hero__sub {
+    color: rgba(255, 255, 255, .82);
+    max-width: 42rem;
+    margin: 0 auto;
+    font-size: 1.02rem;
+    line-height: 1.6;
+}
+
+.people-wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+/* Section heading (e.g. "SK Members", "Other Officials") */
+.people-section-title {
+    text-align: center;
+    margin: 2.75rem 0 1.5rem;
+}
+.people-section-title .people-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .74rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.people-section-title h2 {
+    font-weight: 800;
+    color: var(--heading);
+    font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+    margin: .15rem 0 0;
+}
+
+/* --- Official card (grid + featured share the same base) --- */
+.official-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.6rem 1.25rem;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.official-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent);
+}
+
+/* Rectangular / square portrait frame (NOT circular) with slightly rounded corners */
+.official-card__photo {
+    width: 100%;
+    max-width: 220px;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    flex: 0 0 auto;
+}
+.official-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+.official-card__initials {
+    font-weight: 800;
+    font-size: 2.6rem;
+    line-height: 1;
+}
+.official-card__name {
+    font-weight: 800;
+    color: var(--heading);
+    font-size: 1.1rem;
+    margin: 0 0 .5rem;
+    overflow-wrap: anywhere;
+}
+.official-card__pos {
+    display: inline-block;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    padding: .3rem .8rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    overflow-wrap: anywhere;
+}
+.official-card__committee {
+    margin-top: .6rem;
+    font-size: .85rem;
+    color: var(--muted);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+.official-card__committee i {
+    color: var(--accent);
+}
+.official-card__history-btn {
+    margin-top: 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .35rem .9rem;
+    cursor: pointer;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+.official-card__history-btn:hover,
+.official-card__history-btn:focus-visible {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+/* --- Featured official (Captain / SK Chairperson) --- */
+.official-featured {
+    max-width: 420px;
+    margin: 0 auto 1rem;
+    padding: 2.25rem 1.75rem;
+    position: relative;
+}
+.official-featured::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 5px;
+    background: var(--accent);
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+.official-featured .official-card__photo {
+    max-width: 260px;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.official-featured .official-card__name {
+    font-size: 1.35rem;
+}
+.official-featured .official-card__pos {
+    font-size: .85rem;
+    padding: .38rem 1rem;
+}
+
+/* Ex-Officio label (SK Chairperson shown in the Barangay context) */
+.official-card__exofficio {
+    margin-top: .5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: .26rem .7rem;
+    border-radius: 999px;
+    border: 1px dashed var(--accent);
+    color: var(--accent);
+}
+
+/* Position description shown on each card */
+.official-card__desc {
+    margin: .8rem 0 0;
+    font-size: .85rem;
+    color: var(--body-text);
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+/* --- Status chip --- */
+.official-card__status {
+    margin-top: .8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .74rem;
+    font-weight: 700;
+    padding: .26rem .7rem;
+    border-radius: 999px;
+    background: rgba(22, 163, 74, .14);
+    color: #16a34a;
+}
+.official-card__status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* --- Empty / error state --- */
+.people-empty {
+    background: var(--surface-alt);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 1.25rem;
+    text-align: center;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto;
+}
+.people-empty i {
+    font-size: 2.2rem;
+    opacity: .55;
+    display: block;
+    margin-bottom: .6rem;
+}
+
+/* --- Person-specific history timeline (inside modal) --- */
+.official-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+    position: relative;
+}
+.official-timeline::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: .4rem;
+    bottom: .4rem;
+    width: 2px;
+    background: var(--border);
+}
+.official-timeline__item {
+    position: relative;
+    padding-bottom: 1.35rem;
+}
+.official-timeline__item:last-child {
+    padding-bottom: 0;
+}
+.official-timeline__item::before {
+    content: "";
+    position: absolute;
+    left: -1.5rem;
+    top: .25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+}
+.official-timeline__item.is-current::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.official-timeline__range {
+    font-weight: 800;
+    color: var(--heading);
+    font-size: .92rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+.official-timeline__badge {
+    font-size: .64rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 999px;
+    padding: .12rem .5rem;
+}
+.official-timeline__pos {
+    color: var(--body-text);
+    font-weight: 600;
+    font-size: .9rem;
+    margin-top: .15rem;
+}
+.official-timeline__committee {
+    color: var(--muted);
+    font-size: .82rem;
+    margin-top: .1rem;
+}
+
+/* ==========================================================================
+   PUBLIC HISTORY / VISION / MISSION PAGE
+   ========================================================================== */
+.civic-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.85rem;
+}
+.civic-section + .civic-section {
+    margin-top: 1.5rem;
+}
+.civic-section__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .74rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.civic-section__title {
+    font-weight: 800;
+    color: var(--heading);
+    font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+    margin: .15rem 0 1rem;
+}
+.civic-section__body {
+    color: var(--body-text);
+    line-height: 1.75;
+}
+.civic-vm-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 1.5rem;
+    margin-bottom: .9rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+/* Segmented language toggle (English / Tagalog) on the History page */
+.about-seg {
+    display: inline-flex;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .25rem;
+}
+.about-seg .nav-link {
+    border: 0;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .85rem;
+    padding: .4rem 1.1rem;
+    color: var(--muted);
+    background: transparent;
+}
+.about-seg .nav-link.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: var(--shadow);
+}
+
+/* ==========================================================================
+   STANDING COMMITTEES — Barangay & SK (clean card list, not a block of text)
+   ========================================================================== */
+.committee-card {
+    height: 100%;
+    display: flex;
+    gap: .9rem;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.1rem 1.15rem;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+.committee-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+.committee-card__icon {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.15rem;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+.committee-card__title {
+    font-weight: 700;
+    color: var(--heading);
+    font-size: .95rem;
+    margin: 0 0 .25rem;
+    overflow-wrap: anywhere;
+}
+.committee-card__text {
+    font-size: .83rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+.committee-card__lead {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-top: .5rem;
+    font-size: .76rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.committee-card__lead i {
+    font-size: .9rem;
+}
+
+/* ==========================================================================
+   OFFICIALS ADMIN TABLE — actions row kept on one line, consistent alignment
+   ========================================================================== */
+.official-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+.official-actions .btn {
+    flex: 0 0 auto;
+}
+th.actions-col {
+    width: 1%;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   PUBLIC NAVBAR — subtle hover animation + desktop hover-open dropdowns
+   Reuses the existing Bootstrap navbar; click/tap behavior is preserved.
+   ========================================================================== */
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav .nav-link {
+        position: relative;
+        transition: color .2s ease, transform .2s ease;
+    }
+    /* Animated underline via ::before so it never clashes with the dropdown
+       caret (Bootstrap uses .dropdown-toggle::after for the caret). */
+    .navbar-expand-lg .navbar-nav .nav-link::before {
+        content: "";
+        position: absolute;
+        left: .9rem;
+        right: .9rem;
+        bottom: .3rem;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform .2s ease;
+        pointer-events: none;
+    }
+    .navbar-expand-lg .navbar-nav .nav-link:hover,
+    .navbar-expand-lg .navbar-nav .nav-link:focus-visible {
+        transform: translateY(-1px);
+    }
+    .navbar-expand-lg .navbar-nav .nav-link:hover::before,
+    .navbar-expand-lg .navbar-nav .nav-link:focus-visible::before {
+        transform: scaleX(1);
+    }
+
+    /* Keyboard: keep the menu open while focus is inside the dropdown. */
+    .navbar-expand-lg .navbar-nav .dropdown:focus-within > .dropdown-menu {
+        display: block;
+    }
+
+    /* Hover-open only on true hover/pointer devices so touch is unaffected. */
+    @media (hover: hover) and (pointer: fine) {
+        .navbar-expand-lg .navbar-nav .dropdown:hover > .dropdown-menu {
+            display: block;
+        }
+        /* Small gap + invisible bridge so moving cursor into the menu never
+           crosses a dead zone (prevents flicker/closing). */
+        .navbar-expand-lg .navbar-nav .dropdown > .dropdown-menu {
+            margin-top: .35rem;
+        }
+        .navbar-expand-lg .navbar-nav .dropdown > .dropdown-menu::before {
+            content: "";
+            position: absolute;
+            top: -.5rem;
+            left: 0;
+            right: 0;
+            height: .5rem;
+            background: transparent;
+        }
+    }
+}
+
+/* Flip the dropdown caret upward on hover/open to signal interactivity. */
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav .dropdown-toggle::after {
+        transition: transform .2s ease;
+    }
+    .navbar-expand-lg .navbar-nav .dropdown-toggle.show::after,
+    .navbar-expand-lg .navbar-nav .dropdown-toggle[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+    }
+    @media (hover: hover) and (pointer: fine) {
+        .navbar-expand-lg .navbar-nav .dropdown:hover > .dropdown-toggle::after {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+/* ==========================================================================
+   OFFICIALS ADMIN — toolbar (council tabs + search + status filter)
+   Reuses the palette tokens so it matches every theme automatically.
+   ========================================================================== */
+.officials-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .85rem;
+}
+
+/* Segmented council selector (Sangguniang Barangay / Kabataan) */
+.officials-tabs {
+    display: inline-flex;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .25rem;
+    gap: .15rem;
+    flex-wrap: wrap;
+}
+.officials-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: .85rem;
+    padding: .45rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+.officials-tab:hover {
+    color: var(--heading);
+}
+.officials-tab.is-active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: var(--shadow);
+}
+.officials-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.officials-tab__count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 .35rem;
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .22);
+    color: inherit;
+}
+.officials-tab:not(.is-active) .officials-tab__count {
+    background: var(--border);
+    color: var(--muted);
+}
+
+.officials-filters {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+}
+.officials-search {
+    min-width: 240px;
+    flex: 1 1 240px;
+}
+.officials-status {
+    width: auto;
+    min-width: 150px;
+}
+
+/* Keep every action button the same height/width for tidy alignment */
+.official-actions .btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.official-actions .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+@media (max-width: 575.98px) {
+    .officials-toolbar {
+        align-items: stretch;
+    }
+    .officials-tabs {
+        justify-content: center;
+        width: 100%;
+    }
+    .officials-filters {
+        width: 100%;
+    }
+    .officials-status {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   MOTION — honour the viewer's reduced-motion preference everywhere
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+    .official-card:hover,
+    .committee-card:hover,
+    .official-actions .btn:hover {
+        transform: none;
     }
 }

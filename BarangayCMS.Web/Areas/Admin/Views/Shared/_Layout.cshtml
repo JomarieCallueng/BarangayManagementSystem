@@ -5,11 +5,11 @@
     try { adminUnread = await ContactMessageService.GetUnreadCountAsync(); } catch { }
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Barangay Admin</title>
+    <title>@ViewData["Title"] - @L["Brand.AdminTitle"]</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,37 +30,39 @@
             <div class="app-sidebar__brand">
                 <i class="bi bi-shield-check"></i>
                 <div>
-                    <h6 class="app-sidebar__brand-title">Barangay Admin</h6>
-                    <span class="app-sidebar__brand-sub">Core Portal</span>
+                    <h6 class="app-sidebar__brand-title">@L["Brand.AdminTitle"]</h6>
+                    <span class="app-sidebar__brand-sub">@L["Brand.CorePortal"]</span>
                 </div>
             </div>
 
             <nav class="app-nav">
-                <a href="/Admin/Dashboard" class="app-nav__link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-                <a href="/Admin/Residents" class="app-nav__link"><i class="bi bi-people-fill"></i> Residents</a>
-                <a href="/Admin/Certificates" class="app-nav__link"><i class="bi bi-file-earmark-text-fill"></i> Certificates</a>
-                <a href="/Admin/Complaints" class="app-nav__link"><i class="bi bi-chat-left-text-fill"></i> Complaints</a>
-                <a href="/Admin/Messages" class="app-nav__link d-flex align-items-center justify-content-between">
-                    <span><i class="bi bi-inbox-fill"></i> Messages</span>
+                <a href="/Admin/Dashboard" class="app-nav__link"><i class="bi bi-grid-1x2-fill"></i> @L["Nav.Dashboard"]</a>
+                <a href="/Admin/Residents" class="app-nav__link"><i class="bi bi-people-fill"></i> @L["Nav.Residents"]</a>
+                <a href="/Admin/Certificates" class="app-nav__link"><i class="bi bi-file-earmark-text-fill"></i> @L["Nav.Certificates"]</a>
+                <a href="/Admin/Complaints" class="app-nav__link"><i class="bi bi-chat-left-text-fill"></i> @L["Nav.Complaints"]</a>
+                <a href="/Admin/Messages" class="app-nav__link">
+                    <i class="bi bi-inbox-fill"></i>
+                    <span>@L["Nav.Messages"]</span>
                     @if (adminUnread > 0)
                     {
-                        <span class="badge rounded-pill bg-danger">@adminUnread</span>
+                        <span class="badge rounded-pill bg-danger ms-auto">@adminUnread</span>
                     }
                 </a>
-                <a href="/Admin/Projects" class="app-nav__link"><i class="bi bi-kanban-fill"></i> Projects</a>
-                <a href="/Admin/Budget" class="app-nav__link"><i class="bi bi-cash-coin"></i> Budget Tracker</a>
-                <a href="/Admin/Disaster" class="app-nav__link"><i class="bi bi-shield-exclamation"></i> Disaster Risk</a>
-                <a href="/Admin/Health" class="app-nav__link"><i class="bi bi-heart-pulse-fill"></i> Health Center</a>
-                <a href="/Admin/Environment" class="app-nav__link"><i class="bi bi-tree-fill"></i> Environment</a>
-                <a href="/Admin/BarangayOfficials" class="app-nav__link"><i class="bi bi-person-badge-fill"></i> Officials</a>
-                <a href="/Admin/Announcements" class="app-nav__link"><i class="bi bi-megaphone-fill"></i> Announcements</a>
-                <a href="/Admin/Reports" class="app-nav__link"><i class="bi bi-graph-up-arrow"></i> Reports</a>
-                <a href="/Admin/Users" class="app-nav__link"><i class="bi bi-person-gear"></i> User Accounts</a>
-                <a href="/Admin/Settings" class="app-nav__link"><i class="bi bi-gear-fill"></i> Settings</a>
+                <a href="/Admin/Projects" class="app-nav__link"><i class="bi bi-kanban-fill"></i> @L["Nav.Projects"]</a>
+                <a href="/Admin/Budget" class="app-nav__link"><i class="bi bi-cash-coin"></i> @L["Nav.Budget"]</a>
+                <a href="/Admin/Disaster" class="app-nav__link"><i class="bi bi-shield-exclamation"></i> @L["Nav.Disaster"]</a>
+                <a href="/Admin/Health" class="app-nav__link"><i class="bi bi-heart-pulse-fill"></i> @L["Nav.Health"]</a>
+                <a href="/Admin/Environment" class="app-nav__link"><i class="bi bi-tree-fill"></i> @L["Nav.Environment"]</a>
+                <a href="/Admin/BarangayOfficials" class="app-nav__link"><i class="bi bi-person-badge-fill"></i> @L["Nav.Officials"]</a>
+                <a href="/Admin/Announcements" class="app-nav__link"><i class="bi bi-megaphone-fill"></i> @L["Nav.Announcements"]</a>
+                <a href="/Admin/Reports" class="app-nav__link"><i class="bi bi-graph-up-arrow"></i> @L["Nav.Reports"]</a>
+                <a href="/Admin/Users" class="app-nav__link"><i class="bi bi-person-gear"></i> @L["Nav.Users"]</a>
+                <a href="/Admin/Settings" class="app-nav__link"><i class="bi bi-gear-fill"></i> @L["Nav.Settings"]</a>
+                <a href="/Admin/Help" class="app-nav__link"><i class="bi bi-life-preserver"></i> @L["Nav.Help"]</a>
 
                 <hr class="app-nav__divider" />
                 <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal" class="app-nav__link app-nav__link--danger">
-                    <i class="bi bi-box-arrow-right"></i> Log Out
+                    <i class="bi bi-box-arrow-right"></i> @L["Nav.Logout"]
                 </a>
             </nav>
 
@@ -75,23 +77,50 @@
                             onclick="document.getElementById('appShell').classList.toggle('is-open')">
                         <i class="bi bi-list"></i>
                     </button>
-                    <span class="app-topbar__title"><i class="bi bi-calendar3 me-1"></i> System Session Active</span>
+                    <span class="app-topbar__title"><i class="bi bi-calendar3 me-1"></i> @L["Topbar.SessionActive"]</span>
                 </div>
                 <div class="app-topbar__actions">
+                    <!-- 🌐 LANGUAGE SELECTOR (persists via cookie, returns to same page) -->
+                    <partial name="_LanguageSelector" />
+                    <!-- 📥 MESSAGES: DB-backed unread count, links to the existing inbox -->
+                    <a href="/Admin/Messages" class="app-topbar__icon-btn @(adminUnread > 0 ? "has-unread" : "")"
+                       title="@L["Nav.Messages"]" aria-label="@(adminUnread > 0 ? $"{L["Nav.Messages"]}, {adminUnread}" : L["Nav.Messages"].Value)">
+                        <i class="bi bi-envelope-fill"></i>
+                        @if (adminUnread > 0)
+                        {
+                            <span class="app-topbar__badge" aria-hidden="true">@(adminUnread > 99 ? "99+" : adminUnread.ToString())</span>
+                        }
+                    </a>
                     <div class="dropdown">
                         <button class="btn btn-light btn-sm dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i> Administrator
+                            <i class="bi bi-person-circle me-1"></i> @L["Topbar.Administrator"]
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
-                            <li><a class="dropdown-item small py-2" href="/Admin/Settings"><i class="bi bi-gear me-2 text-muted"></i>Settings</a></li>
+                            <li><a class="dropdown-item small py-2" href="/Admin/Settings"><i class="bi bi-gear me-2 text-muted"></i>@L["Nav.Settings"]</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item small py-2 text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-power me-2"></i>Sign Out</a></li>
+                            <li><a class="dropdown-item small py-2 text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-power me-2"></i>@L["Nav.Logout"]</a></li>
                         </ul>
                     </div>
                 </div>
             </header>
 
             <main class="app-content">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm d-flex align-items-center" role="status">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <span>@TempData["SuccessMessage"]</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm d-flex align-items-center" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span>@TempData["ErrorMessage"]</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
                 @RenderBody()
             </main>
 
@@ -107,13 +136,13 @@
             <div class="modal-content border-0 shadow">
                 <div class="modal-body text-center p-4">
                     <div class="mb-3"><i class="bi bi-box-arrow-right text-danger display-4"></i></div>
-                    <h5 class="fw-bold text-dark mb-2" id="logoutModalLabel">Confirm Log Out</h5>
-                    <p class="text-muted small mb-4">Sigurado ka bang nais mong mag-log out sa system?</p>
+                    <h5 class="fw-bold text-dark mb-2" id="logoutModalLabel">@L["Logout.Title"]</h5>
+                    <p class="text-muted small mb-4">@L["Logout.Message"]</p>
                     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
                         @Html.AntiForgeryToken()
                         <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-light w-50 py-2 fw-semibold border rounded-3" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger w-50 py-2 fw-semibold rounded-3">Yes, Log Out</button>
+                            <button type="button" class="btn btn-light w-50 py-2 fw-semibold border rounded-3" data-bs-dismiss="modal">@L["Common.Cancel"]</button>
+                            <button type="submit" class="btn btn-danger w-50 py-2 fw-semibold rounded-3">@L["Logout.Confirm"]</button>
                         </div>
                     </form>
                 </div>
@@ -140,10 +169,16 @@
                     best = link; bestLen = href.length;
                 }
             });
-            if (!best) { best = document.querySelector('.app-nav__link[href="/Admin/Dashboard"]'); }
+            // Only fall back to Dashboard on the ACTUAL dashboard/area-root path — never as
+            // a blanket default, so opening Help System (or any other page) does not
+            // auto-select Dashboard. Mirrors the Staff layout's guarded fallback.
+            if (!best && (path === "/admin" || path.indexOf("/admin/dashboard") === 0)) {
+                best = document.querySelector('.app-nav__link[href="/Admin/Dashboard"]');
+            }
             if (best) { best.classList.add("active"); }
         })();
     </script>
+    <script src="~/js/sidebar-scroll.js" asp-append-version="true"></script>
     <script src="~/js/form-persist.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

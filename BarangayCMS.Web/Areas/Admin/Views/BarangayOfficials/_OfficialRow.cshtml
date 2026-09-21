@@ -1,0 +1,46 @@
+@model BarangayCMS.Web.Areas.Admin.Models.BarangayOfficialViewModel
+@using BarangayCMS.Web.Areas.Admin.Services
+@{
+    var posLabel = ViewData["PositionLabel"] as string ?? Model.Position;
+    var committee = OfficialStructure.DisplayCommittee(Model.Position, Model.Committee);
+    var committeeText = string.IsNullOrEmpty(committee) ? "No specific committee" : committee;
+    var searchBlob = (Model.FullName + " " + posLabel + " " + committeeText).ToLowerInvariant();
+}
+<tr class="official-row" data-search="@searchBlob" data-status="@(Model.IsActive ? "active" : "inactive")">
+    <td class="fw-semibold text-dark">
+        <i class="bi bi-person-circle text-secondary me-1"></i> @Model.FullName
+    </td>
+    <td>
+        <span class="badge bg-primary-subtle text-primary py-2 px-3 fw-bold">@posLabel</span>
+    </td>
+    <td>
+        @if (string.IsNullOrEmpty(committee))
+        {
+            <span class="text-muted small fst-italic">No specific committee</span>
+        }
+        else
+        {
+            <span class="text-secondary small">@committee</span>
+        }
+    </td>
+    <td>
+        @if (Model.IsActive)
+        {
+            <span class="badge bg-success shadow-sm">Active Service</span>
+        }
+        else
+        {
+            <span class="badge bg-secondary">Term Ended</span>
+        }
+    </td>
+    <td>
+        <div class="official-actions">
+            <a href="/Admin/BarangayOfficials/History/@Model.Id" class="btn btn-sm btn-outline-secondary"
+               title="Manage Service History" aria-label="Manage service history for @Model.FullName"><i class="bi bi-clock-history" aria-hidden="true"></i></a>
+            <a href="/Admin/BarangayOfficials/Edit/@Model.Id" class="btn btn-sm btn-outline-primary"
+               title="Edit" aria-label="Edit @Model.FullName"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+            <a href="/Admin/BarangayOfficials/Delete/@Model.Id" class="btn btn-sm btn-outline-danger"
+               title="Delete" aria-label="Delete @Model.FullName"><i class="bi bi-trash" aria-hidden="true"></i></a>
+        </div>
+    </td>
+</tr>
