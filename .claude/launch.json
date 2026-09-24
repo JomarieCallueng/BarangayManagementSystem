@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "barangay-web",
+      "name": "web",
       "runtimeExecutable": "dotnet",
-      "runtimeArgs": ["run", "--project", "BarangayCMS.Web/BarangayCMS.Web.csproj", "--urls", "http://localhost:5199"],
+      "runtimeArgs": ["run", "--project", "BarangayCMS.Web/BarangayCMS.Web.csproj", "--launch-profile", "http", "--urls", "http://localhost:5199"],
       "port": 5199
     }
   ]

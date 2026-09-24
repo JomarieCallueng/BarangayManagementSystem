@@ -32,7 +32,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 // Gumawa ng default record sa DB kung sakaling wala pang laman
                 settings = new SystemSetting
                 {
-                    BarangayName = "Barangay Central Roster",
+                    BarangayName = "Barangay Tatalon",
                     CityMunicipality = "Quezon City"
                 };
                 _context.SystemSettings.Add(settings);

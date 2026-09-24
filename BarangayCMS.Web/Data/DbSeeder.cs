@@ -22,7 +22,35 @@ namespace BarangayCMS.DAL.Context
             // 3. Seed Sample SMS Alerts History (gamit ang BarangayCMS.Entities.SmsAlert)
             await SeedSmsAlertsAsync(context);
 
+            // 4. Ensure the barangay profile is set to Barangay Tatalon, Quezon City
+            await SeedSystemSettingsAsync(context);
+
             await context.SaveChangesAsync();
+        }
+
+        // Itakda ang barangay profile sa Barangay Tatalon, Quezon City. Gagawa ng
+        // record kung wala pa; kung nasa lumang placeholder default pa ("Barangay
+        // Central Roster"), i-normalize ito papuntang Tatalon. Hindi ito nag-oover-
+        // write kung sadyang binago na ito ng admin sa Settings.
+        private static async Task SeedSystemSettingsAsync(ApplicationDbContext context)
+        {
+            var settings = await context.SystemSettings.FirstOrDefaultAsync();
+            if (settings == null)
+            {
+                context.SystemSettings.Add(new SystemSetting
+                {
+                    BarangayName = "Barangay Tatalon",
+                    CityMunicipality = "Quezon City"
+                });
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(settings.BarangayName) ||
+                settings.BarangayName.Trim().Equals("Barangay Central Roster", StringComparison.OrdinalIgnoreCase))
+            {
+                settings.BarangayName = "Barangay Tatalon";
+                settings.CityMunicipality = "Quezon City";
+            }
         }
 
         private static async Task SeedCommitteesAsync(ApplicationDbContext context)

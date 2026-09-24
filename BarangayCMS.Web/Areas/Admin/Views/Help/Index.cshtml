@@ -2,69 +2,367 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = L["Help.Title"].Value;
 
-    // (icon, name key, description key) — text comes from the shared resources so the whole Help System follows the selected language.
-    var modules = new (string Icon, string NameKey, string DescKey)[]
+    // (icon, name key, description key, step-by-step guide, tip).
+    // Titles/descriptions stay localized via the shared resources; the step guides
+    // are written in English (send Filipino versions any time to localize them too).
+    var modules = new (string Icon, string NameKey, string DescKey, string[] Steps, string Tip)[]
     {
-        ("bi-grid-1x2-fill", "Nav.Dashboard", "Help.Desc.Dashboard"),
-        ("bi-people-fill", "Nav.Residents", "Help.Desc.Residents"),
-        ("bi-file-earmark-text-fill", "Nav.Certificates", "Help.Desc.Certificates"),
-        ("bi-chat-left-text-fill", "Nav.Complaints", "Help.Desc.Complaints"),
-        ("bi-inbox-fill", "Nav.Messages", "Help.Desc.Messages"),
-        ("bi-kanban-fill", "Nav.Projects", "Help.Desc.Projects"),
-        ("bi-cash-coin", "Nav.Budget", "Help.Desc.Budget"),
-        ("bi-shield-exclamation", "Nav.Disaster", "Help.Desc.Disaster"),
-        ("bi-heart-pulse-fill", "Nav.Health", "Help.Desc.Health"),
-        ("bi-tree-fill", "Nav.Environment", "Help.Desc.Environment"),
-        ("bi-person-badge-fill", "Nav.Officials", "Help.Desc.Officials"),
-        ("bi-megaphone-fill", "Nav.Announcements", "Help.Desc.Announcements"),
-        ("bi-graph-up-arrow", "Nav.Reports", "Help.Desc.Reports"),
-        ("bi-person-gear", "Nav.Users", "Help.Desc.Users"),
-        ("bi-gear-fill", "Nav.Settings", "Help.Desc.Settings"),
+        ("bi-grid-1x2-fill", "Nav.Dashboard", "Help.Desc.Dashboard",
+            new[] {
+                "Click \"Dashboard\" in the sidebar to open the overview.",
+                "Review the summary cards — residents, certificates, complaints, projects and more.",
+                "Scan the charts and recent-activity lists to see what needs attention.",
+                "Click a section to jump straight to that module for the full details."
+            },
+            "Figures update automatically from the database — refresh the page if a change doesn't appear yet."),
+
+        ("bi-people-fill", "Nav.Residents", "Help.Desc.Residents",
+            new[] {
+                "Click \"Residents\" in the sidebar.",
+                "Click \"Add Resident\" and fill in the name, address, contact number and other details.",
+                "Click \"Save\" to store the record.",
+                "Use the search box to find a resident, then use Edit to update or Delete to remove them."
+            },
+            "Complete the required fields (name and contact) before saving, and use the proper name format."),
+
+        ("bi-file-earmark-text-fill", "Nav.Certificates", "Help.Desc.Certificates",
+            new[] {
+                "Click \"Certificates\" in the sidebar to see incoming requests.",
+                "Open a request to check the resident's details and required documents.",
+                "Update the status as you process it (e.g. Approved / Released).",
+                "Issue or print the certificate once approved.",
+                "Manage the available certificate types and their requirements from the certificate settings."
+            },
+            "Verify the requirements are complete before approving a request."),
+
+        ("bi-chat-left-text-fill", "Nav.Complaints", "Help.Desc.Complaints",
+            new[] {
+                "Click \"Complaints\" in the sidebar.",
+                "Open a complaint to read the full details.",
+                "Update its status (e.g. In Progress, Resolved) as you act on it.",
+                "Use search and filters to find specific complaints."
+            },
+            "Keep statuses current so every resident's concern is properly tracked."),
+
+        ("bi-inbox-fill", "Nav.Messages", "Help.Desc.Messages",
+            new[] {
+                "Click \"Messages\" in the sidebar to open the public inbox.",
+                "Click a message to read it — it is marked as read automatically.",
+                "Reply to or act on the message as needed.",
+                "Watch the sidebar badge for the number of unread messages."
+            },
+            "The unread badge reflects the actual unread messages in the database."),
+
+        ("bi-kanban-fill", "Nav.Projects", "Help.Desc.Projects",
+            new[] {
+                "Click \"Projects\" in the sidebar.",
+                "Click \"Add Project\" and enter its name, description and budget.",
+                "Save, then open the project to add itemized expenses.",
+                "Each expense rolls up into the project total and links to the Budget Tracker."
+            },
+            "Use the Budget Tracker's project filter to review a single project's spending."),
+
+        ("bi-cash-coin", "Nav.Budget", "Help.Desc.Budget",
+            new[] {
+                "Click \"Budget Tracker\" in the sidebar.",
+                "Record budget entries, funds and expenses.",
+                "Filter by project to review a specific project's expenses.",
+                "Check the totals to monitor the remaining budget."
+            },
+            "Expenses added under a Project appear here automatically — no need to re-enter them."),
+
+        ("bi-shield-exclamation", "Nav.Disaster", "Help.Desc.Disaster",
+            new[] {
+                "Click \"Disaster Risk\" in the sidebar.",
+                "Use \"Log Emergency Incident\" to record an incident (type, description, location).",
+                "Manage evacuation centers via \"Evacuation Centers\".",
+                "Send an Emergency SMS alert to residents, then review or delete past alerts in SMS Alert History."
+            },
+            "Deleting an old SMS history record never sends a new SMS — it only removes the log entry."),
+
+        ("bi-heart-pulse-fill", "Nav.Health", "Help.Desc.Health",
+            new[] {
+                "Click \"Health Center\" in the sidebar.",
+                "Add or update the health record or service.",
+                "Save each entry.",
+                "Use the search to find an existing record quickly."
+            },
+            "Double-check the details are complete and correct before saving."),
+
+        ("bi-tree-fill", "Nav.Environment", "Help.Desc.Environment",
+            new[] {
+                "Click \"Environment\" in the sidebar.",
+                "Record an environmental activity or program (e.g. clean-up, tree planting).",
+                "Save the entry, and edit it later if the details change."
+            },
+            "Log activities as they happen so the barangay's environmental records stay up to date."),
+
+        ("bi-person-badge-fill", "Nav.Officials", "Help.Desc.Officials",
+            new[] {
+                "Click \"Officials\" in the sidebar.",
+                "Use the Sangguniang Barangay / Sangguniang Kabataan tabs to switch councils.",
+                "Click \"Add Council Member\" to add an official (position, committee, photo).",
+                "Use the row actions to Edit, Manage Service History, or Delete; search and filter as needed."
+            },
+            "Positions that are already full are disabled — deactivate the current holder before adding a new one."),
+
+        ("bi-megaphone-fill", "Nav.Announcements", "Help.Desc.Announcements",
+            new[] {
+                "Click \"Announcements\" in the sidebar.",
+                "Click \"Add Announcement\" and enter the title and content.",
+                "Save or publish it so it appears on the public site.",
+                "Edit or remove an announcement any time from the list."
+            },
+            "Keep announcements clear and dated so residents know what's current."),
+
+        ("bi-graph-up-arrow", "Nav.Reports", "Help.Desc.Reports",
+            new[] {
+                "Click \"Reports\" in the sidebar.",
+                "Choose the report you need.",
+                "Review the generated figures on screen.",
+                "Export or print the report if you need a copy."
+            },
+            "Reports are built from the data encoded in the other modules — keep those records accurate."),
+
+        ("bi-person-gear", "Nav.Users", "Help.Desc.Users",
+            new[] {
+                "Click \"User Accounts\" in the sidebar.",
+                "Click \"Add User\" and enter their details and role (Admin or Staff).",
+                "Save the account.",
+                "Edit a user to change their role or reset their access."
+            },
+            "Give each person only the access their role actually needs."),
+
+        ("bi-gear-fill", "Nav.Settings", "Help.Desc.Settings",
+            new[] {
+                "Click \"Settings\" in the sidebar.",
+                "Update the barangay profile (name, logo, contact) and other preferences.",
+                "Save your changes.",
+                "Use the appearance/theme option to change the site's colors."
+            },
+            "Changes here affect the whole system, so review them before saving."),
     };
 }
 
 @section Styles {
     <style>
-        /* Help System — subtle, professional interactivity (light + dark safe). */
-        .help-search .input-group-text,
-        .help-search .form-control {
-            border-color: var(--border, #dee2e6);
+        /* ===== Help Center — hero + topic-card grid. Theme-token driven so it
+                       follows every palette and is light/dark safe. ===== */
+        .help-hero {
+            position: relative;
+            background: var(--hero-bg);
+            color: var(--hero-text);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem 1.5rem 2.75rem;
+            text-align: center;
+            overflow: hidden;
         }
 
-            .help-search .form-control:focus {
-                box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
-                border-color: #86b7fe;
-            }
-
-        .help-item {
-            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+        .help-hero__icon {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 2rem;
+            background: rgba(255, 255, 255, .15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .22);
+        }
+        /* Scoped under .help-hero so it beats the global `.app-content h1` colour. */
+        .help-hero .help-hero__title {
+            font-weight: 800;
+            font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+            margin: 0 0 .5rem;
+            color: #fff;
         }
 
-            .help-item:hover {
-                transform: translateX(3px);
-                box-shadow: 0 .35rem .9rem rgba(0, 0, 0, .06);
+        .help-hero__sub {
+            max-width: 34rem;
+            margin: 0 auto 1.5rem;
+            color: rgba(255, 255, 255, .8);
+            font-size: .95rem;
+            line-height: 1.6;
+        }
+
+        .help-hero__search {
+            max-width: 40rem;
+            margin: 0 auto;
+        }
+
+            .help-hero__search .input-group {
+                background: #fff;
+                border-radius: 999px;
+                box-shadow: 0 .5rem 1.25rem rgba(0, 0, 0, .18);
+                overflow: hidden;
             }
 
-            .help-item .accordion-button {
-                transition: background-color .2s ease, color .2s ease;
+            .help-hero__search .form-control,
+            .help-hero__search .input-group-text {
+                border: 0;
+                padding-top: .75rem;
+                padding-bottom: .75rem;
+                background: #fff;
             }
-                /* Active/selected topic — an open accordion item stands out. */
-                .help-item .accordion-button:not(.collapsed) {
-                    background-color: rgba(13, 110, 253, .08);
-                    color: var(--bs-primary, #0d6efd);
-                    font-weight: 600;
-                }
 
-                .help-item .accordion-button:focus {
+                .help-hero__search .form-control:focus {
                     box-shadow: none;
                 }
 
-            .help-item mark {
-                background: #fff3cd;
-                padding: 0 .1rem;
-                border-radius: 3px;
+            .help-hero__search .help-hero__btn {
+                border: 0;
+                border-radius: 999px;
+                margin: .3rem .3rem .3rem 0;
+                padding-inline: 1.4rem;
+                font-weight: 600;
+                background: var(--accent);
+                color: #fff;
             }
-        /* Red PDF download button — white icon/text, subtle hover lift. */
+
+                .help-hero__search .help-hero__btn:hover {
+                    background: var(--accent-hover);
+                }
+
+        /* Section heading above the grid */
+        .help-section-title {
+            font-weight: 800;
+            color: var(--heading);
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        /* Topic cards — clickable buttons that open a guide modal. */
+        .help-topic-card {
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+            width: 100%;
+            text-align: left;
+            font: inherit;
+            cursor: pointer;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            height: 100%;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+
+            .help-topic-card:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-lg);
+                border-color: var(--accent);
+            }
+
+            .help-topic-card:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
+            }
+
+        .help-topic-card__icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 1.3rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .help-topic-card__title {
+            font-weight: 700;
+            color: var(--heading);
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .help-topic-card__text {
+            color: var(--muted);
+            font-size: .85rem;
+            line-height: 1.55;
+            margin: 0;
+        }
+        /* "View guide →" affordance, pushed to the bottom of the card. */
+        .help-topic-card__more {
+            margin-top: auto;
+            padding-top: .35rem;
+            font-size: .8rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+        }
+
+        .help-topic-card:hover .help-topic-card__more i {
+            transform: translateX(2px);
+        }
+
+        .help-topic-card__more i {
+            transition: transform .18s ease;
+        }
+
+        /* Guide modal */
+        .help-modal-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: inline-grid;
+            place-items: center;
+            font-size: 1.05rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .help-guide__intro {
+            color: var(--body-text);
+        }
+
+        .help-guide__steps-title,
+        .help-guide__tips-title {
+            font-weight: 700;
+            color: var(--heading);
+            font-size: .9rem;
+            margin: 1rem 0 .5rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .help-guide__steps {
+            padding-left: 1.15rem;
+            margin: 0;
+        }
+
+            .help-guide__steps li {
+                margin-bottom: .5rem;
+                line-height: 1.55;
+            }
+
+        .help-guide__tips {
+            margin-top: 1rem;
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: .85rem 1rem;
+        }
+
+        .help-guide__tips-title {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .help-guide__tips p {
+            margin: 0;
+            font-size: .88rem;
+            line-height: 1.55;
+        }
+
+        /* Red PDF download button — subtle hover lift. */
         .help-manual-btn {
             transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
         }
@@ -75,104 +373,148 @@
                 box-shadow: 0 .4rem .9rem rgba(220, 53, 69, .35);
             }
 
-        @@media (max-width: 575.98px) {
-            .help-toolbar {
-                flex-direction: column;
-                align-items: stretch !important;
+        @@media (prefers-reduced-motion: reduce) {
+            .help-topic-card,
+            .help-manual-btn,
+            .help-topic-card__more i {
+                transition: none;
             }
 
-                .help-toolbar .help-count {
-                    text-align: right;
+                .help-topic-card:hover,
+                .help-manual-btn:hover {
+                    transform: none;
                 }
         }
     </style>
 }
 
-<div class="page-header">
-    <div>
-        <h1 class="page-header__title"><i class="bi bi-life-preserver"></i> @L["Help.Title"]</h1>
-        <p class="page-header__sub mb-0">@L["Help.Subtitle"]</p>
-    </div>
+<!-- Slim action bar: keep the User Manual download accessible -->
+<div class="d-flex justify-content-end mb-3">
     <a href="/Admin/Help/Manual" download="User-Manual.pdf"
        class="btn btn-danger help-manual-btn fw-semibold rounded-3">
         <i class="bi bi-file-earmark-pdf-fill me-2"></i>@L["Help.DownloadManual"]
     </a>
 </div>
 
+<!-- 🎯 HERO with prominent search -->
+<section class="help-hero mb-4">
+    <div class="help-hero__icon"><i class="bi bi-question-lg"></i></div>
+    <h1 class="help-hero__title">@L["Help.Title"]</h1>
+    <p class="help-hero__sub">@L["Help.Subtitle"]</p>
+    <div class="help-hero__search">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="helpSearch" class="form-control"
+                   placeholder="@L["Help.SearchPlaceholder"]" autocomplete="off" aria-label="@L["Help.SearchPlaceholder"]" />
+            <button type="button" id="helpSearchClear" class="btn btn-link text-muted d-none px-2"
+                    title="@L["Help.ClearSearch"]" aria-label="@L["Help.ClearSearch"]">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <button type="button" id="helpSearchBtn" class="help-hero__btn"><i class="bi bi-search me-1"></i>@L["Common.Search"]</button>
+        </div>
+    </div>
+</section>
+
 <div class="alert alert-info border-0 shadow-sm small">
     <i class="bi bi-info-circle me-1"></i> @L["Help.InfoNote"]
 </div>
 
-<!-- 🔎 SEARCH — live filter ng mga help topics (walang page reload) -->
-<div class="card border-0 shadow-sm rounded p-3 mb-3 help-search">
-    <div class="help-toolbar d-flex align-items-center gap-2">
-        <div class="input-group flex-grow-1">
-            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" id="helpSearch" class="form-control border-start-0"
-                   placeholder="Search help topics…" autocomplete="off" aria-label="Search help topics" />
-            <button type="button" id="helpSearchClear" class="btn btn-outline-secondary border-start-0 d-none"
-                    title="Clear" aria-label="Clear search">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <span id="helpResultCount" class="text-muted small help-count text-nowrap"></span>
-    </div>
+<!-- 🗂️ BROWSE BY TOPIC -->
+<div class="d-flex align-items-center justify-content-between mt-4 mb-3">
+    <h2 class="help-section-title">@L["Help.BrowseByTopic"]</h2>
+    <span id="helpResultCount" class="text-muted small text-nowrap"></span>
 </div>
 
-<div class="accordion" id="helpAccordion">
-    @{
-        var idx = 0;
-    }
+<div class="row g-3" id="helpGrid">
     @foreach (var m in modules)
     {
-        idx++;
         var title = L[m.NameKey].Value;
         var desc = L[m.DescKey].Value;
-
-        <div class="accordion-item help-item" data-help-item
-             data-help-title="@title" data-help-text="@desc">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#help-item-@(idx)"
-                        aria-expanded="false" aria-controls="help-item-@(idx)">
-                    <i class="bi @m.Icon text-primary me-2"></i> <span class="help-item__title">@title</span>
-                </button>
-            </h2>
-            <div id="help-item-@(idx)" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
-                <div class="accordion-body small help-item__body">@desc</div>
-            </div>
+        <div class="col-12 col-sm-6 col-lg-4" data-help-item data-help-title="@title" data-help-text="@desc">
+            <button type="button" class="help-topic-card"
+                    data-bs-toggle="modal" data-bs-target="#helpTopicModal"
+                    data-help-title="@title" data-help-icon="@m.Icon">
+                <span class="help-topic-card__icon"><i class="bi @m.Icon"></i></span>
+                <span class="help-topic-card__title">@title</span>
+                <span class="help-topic-card__text">@desc</span>
+                <span class="help-topic-card__more">@L["Help.ViewGuide"] <i class="bi bi-arrow-right"></i></span>
+                @* Guide body cloned into the modal: intro + step-by-step directions + a tip. *@
+                <template class="help-topic-card__guide">
+                    <p class="help-guide__intro">@desc</p>
+                    <div class="help-guide__steps-title"><i class="bi bi-list-check"></i> @L["Help.StepsTitle"]</div>
+                    <ol class="help-guide__steps">
+                        @foreach (var step in m.Steps)
+                        {
+                            <li>@step</li>
+                        }
+                    </ol>
+                    @if (!string.IsNullOrWhiteSpace(m.Tip))
+                    {
+                        <div class="help-guide__tips">
+                            <div class="help-guide__tips-title"><i class="bi bi-lightbulb"></i> @L["Help.TipLabel"]</div>
+                            <p>@m.Tip</p>
+                        </div>
+                    }
+                </template>
+            </button>
         </div>
     }
 </div>
 
 <!-- Empty state kapag walang tugma -->
 <div id="helpNoResults" class="alert alert-light border text-center text-muted d-none mt-3">
-    <i class="bi bi-search me-1"></i> No help topics found. <a href="#" id="helpNoResultsReset" class="alert-link">Clear search</a>
+    <i class="bi bi-search me-1"></i> @L["Help.NoResults"] <a href="#" id="helpNoResultsReset" class="alert-link">@L["Help.ClearSearch"]</a>
 </div>
 
 <div class="card border-0 shadow-sm rounded mt-4">
     <div class="card-body small">
-        <h6 class="fw-bold mb-2"><i class="bi bi-lightbulb text-warning me-1"></i> Mga karaniwang tip</h6>
+        <h6 class="fw-bold mb-2"><i class="bi bi-lightbulb text-warning me-1"></i> @L["Help.TipsTitle"]</h6>
         <ul class="mb-0">
-            <li>Kapag hindi lumalabas ang mga pagbabago, i-refresh ang pahina.</li>
-            <li>Sa Officials, ang mga posisyong <em>puno na</em> ay naka-disable — i-deactivate muna ang kasalukuyan bago magdagdag ng bago.</li>
-            <li>Kung na-block ang isang aksyon, basahin ang pulang mensahe sa itaas ng form para sa dahilan.</li>
-            <li>Ang Messages badge ay galing sa aktwal na unread na mensahe sa database.</li>
+            <li>@L["Help.Tip.Refresh"]</li>
+            <li>@L["Help.Tip.OfficialsFull"]</li>
+            <li>@L["Help.Tip.Blocked"]</li>
+            <li>@L["Help.Tip.MessagesBadge"]</li>
         </ul>
+    </div>
+</div>
+
+<!-- 📖 GUIDE MODAL (shared, populated from the clicked topic card) -->
+<div class="modal fade" id="helpTopicModal" tabindex="-1" aria-labelledby="helpTopicModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center gap-2" id="helpTopicModalLabel">
+                    <span class="help-modal-icon" id="helpTopicModalIcon"><i class="bi bi-question-lg"></i></span>
+                    <span id="helpTopicModalTitle">@L["Help.Title"]</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Common.Close"]"></button>
+            </div>
+            <div class="modal-body" id="helpTopicModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">@L["Common.Close"]</button>
+                <a href="/Admin/Help/Manual" download="User-Manual.pdf" class="btn btn-danger help-manual-btn">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i>@L["Help.DownloadManual"]
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
         (function () {
-            // Live, case-insensitive filter over the EXISTING help topics.
+            // ---- Live, case-insensitive filter over the topic cards ----
             var search = document.getElementById('helpSearch');
             var clearBtn = document.getElementById('helpSearchClear');
+            var searchBtn = document.getElementById('helpSearchBtn');
             var noResults = document.getElementById('helpNoResults');
             var resetLink = document.getElementById('helpNoResultsReset');
             var counter = document.getElementById('helpResultCount');
+            var grid = document.getElementById('helpGrid');
             var items = Array.prototype.slice.call(document.querySelectorAll('[data-help-item]'));
-            if (!search) return;
+
+            var COUNT_MANY = @Html.Raw(Json.Serialize(L["Help.TopicCount"].Value));
+            var COUNT_ONE = @Html.Raw(Json.Serialize(L["Help.TopicCountOne"].Value));
 
             function apply() {
                 var q = search.value.trim().toLowerCase();
@@ -187,7 +529,7 @@
                 });
                 noResults.classList.toggle('d-none', visible !== 0);
                 clearBtn.classList.toggle('d-none', q.length === 0);
-                if (counter) counter.textContent = q ? (visible + (visible === 1 ? ' topic' : ' topics')) : '';
+                if (counter) counter.textContent = q ? (visible + ' ' + (visible === 1 ? COUNT_ONE : COUNT_MANY)) : '';
             }
 
             function reset(ev) {
@@ -197,10 +539,41 @@
                 search.focus();
             }
 
-            search.addEventListener('input', apply);
-            clearBtn.addEventListener('click', reset);
-            if (resetLink) resetLink.addEventListener('click', reset);
-            apply();
+            if (search) {
+                search.addEventListener('input', apply);
+                clearBtn.addEventListener('click', reset);
+                if (resetLink) resetLink.addEventListener('click', reset);
+                if (searchBtn) searchBtn.addEventListener('click', function () {
+                    apply();
+                    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+                search.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); apply(); } });
+                apply();
+            }
+
+            // ---- Guide modal: populate from the clicked topic card ----
+            var modal = document.getElementById('helpTopicModal');
+            if (modal) {
+                var titleEl = document.getElementById('helpTopicModalTitle');
+                var iconEl = document.getElementById('helpTopicModalIcon');
+                var bodyEl = document.getElementById('helpTopicModalBody');
+
+                modal.addEventListener('show.bs.modal', function (event) {
+                    var card = event.relatedTarget;
+                    if (!card) return;
+                    titleEl.textContent = card.getAttribute('data-help-title') || '';
+                    var iconClass = card.getAttribute('data-help-icon') || 'bi-question-lg';
+                    iconEl.innerHTML = '<i class="bi ' + iconClass + '"></i>';
+                    // Clone the card's guide body (a <template>) into the modal.
+                    var guide = card.querySelector('.help-topic-card__guide');
+                    bodyEl.innerHTML = '';
+                    if (guide && guide.content) {
+                        bodyEl.appendChild(guide.content.cloneNode(true));
+                    } else if (guide) {
+                        bodyEl.innerHTML = guide.innerHTML;
+                    }
+                });
+            }
         })();
     </script>
 }

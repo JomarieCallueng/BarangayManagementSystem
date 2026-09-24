@@ -12,7 +12,7 @@
     <div id="heroCarousel"
          class="carousel slide carousel-fade hero-carousel"
          data-bs-ride="carousel"
-         data-bs-interval="3000"
+         data-bs-interval="2500"
          data-bs-pause="hover"
          data-bs-keyboard="true"
          data-bs-touch="true"
@@ -64,6 +64,20 @@
                 </div>
             </div>
 
+            <!-- SLIDE 6: Barangay Tatalon official seal -->
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide--logo">
+                    <img src="/images/Brgy%20Tatalon%20Seal.png" class="hero-slide__img" alt="Barangay Tatalon Official Seal">
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Quezon City official seal -->
+            <div class="carousel-item">
+                <div class="hero-slide hero-slide--logo">
+                    <img src="/images/Quezon%20City%20Seal.webp" class="hero-slide__img" alt="Quezon City Official Seal">
+                </div>
+            </div>
+
         </div>
 
         <!-- ⚪ Slide indicators / dots (one per slide) -->
@@ -73,6 +87,8 @@
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Go to slide 4"></button>
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4" aria-label="Go to slide 5"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="5" aria-label="Go to slide 6"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="6" aria-label="Go to slide 7"></button>
         </div>
 
         <!-- ◀️ ▶️ Manual navigation controls -->
@@ -257,15 +273,9 @@
     </div>
 </section>
 
-<partial name="_ThemeSwitcher" />
-
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            if (window.BmsTheme && typeof window.BmsTheme.initSwitcher === 'function') {
-                window.BmsTheme.initSwitcher();
-            }
-
             // AUTO-REPLACE FALLBACK KAPAG HINDI NABASA NG SERVER ANG SPACES SA FILENAME
             const brgyImg = document.getElementById("brgyLogo");
             if (brgyImg) {

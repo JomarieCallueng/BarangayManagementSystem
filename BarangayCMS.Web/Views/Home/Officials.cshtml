@@ -30,14 +30,33 @@
     var exOfficio = ViewData["ExOfficio"] as BarangayCMS.Entities.BarangayOfficial;
     var exOfficioData = new ViewDataDictionary(ViewData) { ["ExOfficio"] = true };
 
+    // Ordering: Captain (lead) first, then Secretary + Treasurer side-by-side,
+    // then the remaining Sangguniang Barangay members, then the SK Chair (Ex-Officio).
+    bool IsSecretary(BarangayCMS.Entities.BarangayOfficial o) => (o.Position ?? string.Empty).ToLowerInvariant().Contains("secretary");
+    bool IsTreasurer(BarangayCMS.Entities.BarangayOfficial o) => (o.Position ?? string.Empty).ToLowerInvariant().Contains("treasurer");
+
+    var sbSecretary = sbOthers.FirstOrDefault(IsSecretary);
+    var sbTreasurer = sbOthers.FirstOrDefault(IsTreasurer);
+    var sbRest = sbOthers.Where(o => o != sbSecretary && o != sbTreasurer).ToList();
+
     // Person-specific history modals — para LAMANG sa mga opisyal na ipinapakita dito.
     var shownOfficials = new List<BarangayCMS.Entities.BarangayOfficial>();
     if (captain != null) shownOfficials.Add(captain);
-    shownOfficials.AddRange(sbOthers);
+    if (sbSecretary != null) shownOfficials.Add(sbSecretary);
+    if (sbTreasurer != null) shownOfficials.Add(sbTreasurer);
+    shownOfficials.AddRange(sbRest);
     if (exOfficio != null && !shownOfficials.Any(o => o.BarangayOfficialId == exOfficio.BarangayOfficialId))
         shownOfficials.Add(exOfficio);
 
     var hasBarangayOfficials = captain != null || sbOthers.Any() || exOfficio != null;
+
+    var servantsData = new ViewDataDictionary(ViewData)
+    {
+        ["ServantsTitle"] = "Your Barangay Public Servants",
+        ["ServantsLeadId"] = captain?.BarangayOfficialId,
+        ["ServantsExOfficioId"] = exOfficio?.BarangayOfficialId,
+        ["ServantsCols"] = 3
+    };
 }
 
 <!-- HERO -->
@@ -64,47 +83,7 @@
     }
     else
     {
-        @if (captain != null)
-        {
-            <div class="people-section-title mb-3">
-                <span class="people-eyebrow">Punong Barangay</span>
-                <h2>Barangay Captain</h2>
-            </div>
-            <partial name="_PublicOfficialCard" model="captain" view-data="featuredData" />
-        }
-
-        @if (sbOthers.Any())
-        {
-            <div class="people-section-title">
-                <span class="people-eyebrow">Sangguniang Barangay</span>
-                <h2>@(captain != null ? "Other Barangay Officials" : "Barangay Officials")</h2>
-            </div>
-
-            <div class="row g-4">
-                @foreach (var official in sbOthers)
-                {
-                    <div class="col-12 col-sm-6 col-lg-4">
-                        <partial name="_PublicOfficialCard" model="official" />
-                    </div>
-                }
-            </div>
-        }
-
-        @if (exOfficio != null)
-        {
-            <div class="people-section-title">
-                <span class="people-eyebrow">Ex-Officio</span>
-                <h2>SK Chairperson — Ex-Officio Member</h2>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-12 col-sm-6 col-lg-4">
-                    <partial name="_PublicOfficialCard" model="exOfficio" view-data="exOfficioData" />
-                </div>
-            </div>
-        }
-
-        <!-- Sangguniang Barangay standing committees (leads mula sa DB kapag may tugma) -->
-        <partial name="_BarangayCommittees" model="officials" />
+        <partial name="_PublicServantsGrid" model="shownOfficials" view-data="servantsData" />
     }
 </div>
 

@@ -31,6 +31,10 @@ namespace BarangayCMS.DAL.Context
         public DbSet<HealthRecord> HealthRecords { get; set; } = null!;
 
         public DbSet<Project> Projects { get; set; } = null!;
+
+        // 💸 Itemized na gastos per proyekto — ugnayan ng Projects at Budget Tracker.
+        public DbSet<ProjectExpense> ProjectExpenses { get; set; } = null!;
+
         public DbSet<BarangayOfficial> BarangayOfficials { get; set; } = null!;
 
         // 🏛️ Service history (mga termino) per barangay official.
@@ -74,6 +78,14 @@ namespace BarangayCMS.DAL.Context
                 .WithMany(c => c.Assignments)
                 .HasForeignKey(ca => ca.CommitteeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // 💸 One Project → many ProjectExpense.
+            // Restrict delete: hindi pwedeng basta-basta burahin ang proyektong may financial history.
+            modelBuilder.Entity<ProjectExpense>()
+                .HasOne(e => e.Project)
+                .WithMany(p => p.Expenses)
+                .HasForeignKey(e => e.ProjectId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

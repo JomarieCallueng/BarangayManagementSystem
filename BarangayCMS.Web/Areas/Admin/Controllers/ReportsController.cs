@@ -8,6 +8,7 @@ using BarangayCMS.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
 
 namespace BarangayCMS.Web.Areas.Admin.Controllers
 {
@@ -16,10 +17,12 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
     public class ReportsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ReportsController(ApplicationDbContext context)
+        public ReportsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // ==========================================
@@ -152,8 +155,12 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         }
 
         // ==========================================
-        // 2. EXPORT PDF / PRINT ACTION
+        // 2. EXPORT PDF — direct server-generated download
         // ==========================================
+        // Streams an official, government-standard Executive Summary PDF
+        // (rendered server-side with QuestPDF). Clicking "Export PDF Summary"
+        // downloads the file directly — no on-screen preview, and QuestPDF
+        // paginates properly so the content is never cut off.
         [HttpGet]
         public async Task<IActionResult> Export()
         {
@@ -168,7 +175,39 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 TotalHealthRecords = await _context.HealthRecords.CountAsync()
             };
 
-            return View("ExportPdf", dashboardData);
+            var settings = await _context.SystemSettings.AsNoTracking().FirstOrDefaultAsync();
+            var barangayName = settings?.BarangayName ?? "Barangay Tatalon";
+            var cityMunicipality = settings?.CityMunicipality ?? "Quezon City";
+            var generatedAt = DateTime.Now;
+
+            // Official seals: Barangay Tatalon (circular) + Quezon City (triangle).
+            var leftSeal = TryReadWebFile("images/seals/seal-tatalon.png");
+            var rightSeal = TryReadWebFile("images/seals/seal-quezon-city.png");
+
+            // Safety net: don't throw on a missing glyph in any environment.
+            QuestPDF.Settings.CheckIfAllTextGlyphsAreAvailable = false;
+            var pdfBytes = new BarangayCMS.Web.Services.ExecutiveSummaryDocument(
+                dashboardData, barangayName, cityMunicipality, generatedAt,
+                region: "Metropolitan Manila", district: "District IV",
+                leftSeal: leftSeal, rightSeal: rightSeal).GeneratePdf();
+
+            var fileName = $"Barangay_Executive_Summary_{generatedAt:yyyy-MM-dd}.pdf";
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+
+        // Reads a file under wwwroot; returns null if it does not exist so the
+        // PDF still renders (with a placeholder seal) when an image is missing.
+        private byte[]? TryReadWebFile(string relativePath)
+        {
+            try
+            {
+                var full = System.IO.Path.Combine(_env.WebRootPath, relativePath.Replace('/', System.IO.Path.DirectorySeparatorChar));
+                return System.IO.File.Exists(full) ? System.IO.File.ReadAllBytes(full) : null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         // ==========================================

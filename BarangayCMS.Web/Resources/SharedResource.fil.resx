@@ -114,6 +114,10 @@
   <data name="Help.Subtitle" xml:space="preserve"><value>Ano ang ginagawa ng bawat module at paano ito gamitin.</value></data>
   <data name="Help.InfoNote" xml:space="preserve"><value>Ang gabay na ito ay sumasaklaw lamang sa mga module na aktwal na umiiral sa kasalukuyang sistema.</value></data>
   <data name="Help.SearchPlaceholder" xml:space="preserve"><value>Maghanap ng paksa ng tulong…</value></data>
+  <data name="Help.BrowseByTopic" xml:space="preserve"><value>Mag-browse ayon sa paksa</value></data>
+  <data name="Help.ViewGuide" xml:space="preserve"><value>Tingnan ang gabay</value></data>
+  <data name="Help.StepsTitle" xml:space="preserve"><value>Hakbang-hakbang</value></data>
+  <data name="Help.TipLabel" xml:space="preserve"><value>Tip</value></data>
   <data name="Help.DownloadManual" xml:space="preserve"><value>I-download ang User Manual</value></data>
   <data name="Help.NoResults" xml:space="preserve"><value>Walang nahanap na paksa ng tulong.</value></data>
   <data name="Help.ClearSearch" xml:space="preserve"><value>I-clear ang paghahanap</value></data>
@@ -167,4 +171,105 @@
   <data name="Sms.LabelEmergency" xml:space="preserve"><value>Emergency</value></data>
   <data name="Sms.LabelDate" xml:space="preserve"><value>Petsa</value></data>
   <data name="Sms.LabelRecipients" xml:space="preserve"><value>Mga Tatanggap</value></data>
+  <!-- ===== Staff chrome ===== -->
+  <data name="Brand.EncoderPortal" xml:space="preserve"><value>Portal ng Encoder</value></data>
+  <data name="Topbar.EncoderSession" xml:space="preserve"><value>Aktibo ang Sesyon ng Encoder</value></data>
+  <data name="Topbar.StaffEncoder" xml:space="preserve"><value>Staff Encoder</value></data>
+  <data name="Nav.SignOut" xml:space="preserve"><value>Mag-sign Out</value></data>
+  <data name="Logout.StaffMessage" xml:space="preserve"><value>Sigurado ka bang gusto mong mag-log out sa Portal ng Encoder? Maaaring hindi ma-save ang mga hindi pa nasa-save na pagbabago.</value></data>
+  <!-- ===== Appearance / Theme ===== -->
+  <data name="Appearance.Title" xml:space="preserve"><value>Itsura</value></data>
+  <data name="Appearance.Mode" xml:space="preserve"><value>Mode</value></data>
+  <data name="Appearance.Light" xml:space="preserve"><value>Maliwanag</value></data>
+  <data name="Appearance.Dark" xml:space="preserve"><value>Madilim</value></data>
+  <!-- ===== Public navigation / footer ===== -->
+  <data name="Pub.Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Pub.About" xml:space="preserve"><value>Tungkol Sa Amin</value></data>
+  <data name="Pub.AboutBarangay" xml:space="preserve"><value>Tungkol sa Barangay</value></data>
+  <data name="Pub.Officials" xml:space="preserve"><value>Mga Opisyal ng Barangay</value></data>
+  <data name="Pub.SK" xml:space="preserve"><value>Mga Opisyal ng SK</value></data>
+  <data name="Pub.Faq" xml:space="preserve"><value>Mga FAQ</value></data>
+  <data name="Pub.Modules" xml:space="preserve"><value>Mga Serbisyo</value></data>
+  <data name="Pub.OnlineServices" xml:space="preserve"><value>Mga Serbisyong Online</value></data>
+  <data name="Pub.RequestCertificate" xml:space="preserve"><value>Humiling ng Sertipiko</value></data>
+  <data name="Pub.FileComplaint" xml:space="preserve"><value>Maghain ng Reklamo</value></data>
+  <data name="Pub.Information" xml:space="preserve"><value>Impormasyon</value></data>
+  <data name="Pub.Announcements" xml:space="preserve"><value>Mga Anunsyo</value></data>
+  <data name="Pub.Disaster" xml:space="preserve"><value>Paghahanda sa Sakuna</value></data>
+  <data name="Pub.Evacuation" xml:space="preserve"><value>Paglikas</value></data>
+  <data name="Pub.Contact" xml:space="preserve"><value>Makipag-ugnayan</value></data>
+  <data name="Pub.EmergencyAlerts" xml:space="preserve"><value>Mga Alerto sa Emerhensya</value></data>
+  <data name="Pub.Footer.Tagline" xml:space="preserve"><value>Isang sentralisadong digital na plataporma para sa mas mahusay na pamamahala, serbisyo publiko, at kapakanan ng komunidad.</value></data>
+  <data name="Pub.Footer.QuickLinks" xml:space="preserve"><value>Mabilisang Link</value></data>
+  <data name="Pub.Footer.BarangayAnnouncements" xml:space="preserve"><value>Mga Anunsyo ng Barangay</value></data>
+  <data name="Pub.Footer.DisasterResponse" xml:space="preserve"><value>Tugon sa Sakuna</value></data>
+  <data name="Pub.Footer.EvacuationInfo" xml:space="preserve"><value>Impormasyon sa Paglikas</value></data>
+  <data name="Pub.Footer.StaffLogin" xml:space="preserve"><value>Login sa Portal ng Staff</value></data>
+  <data name="Pub.Footer.ContactInfo" xml:space="preserve"><value>Impormasyon sa Pakikipag-ugnayan</value></data>
+  <data name="Pub.Footer.Hours" xml:space="preserve"><value>Lun–Biy, 8:00 AM – 5:00 PM</value></data>
+  <data name="Pub.Footer.Rights" xml:space="preserve"><value>© 2026 Comprehensive Barangay Management and Service System. Nakalaan ang lahat ng karapatan.</value></data>
+  <data name="Common.BackToTop" xml:space="preserve"><value>Bumalik sa Itaas</value></data>
+  <!-- ===== Budget Tracker module ===== -->
+  <data name="Budget.Title" xml:space="preserve"><value>Tagasubaybay ng Badyet</value></data>
+  <data name="Budget.Subtitle" xml:space="preserve"><value>Taunang alokasyon ng pondo at pagsubaybay sa pananalapi bawat proyekto.</value></data>
+  <data name="Budget.Project" xml:space="preserve"><value>Proyekto</value></data>
+  <data name="Budget.AllProjects" xml:space="preserve"><value>Lahat ng Proyekto (Fund Planner)</value></data>
+  <data name="Budget.SetAnnual" xml:space="preserve"><value>Itakda ang Taunang Badyet</value></data>
+  <data name="Budget.AddCategory" xml:space="preserve"><value>Magdagdag ng Kategorya ng Badyet</value></data>
+  <data name="Budget.TotalAnnual" xml:space="preserve"><value>Kabuuang Taunang Badyet</value></data>
+  <data name="Budget.FiscalYear" xml:space="preserve"><value>Taon ng Pananalapi</value></data>
+  <data name="Budget.AllocatedToPrograms" xml:space="preserve"><value>Inilaan sa mga Programa</value></data>
+  <data name="Budget.PctOfBudget" xml:space="preserve"><value>% ng badyet</value></data>
+  <data name="Budget.RemainingBudget" xml:space="preserve"><value>Natitirang Badyet</value></data>
+  <data name="Budget.UnallocatedBalance" xml:space="preserve"><value>Hindi pa nailalaang balanse</value></data>
+  <data name="Budget.OverAllocated" xml:space="preserve"><value>Lampas sa alokasyon</value></data>
+  <data name="Budget.Disbursed" xml:space="preserve"><value>Nailabas (Nagastos)</value></data>
+  <data name="Budget.PctOfAllocated" xml:space="preserve"><value>% ng nailaan</value></data>
+  <data name="Budget.AllocationSummary" xml:space="preserve"><value>Buod ng Alokasyon Ayon sa Pinagmumulan ng Pondo</value></data>
+  <data name="Budget.Programs" xml:space="preserve"><value>(na) programa</value></data>
+  <data name="Budget.CategoriesPrograms" xml:space="preserve"><value>Mga Kategorya at Programa ng Badyet</value></data>
+  <data name="Budget.Records" xml:space="preserve"><value>(na) tala</value></data>
+  <data name="Budget.FundCategoryProgram" xml:space="preserve"><value>Kategorya at Programa ng Pondo</value></data>
+  <data name="Budget.FundSource" xml:space="preserve"><value>Pinagmumulan ng Pondo</value></data>
+  <data name="Budget.TotalAllocation" xml:space="preserve"><value>Kabuuang Alokasyon</value></data>
+  <data name="Budget.DisbursedUsed" xml:space="preserve"><value>Nailabas (Nagamit)</value></data>
+  <data name="Budget.AvailableBalance" xml:space="preserve"><value>Natitirang Balanse</value></data>
+  <data name="Common.Actions" xml:space="preserve"><value>Mga Aksyon</value></data>
+  <data name="Budget.GeneralFund" xml:space="preserve"><value>General Fund</value></data>
+  <data name="Budget.NoDistributions" xml:space="preserve"><value>Walang naka-configure na distribusyon ng badyet para sa taong</value></data>
+  <data name="Budget.AddFundsIncome" xml:space="preserve"><value>Magdagdag ng Pondo / Kita</value></data>
+  <data name="Budget.DisburseExpense" xml:space="preserve"><value>Maglabas / Gastos</value></data>
+  <data name="Budget.EditCategory" xml:space="preserve"><value>I-edit ang Kategorya</value></data>
+  <data name="Budget.BackToPlanner" xml:space="preserve"><value>Bumalik sa Fund Planner</value></data>
+  <data name="Budget.ViewProject" xml:space="preserve"><value>Tingnan ang Proyekto</value></data>
+  <data name="Budget.RecordExpense" xml:space="preserve"><value>Magtala ng Gastos</value></data>
+  <data name="Budget.ApprovedBudget" xml:space="preserve"><value>Aprubadong Badyet</value></data>
+  <data name="Budget.TotalExpenses" xml:space="preserve"><value>Kabuuang Gastos</value></data>
+  <data name="Budget.Remaining" xml:space="preserve"><value>Natitira</value></data>
+  <data name="Budget.Utilization" xml:space="preserve"><value>Paggamit ng Badyet</value></data>
+  <data name="Budget.Used" xml:space="preserve"><value>nagamit</value></data>
+  <data name="Budget.NoApprovedBudget" xml:space="preserve"><value>Wala pang itinakdang aprubadong badyet ang proyektong ito. Magtakda ng Inilaang Badyet sa Edit form ng proyekto upang paganahin ang pagsubaybay sa badyet.</value></data>
+  <data name="Budget.Items" xml:space="preserve"><value>(na) aytem</value></data>
+  <data name="Budget.FinancialRecords" xml:space="preserve"><value>Mga Gastos / Talaan ng Pananalapi</value></data>
+  <data name="Budget.ColDate" xml:space="preserve"><value>Petsa</value></data>
+  <data name="Budget.ColCategory" xml:space="preserve"><value>Kategorya</value></data>
+  <data name="Budget.ColDescription" xml:space="preserve"><value>Deskripsyon</value></data>
+  <data name="Budget.ColLoggedBy" xml:space="preserve"><value>Itinala Ni</value></data>
+  <data name="Budget.ColAmount" xml:space="preserve"><value>Halaga</value></data>
+  <data name="Budget.NoExpenses" xml:space="preserve"><value>Walang naitalang gastos para sa proyektong ito.</value></data>
+  <data name="Budget.VoidConfirm" xml:space="preserve"><value>I-void ang gastos na ito? Aalisin ito sa kabuuan ngunit itatago para sa talaan.</value></data>
+  <data name="Budget.Void" xml:space="preserve"><value>I-void</value></data>
+  <data name="Budget.SetAnnualTitle" xml:space="preserve"><value>Itakda ang Kabuuang Taunang Badyet</value></data>
+  <data name="Budget.TotalFundsLabel" xml:space="preserve"><value>Kabuuang Pondo ng Barangay (Piso)</value></data>
+  <data name="Budget.SetAnnualHelp" xml:space="preserve"><value>Ito ang magiging batayan ng kabuuang pondo kung saan ibabawas ang bawat kategorya ng programa.</value></data>
+  <data name="Budget.SaveAnnual" xml:space="preserve"><value>I-save ang Taunang Badyet</value></data>
+  <data name="Budget.Status.Within" xml:space="preserve"><value>Nasa Loob ng Badyet</value></data>
+  <data name="Budget.Status.Near" xml:space="preserve"><value>Malapit nang Maubos</value></data>
+  <data name="Budget.Status.Exhausted" xml:space="preserve"><value>Naubos na ang Badyet</value></data>
+  <data name="Budget.Status.Over" xml:space="preserve"><value>Lampas sa Badyet</value></data>
+  <data name="Budget.Status.None" xml:space="preserve"><value>Walang Itinakdang Badyet</value></data>
+  <!-- ===== Form validation ===== -->
+  <data name="Val.Name.Invalid" xml:space="preserve"><value>Maglagay ng wastong pangalan (mga titik, espasyo, gitling at kudlit lamang).</value></data>
+  <data name="Val.Mobile.Format" xml:space="preserve"><value>Ang numero ng cellphone ay dapat eksaktong 11 digit (hal., 09XXXXXXXXX).</value></data>
+  <data name="Val.Mobile.Helper" xml:space="preserve"><value>Ilagay ang 11-digit na numero ng cellphone (09XXXXXXXXX).</value></data>
 </root>

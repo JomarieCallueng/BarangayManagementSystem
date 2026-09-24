@@ -14,14 +14,14 @@
 
     var STORAGE_KEY = "bms.preset";
     var DEFAULT_PRESET = "civic";
+    var MODE_KEY = "bms.mode";
+    var DEFAULT_MODE = "light";
 
     // preset id -> { theme (palette), layout (home page structure) }
     var PRESETS = {
         civic: { theme: "civic", layout: "classic" },
-        coastal: { theme: "coastal", layout: "split" },
-        midnight: { theme: "midnight", layout: "compact" },
-        sage: { theme: "sage", layout: "classic" },
-        lilac: { theme: "lilac", layout: "split" }
+        emerald: { theme: "emerald", layout: "classic" },
+        teal: { theme: "teal", layout: "classic" }
     };
 
     function apply(presetId) {
@@ -30,6 +30,29 @@
         root.setAttribute("data-theme", preset.theme);
         root.setAttribute("data-layout", preset.layout);
         return preset;
+    }
+
+    // Dark/Light is an independent axis — it layers on top of any colour theme.
+    function applyMode(mode) {
+        var m = (mode === "dark") ? "dark" : "light";
+        document.documentElement.setAttribute("data-mode", m);
+        return m;
+    }
+
+    function storedMode() {
+        try {
+            return window.localStorage.getItem(MODE_KEY) || DEFAULT_MODE;
+        } catch (e) {
+            return DEFAULT_MODE;
+        }
+    }
+
+    function saveMode(mode) {
+        try {
+            window.localStorage.setItem(MODE_KEY, mode);
+        } catch (e) {
+            /* non-fatal */
+        }
     }
 
     function stored() {
@@ -64,6 +87,23 @@
 
         current: stored,
 
+        /* Dark / Light mode — independent of the colour theme. */
+        applyStoredMode: function () {
+            return applyMode(storedMode());
+        },
+
+        setMode: function (mode) {
+            var m = applyMode(mode);
+            saveMode(m);
+            return m;
+        },
+
+        toggleMode: function () {
+            return this.setMode(storedMode() === "dark" ? "light" : "dark");
+        },
+
+        currentMode: storedMode,
+
         /* Called by the switcher partial once its markup is in the DOM. */
         initSwitcher: function () {
             var fab = document.querySelector("[data-theme-fab]");
@@ -87,6 +127,21 @@
             }
 
             markActive(stored());
+
+            // Light/Dark mode buttons (independent of the colour preset).
+            var modeButtons = panel.querySelectorAll("[data-mode]");
+            function markMode(mode) {
+                Array.prototype.forEach.call(modeButtons, function (b) {
+                    b.setAttribute("aria-checked", b.getAttribute("data-mode") === mode ? "true" : "false");
+                });
+            }
+            markMode(BmsTheme.currentMode());
+            Array.prototype.forEach.call(modeButtons, function (b) {
+                b.addEventListener("click", function () {
+                    var m = BmsTheme.setMode(b.getAttribute("data-mode"));
+                    markMode(m);
+                });
+            });
 
             fab.addEventListener("click", function (event) {
                 event.stopPropagation();
@@ -121,4 +176,5 @@
 
     // Apply immediately — this file is loaded in <head> before the body renders.
     BmsTheme.applyStoredPreset();
+    BmsTheme.applyStoredMode();
 })(window, document);

@@ -4,129 +4,122 @@
 }
 
 <style>
-    /* ============ DOCUMENT REQUIREMENTS — scoped, theme-aware ============ */
-    .rq-hero {
-        position: relative; overflow: hidden;
+    /* ===== Public form pages (theme-aware) — same shell as "File a Report" ===== */
+    .pubform { max-width: 920px; }
+    .pubform__card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden;
+    }
+    .pubform__head {
         background: var(--hero-bg); color: var(--hero-text);
-        padding: 3.25rem 1rem 3.75rem;
+        padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: 1rem;
     }
-    .rq-hero::after {
-        content: ""; position: absolute; top: -45%; right: -8%;
-        width: 460px; height: 460px;
-        background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 70%);
-        pointer-events: none;
+    .pubform__head-icon {
+        flex: 0 0 auto; width: 54px; height: 54px; border-radius: 14px; display: grid; place-items: center;
+        font-size: 1.55rem; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.24);
     }
-    .rq-hero__inner { max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: center; gap: 1.15rem; flex-wrap: wrap; }
-    .rq-hero__icon {
-        flex: 0 0 auto; width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; font-size: 1.8rem;
-        background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28);
+    .pubform__head h1 { font-size: 1.3rem; font-weight: 800; margin: 0; color: #fff; }
+    .pubform__head p { margin: .15rem 0 0; font-size: .85rem; color: rgba(255,255,255,.75); }
+    .pubform__body { padding: 1.75rem; }
+    @@media (min-width: 768px) { .pubform__body { padding: 2.25rem; } }
+    .pubform__note {
+        background: var(--accent-soft); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: .8rem 1rem; font-size: .85rem; color: var(--body-text); margin-bottom: 1.5rem;
     }
-    .rq-hero__title { font-weight: 800; font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: 0 0 .35rem; }
-    .rq-hero__sub { color: rgba(255,255,255,.78); max-width: 46rem; margin: 0; }
+    .pubform__note i { color: var(--accent); }
+    .pubform__actions {
+        display: flex; justify-content: center; gap: .6rem; flex-wrap: wrap;
+        border-top: 1px solid var(--border); padding-top: 1.5rem; margin-top: 1.75rem;
+    }
 
-    .rq-wrap { max-width: 1140px; margin-top: -2.25rem; position: relative; z-index: 2; }
-
-    .rq-card {
+    /* Document block inside the card body */
+    .req-doc {
         position: relative; height: 100%; overflow: hidden;
-        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-        box-shadow: var(--shadow); padding: 1.75rem;
-        transition: transform .2s ease, box-shadow .2s ease;
+        background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 1.35rem;
     }
-    .rq-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-    .rq-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; }
-    .rq-card--clearance::before { background: var(--brand-soft); }
-    .rq-card--indigency::before { background: #dc3545; }
-    .rq-card__head { display: flex; align-items: center; gap: .8rem; margin-bottom: .6rem; }
-    .rq-card__icon { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; font-size: 1.4rem; }
-    .rq-card--clearance .rq-card__icon { background: rgba(30,58,138,.12); color: var(--brand-soft); }
-    .rq-card--indigency .rq-card__icon { background: rgba(220,53,69,.12); color: #dc3545; }
-    .rq-card__title { font-weight: 800; color: var(--heading); font-size: 1.2rem; margin: 0; }
-    .rq-card__desc { color: var(--muted); font-size: .9rem; margin: 0 0 1.1rem; }
-    .rq-list { list-style: none; margin: 0; padding: 0; }
-    .rq-list li { display: flex; align-items: flex-start; gap: .6rem; padding: .55rem 0; color: var(--body-text); line-height: 1.5; }
-    .rq-list li + li { border-top: 1px dashed var(--border); }
-    .rq-list i { color: var(--accent); font-size: 1.1rem; flex: 0 0 auto; margin-top: .05rem; }
+    .req-doc::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; }
+    .req-doc--clearance::before { background: var(--brand-soft); }
+    .req-doc--indigency::before { background: #dc3545; }
+    .req-doc__head { display: flex; align-items: center; gap: .7rem; margin-bottom: .5rem; }
+    .req-doc__icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.3rem; }
+    .req-doc--clearance .req-doc__icon { background: rgba(30,58,138,.12); color: var(--brand-soft); }
+    .req-doc--indigency .req-doc__icon { background: rgba(220,53,69,.12); color: #dc3545; }
+    .req-doc__title { font-weight: 800; color: var(--heading); font-size: 1.1rem; margin: 0; }
+    .req-doc__desc { color: var(--muted); font-size: .86rem; margin: 0 0 .9rem; }
+    .req-list { list-style: none; margin: 0; padding: 0; }
+    .req-list li { display: flex; align-items: flex-start; gap: .55rem; padding: .5rem 0; color: var(--body-text); font-size: .9rem; line-height: 1.5; }
+    .req-list li + li { border-top: 1px dashed var(--border); }
+    .req-list i { color: var(--accent); font-size: 1.05rem; flex: 0 0 auto; margin-top: .05rem; }
 
-    .rq-cta {
-        display: inline-flex; align-items: center; gap: .55rem;
-        padding: .9rem 1.9rem; border-radius: 12px; font-weight: 700; font-size: 1.02rem;
-        color: #fff; text-decoration: none; background: var(--accent); box-shadow: var(--shadow);
-        transition: background .18s ease, transform .15s ease, box-shadow .18s ease;
-    }
-    .rq-cta:hover { background: var(--accent-hover); color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .rq-cta i { transition: transform .18s ease; }
-    .rq-cta:hover i { transform: translateX(4px); }
-
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
-    .reveal.is-in { opacity: 1; transform: none; }
-    @@media (prefers-reduced-motion: reduce) {
-        .reveal { opacity: 1 !important; transform: none !important; transition: none; }
-        .rq-card:hover, .rq-cta:hover { transform: none; }
-        .rq-cta:hover i { transform: none; }
-    }
+    .btn-brand { background: var(--accent); border: 1px solid var(--accent); color: #fff; font-weight: 700; }
+    .btn-brand:hover, .btn-brand:focus { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+    .btn-brand i { transition: transform .18s ease; }
+    .btn-brand:hover i { transform: translateX(4px); }
 </style>
 
-<section class="rq-hero">
-    <div class="rq-hero__inner">
-        <div class="rq-hero__icon"><i class="bi bi-file-earmark-check"></i></div>
-        <div>
-            <h1 class="rq-hero__title">Document Requirements</h1>
-            <p class="rq-hero__sub">Check the necessary documentation before filing your applications online or claiming them at the windows.</p>
-        </div>
-    </div>
-</section>
+<div class="container my-5 pubform">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small mb-0">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Document Requirements</li>
+        </ol>
+    </nav>
 
-<div class="container rq-wrap pb-5">
-    <div class="row g-4">
-        <!-- Clearance Requirements Card -->
-        <div class="col-md-6 reveal">
-            <div class="rq-card rq-card--clearance">
-                <div class="rq-card__head">
-                    <div class="rq-card__icon"><i class="bi bi-person-badge-fill"></i></div>
-                    <h2 class="rq-card__title">Barangay Clearance</h2>
-                </div>
-                <p class="rq-card__desc">Issued for employment, local identification, or bank account openings.</p>
-                <ul class="rq-list">
-                    <li><i class="bi bi-check-circle-fill"></i> Recent Community Tax Certificate (Cedula)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Any valid government-issued ID (with photo)</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Fully completed digital or physical form</li>
-                </ul>
+    <div class="pubform__card">
+        <div class="pubform__head">
+            <div class="pubform__head-icon"><i class="bi bi-file-earmark-check"></i></div>
+            <div>
+                <h1>Document Requirements</h1>
+                <p>Check the necessary documentation before filing your applications online or claiming them at the windows.</p>
             </div>
         </div>
 
-        <!-- Indigency Requirements Card -->
-        <div class="col-md-6 reveal">
-            <div class="rq-card rq-card--indigency">
-                <div class="rq-card__head">
-                    <div class="rq-card__icon"><i class="bi bi-heart-pulse-fill"></i></div>
-                    <h2 class="rq-card__title">Certificate of Indigency</h2>
+        <div class="pubform__body">
+            <div class="pubform__note">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                Ihanda ang mga kinakailangang dokumento sa ibaba bago magpatuloy sa online request form para mas mabilis ang pagproseso.
+            </div>
+
+            <div class="row g-4">
+                <!-- Barangay Clearance -->
+                <div class="col-md-6">
+                    <div class="req-doc req-doc--clearance">
+                        <div class="req-doc__head">
+                            <div class="req-doc__icon"><i class="bi bi-person-badge-fill"></i></div>
+                            <h2 class="req-doc__title">Barangay Clearance</h2>
+                        </div>
+                        <p class="req-doc__desc">Issued for employment, local identification, or bank account openings.</p>
+                        <ul class="req-list">
+                            <li><i class="bi bi-check-circle-fill"></i> Recent Community Tax Certificate (Cedula)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Any valid government-issued ID (with photo)</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Fully completed digital or physical form</li>
+                        </ul>
+                    </div>
                 </div>
-                <p class="rq-card__desc">Issued to low-income residents for medical, educational, or financial aid.</p>
-                <ul class="rq-list">
-                    <li><i class="bi bi-check-circle-fill"></i> Case study report from DSWD or proof of low income</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Voter registration validation or Brgy. ID</li>
-                    <li><i class="bi bi-check-circle-fill"></i> Purpose specifications (e.g., hospital bill, school billing)</li>
-                </ul>
+
+                <!-- Certificate of Indigency -->
+                <div class="col-md-6">
+                    <div class="req-doc req-doc--indigency">
+                        <div class="req-doc__head">
+                            <div class="req-doc__icon"><i class="bi bi-heart-pulse-fill"></i></div>
+                            <h2 class="req-doc__title">Certificate of Indigency</h2>
+                        </div>
+                        <p class="req-doc__desc">Issued to low-income residents for medical, educational, or financial aid.</p>
+                        <ul class="req-list">
+                            <li><i class="bi bi-check-circle-fill"></i> Case study report from DSWD or proof of low income</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Voter registration validation or Brgy. ID</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Purpose specifications (e.g., hospital bill, school billing)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pubform__actions">
+                <a asp-action="Create" class="btn btn-brand px-4 py-2 rounded-3 shadow-sm">
+                    Proceed to Online Request Form <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
-    </div>
-
-    <div class="mt-5 text-center reveal">
-        <a asp-action="Create" class="rq-cta">
-            Proceed to Online Request Form <i class="bi bi-arrow-right"></i>
-        </a>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        (function () {
-            var items = document.querySelectorAll('.reveal');
-            if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('is-in'); }); return; }
-            var io = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); } });
-            }, { threshold: 0.12 });
-            items.forEach(function (el) { io.observe(el); });
-        })();
-    </script>
-}

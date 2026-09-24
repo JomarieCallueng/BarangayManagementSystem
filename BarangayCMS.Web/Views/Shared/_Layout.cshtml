@@ -1,8 +1,11 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="@(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("fil") ? "tl" : "en")" translate="no">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* The app provides its own English/Filipino switch, so tell Chrome not to
+       offer its own page-translation prompt (which pops up on mixed-language content). *@
+    <meta name="google" content="notranslate" />
     <title>@ViewData["Title"] - Barangay Management System</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -49,34 +52,34 @@
                         <!-- 🏠 HOME LINK -->
                         <li class="nav-item">
                             <a class="nav-link px-3 @(currentController == "Home" && currentAction == "Index" ? "active" : "")"
-                               asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                               asp-area="" asp-controller="Home" asp-action="Index">@L["Pub.Home"]</a>
                         </li>
 
                         <!-- 🌟 ABOUT US DROPDOWN — separate pages -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle px-3 @(isAboutSection ? "active" : "")"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                About Us
+                                @L["Pub.About"]
                             </a>
                             <ul class="dropdown-menu shadow border-0 rounded-3 mt-2">
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isHistory ? "active" : "")" asp-area="" asp-controller="Home" asp-action="History">
-                                        <i class="bi bi-info-circle text-success"></i> About Barangay
+                                        <i class="bi bi-info-circle text-success"></i> @L["Pub.AboutBarangay"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isOfficials ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Officials">
-                                        <i class="bi bi-person-badge text-primary"></i> Barangay Officials
+                                        <i class="bi bi-person-badge text-primary"></i> @L["Pub.Officials"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isSk ? "active" : "")" asp-area="" asp-controller="Home" asp-action="SK">
-                                        <i class="bi bi-people text-info"></i> SK Officials
+                                        <i class="bi bi-people text-info"></i> @L["Pub.SK"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2 @(isFaq ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Faq">
-                                        <i class="bi bi-question-circle text-warning"></i> FAQs
+                                        <i class="bi bi-question-circle text-warning"></i> @L["Pub.Faq"]
                                     </a>
                                 </li>
                             </ul>
@@ -86,37 +89,37 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle px-3 @(isModulesSection ? "active" : "")"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Modules
+                                @L["Pub.Modules"]
                             </a>
                             <ul class="dropdown-menu shadow border-0 rounded-3 mt-2">
-                                <li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">Online Services</h6></li>
+                                <li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">@L["Pub.OnlineServices"]</h6></li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="CertificateRequest" asp-action="Create">
-                                        <i class="bi bi-file-earmark-text text-primary"></i> Request Certificate
+                                        <i class="bi bi-file-earmark-text text-primary"></i> @L["Pub.RequestCertificate"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="Complaint" asp-action="Create">
-                                        <i class="bi bi-chat-left-text text-warning"></i> File a Complaint
+                                        <i class="bi bi-chat-left-text text-warning"></i> @L["Pub.FileComplaint"]
                                     </a>
                                 </li>
 
                                 <li><hr class="dropdown-divider opacity-50"></li>
 
-                                <li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">Information</h6></li>
+                                <li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">@L["Pub.Information"]</h6></li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="Announcement" asp-action="Index">
-                                        <i class="bi bi-megaphone text-success"></i> Announcements
+                                        <i class="bi bi-megaphone text-success"></i> @L["Pub.Announcements"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="DisasterPreparedness" asp-action="Index">
-                                        <i class="bi bi-exclamation-triangle text-danger"></i> Disaster Preparedness
+                                        <i class="bi bi-exclamation-triangle text-danger"></i> @L["Pub.Disaster"]
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2 px-3 small d-flex align-items-center gap-2" asp-area="" asp-controller="Evacuation" asp-action="Index">
-                                        <i class="bi bi-buildings text-danger"></i> Evacuation
+                                        <i class="bi bi-buildings text-danger"></i> @L["Pub.Evacuation"]
                                     </a>
                                 </li>
                             </ul>
@@ -124,14 +127,23 @@
 
                         <li class="nav-item">
                             <a class="nav-link px-3 @(currentController == "Home" && currentAction == "Contact" ? "active" : "")"
-                               asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                               asp-area="" asp-controller="Home" asp-action="Contact">@L["Pub.Contact"]</a>
                         </li>
                     </ul>
 
-                    <!-- Emergency Alerts — CTA button -->
-                    <div class="d-flex mt-2 mt-lg-0">
+                    <!-- Utility controls: language, appearance, emergency CTA -->
+                    <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+                        <partial name="_LanguageSelector" />
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-label="@L["Appearance.Title"]" title="@L["Appearance.Title"]">
+                                <i class="bi bi-palette-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2">
+                                <partial name="_AppearanceMenu" />
+                            </ul>
+                        </div>
                         <a asp-area="" asp-controller="Home" asp-action="Contact" class="btn btn-success btn-sm px-3 rounded fw-bold text-white bg-emerald">
-                            Emergency Alerts
+                            @L["Pub.EmergencyAlerts"]
                         </a>
                     </div>
                 </div>
@@ -152,40 +164,40 @@
                         <img src="~/images/Barangay Tatalon Logo-modified.png" alt="Barangay Tatalon Logo" class="me-2" style="height: 30px; width: auto; object-fit: contain;">
                         Barangay Management System
                     </h5>
-                    <p class="text-white-50 small pe-md-5">A centralized digital platform improving governance, public service delivery, and community welfare.</p>
+                    <p class="text-white-50 small pe-md-5">@L["Pub.Footer.Tagline"]</p>
                 </div>
                 <div class="col-md-3">
-                    <h6 class="text-uppercase fw-bold text-white small mb-3" style="letter-spacing: 0.8px;">Quick Links</h6>
+                    <h6 class="text-uppercase fw-bold text-white small mb-3" style="letter-spacing: 0.8px;">@L["Pub.Footer.QuickLinks"]</h6>
                     <ul class="list-unstyled text-light small lh-lg">
-                        <li><a asp-area="" asp-controller="CertificateRequest" asp-action="Create" class="footer-link">Request Certificate</a></li>
-                        <li><a asp-area="" asp-controller="Complaint" asp-action="Create" class="footer-link">File a Complaint</a></li>
-                        <li><a asp-area="" asp-controller="Announcement" asp-action="Index" class="footer-link">Barangay Announcements</a></li>
-                        <li><a asp-area="" asp-controller="DisasterPreparedness" asp-action="Index" class="footer-link">Disaster Response</a></li>
-                        <li><a asp-area="" asp-controller="Evacuation" asp-action="Index" class="footer-link">Evacuation Information</a></li>
-                        <li class="mt-2"><a asp-area="" asp-controller="Account" asp-action="Login" class="footer-link fw-semibold text-info"><i class="bi bi-box-arrow-in-right me-1"></i>Staff Portal Login</a></li>
+                        <li><a asp-area="" asp-controller="CertificateRequest" asp-action="Create" class="footer-link">@L["Pub.RequestCertificate"]</a></li>
+                        <li><a asp-area="" asp-controller="Complaint" asp-action="Create" class="footer-link">@L["Pub.FileComplaint"]</a></li>
+                        <li><a asp-area="" asp-controller="Announcement" asp-action="Index" class="footer-link">@L["Pub.Footer.BarangayAnnouncements"]</a></li>
+                        <li><a asp-area="" asp-controller="DisasterPreparedness" asp-action="Index" class="footer-link">@L["Pub.Footer.DisasterResponse"]</a></li>
+                        <li><a asp-area="" asp-controller="Evacuation" asp-action="Index" class="footer-link">@L["Pub.Footer.EvacuationInfo"]</a></li>
+                        <li class="mt-2"><a asp-area="" asp-controller="Account" asp-action="Login" class="footer-link fw-semibold text-info"><i class="bi bi-box-arrow-in-right me-1"></i>@L["Pub.Footer.StaffLogin"]</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h6 class="text-uppercase fw-bold text-white small mb-3" style="letter-spacing: 0.8px;">Contact Info</h6>
+                    <h6 class="text-uppercase fw-bold text-white small mb-3" style="letter-spacing: 0.8px;">@L["Pub.Footer.ContactInfo"]</h6>
                     <p class="text-light small mb-2"><i class="bi bi-telephone text-info me-2"></i> 0912-345-6789</p>
                     <p class="text-light small mb-2"><i class="bi bi-envelope text-info me-2"></i> barangay@email.com</p>
-                    <p class="text-light small"><i class="bi bi-clock text-info me-2"></i> Mon–Fri, 8:00 AM – 5:00 PM</p>
+                    <p class="text-light small"><i class="bi bi-clock text-info me-2"></i> @L["Pub.Footer.Hours"]</p>
                 </div>
             </div>
             <hr class="border-white border-opacity-10 my-4" />
             <div class="text-center text-white-50 small">
-                &copy; 2026 Comprehensive Barangay Management and Service System. All Rights Reserved.
+                @L["Pub.Footer.Rights"]
             </div>
         </div>
     </footer>
 
-    <!-- ⬆️ BACK TO TOP BUTTON -->
-    <button id="backToTopBtn" type="button" class="back-to-top-btn" title="Bumalik sa Itaas" onclick="scrollToTop()">
-        <i class="bi bi-arrow-up"></i>
-    </button>
-
-    <!-- 🎨 THEME / APPEARANCE SWITCHER PARTIAL (Para lumabas sa LAHAT ng pahina at sub-menus) -->
-    <partial name="_ThemeSwitcher" />
+    <!-- ⬆️ BACK TO TOP BUTTON — excluded from Barangay Officials, SK Officials, and FAQ pages -->
+    @if (!(isOfficials || isSk || isFaq))
+    {
+        <button id="backToTopBtn" type="button" class="back-to-top-btn" title="@L["Common.BackToTop"]" onclick="scrollToTop()">
+            <i class="bi bi-arrow-up"></i>
+        </button>
+    }
 
     <style>
         /* Footer Links */
@@ -230,7 +242,21 @@
             justify-content: center !important;
             z-index: 99999 !important;
             cursor: pointer !important;
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+            /* Hidden by default — only shown after the user scrolls down. */
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateY(12px) !important;
+            pointer-events: none !important;
+            transition: opacity .25s ease, transform .25s ease, visibility .25s ease, background-color .2s ease, box-shadow .2s ease !important;
+        }
+
+        /* Visible state — toggled by JS once scrolled past the threshold. */
+        html body #backToTopBtn.is-visible,
+        html body .back-to-top-btn.is-visible {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) !important;
+            pointer-events: auto !important;
         }
 
         html body #backToTopBtn::before,
@@ -272,6 +298,21 @@
                 behavior: 'smooth'
             });
         }
+
+        // Show the Back-to-Top button only after scrolling down; hide it near the top
+        // (this also hides it after a click, since clicking smooth-scrolls back up).
+        (function () {
+            var btn = document.getElementById('backToTopBtn');
+            if (!btn) return;
+            var THRESHOLD = 250; // px scrolled before the button appears
+            function toggle() {
+                var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+                btn.classList.toggle('is-visible', y > THRESHOLD);
+            }
+            window.addEventListener('scroll', toggle, { passive: true });
+            window.addEventListener('resize', toggle, { passive: true });
+            toggle(); // set the correct initial state on load
+        })();
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -26,88 +26,66 @@
     --shadow-lg: 0 12px 24px -8px rgba(15, 23, 42, .18);
 }
 
-/* --- 2. COASTAL TEAL ------------------------------------------------------ */
-[data-theme="coastal"] {
-    --brand: #0f766e;
-    --brand-soft: #0d9488;
-    --accent: #f59e0b;
-    --accent-hover: #d97706;
-    --accent-soft: rgba(245, 158, 11, .14);
-    --page-bg: #fdfcf7;
+/* --- 2. EMERALD GOLD (light, deep green + warm gold — from brand palette) - */
+[data-theme="emerald"] {
+    --brand: #0c3b2e;
+    --brand-soft: #2f6f57;
+    --accent: #d99a00;
+    --accent-hover: #b37f00;
+    --accent-soft: rgba(217, 154, 0, .14);
+    --page-bg: #eef3ee;
     --surface: #ffffff;
-    --surface-alt: #f6f5ef;
-    --border: #e7e2d4;
-    --heading: #134e4a;
-    --body-text: #5b6660;
-    --muted: #9aa39d;
-    --hero-bg: linear-gradient(135deg, #0f766e 0%, #115e59 55%, #134e4a 100%);
-    --hero-text: #ffffff;
-    --radius: 1rem;
-    --shadow: 0 1px 3px rgba(19, 78, 74, .07);
-    --shadow-lg: 0 14px 30px -10px rgba(19, 78, 74, .22);
-}
-
-/* --- 3. MIDNIGHT SLATE (dark) -------------------------------------------- */
-[data-theme="midnight"] {
-    --brand: #0b1120;
-    --brand-soft: #1e293b;
-    --accent: #6366f1;
-    --accent-hover: #4f46e5;
-    --accent-soft: rgba(99, 102, 241, .18);
-    --page-bg: #0b1120;
-    --surface: #151d2e;
-    --surface-alt: #101728;
-    --border: #26304a;
-    --heading: #f1f5f9;
-    --body-text: #a5b0c4;
-    --muted: #6b7794;
-    --hero-bg: radial-gradient(120% 120% at 15% 0%, #1e293b 0%, #0b1120 60%);
-    --hero-text: #f8fafc;
-    --radius: .375rem;
-    --shadow: 0 1px 3px rgba(0, 0, 0, .5);
-    --shadow-lg: 0 16px 32px -12px rgba(0, 0, 0, .7);
-}
-
-/* --- 4. SAGE GARDEN (light, soft green) ---------------------------------- */
-[data-theme="sage"] {
-    --brand: #3d6b52;
-    --brand-soft: #558a6b;
-    --accent: #4f9e77;
-    --accent-hover: #3f8663;
-    --accent-soft: rgba(79, 158, 119, .14);
-    --page-bg: #f2f7f3;
-    --surface: #ffffff;
-    --surface-alt: #eaf2ec;
-    --border: #d8e6dd;
-    --heading: #1e3a2b;
-    --body-text: #46574d;
-    --muted: #86a091;
-    --hero-bg: linear-gradient(135deg, #4f8c68 0%, #33604a 100%);
+    --surface-alt: #f3f7f3;
+    --border: #d7e5db;
+    --heading: #0c3b2e;
+    --body-text: #45564d;
+    --muted: #89a394;
+    --hero-bg: linear-gradient(135deg, #0c3b2e 0%, #124a39 55%, #0a2f25 100%);
     --hero-text: #ffffff;
     --radius: .6rem;
-    --shadow: 0 1px 3px rgba(30, 58, 43, .08);
-    --shadow-lg: 0 12px 24px -8px rgba(30, 58, 43, .18);
+    --shadow: 0 1px 3px rgba(12, 59, 46, .08);
+    --shadow-lg: 0 12px 24px -8px rgba(12, 59, 46, .2);
 }
 
-/* --- 5. LILAC MIST (light, soft lavender) -------------------------------- */
-[data-theme="lilac"] {
-    --brand: #5a4fa3;
-    --brand-soft: #7266bd;
-    --accent: #6d5fc4;
-    --accent-hover: #5a4dab;
-    --accent-soft: rgba(109, 95, 196, .14);
-    --page-bg: #f6f5fb;
+/* --- 3. COASTAL TEAL (light, calm teal) --------------------------------- */
+[data-theme="teal"] {
+    --brand: #0f5257;
+    --brand-soft: #0f766e;
+    --accent: #0d9488;
+    --accent-hover: #0f766e;
+    --accent-soft: rgba(13, 148, 136, .14);
+    --page-bg: #ecf5f4;
     --surface: #ffffff;
-    --surface-alt: #efedf9;
-    --border: #e3dff1;
-    --heading: #2e2a4d;
-    --body-text: #565270;
-    --muted: #988fb6;
-    --hero-bg: linear-gradient(135deg, #6d5fc4 0%, #4b3f93 100%);
+    --surface-alt: #f1f8f7;
+    --border: #cfe6e3;
+    --heading: #0b3b3e;
+    --body-text: #43585a;
+    --muted: #82a3a3;
+    --hero-bg: linear-gradient(135deg, #0f5257 0%, #0f766e 55%, #0b3f43 100%);
     --hero-text: #ffffff;
-    --radius: .75rem;
-    --shadow: 0 1px 3px rgba(46, 42, 77, .08);
-    --shadow-lg: 0 12px 26px -8px rgba(46, 42, 77, .20);
+    --radius: .6rem;
+    --shadow: 0 1px 3px rgba(11, 59, 62, .08);
+    --shadow-lg: 0 12px 24px -8px rgba(11, 59, 62, .2);
+}
+
+/* --- DARK / LIGHT MODE ---------------------------------------------------
+   Dark/Light is an INDEPENDENT axis from the colour theme. theme-switcher.js
+   sets data-mode="dark" on <html>; this block overrides only the neutral
+   surface/text tokens, so ANY colour theme (Civic Navy, Emerald Gold,
+   Coastal Teal) can be shown in dark mode while keeping its own brand +
+   accent hues and its dark hero gradient. Light mode is the default and
+   needs no override. Placed AFTER the theme presets so it wins for the
+   tokens it redefines. */
+[data-mode="dark"] {
+    --page-bg: #0d1526;
+    --surface: #161f34;
+    --surface-alt: #121a2c;
+    --border: #29334d;
+    --heading: #f1f5f9;
+    --body-text: #aeb9cc;
+    --muted: #6f7f97;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .5);
+    --shadow-lg: 0 16px 32px -12px rgba(0, 0, 0, .7);
 }
 
 /* ==========================================================================
@@ -574,7 +552,7 @@ body {
     color: #dc2626;
 }
 
-[data-theme="midnight"] .info-table .is-urgent {
+[data-mode="dark"] .info-table .is-urgent {
     color: #f87171;
 }
 
@@ -1098,11 +1076,21 @@ body {
     transition: background .15s ease, color .15s ease;
 }
 
+    /* iOS Settings–style icon tile: consistent rounded square with a subtle
+       border behind every nav icon (Admin + Staff share this class). */
     .app-nav__link i {
-        font-size: 1.05rem;
-        width: 20px;
-        text-align: center;
+        font-size: 1rem;
+        width: 30px;
+        height: 30px;
         flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, .08);
+        border: 1px solid rgba(255, 255, 255, .14);
+        color: rgba(255, 255, 255, .92);
+        transition: background .15s ease, border-color .15s ease, color .15s ease;
     }
 
     .app-nav__link:hover {
@@ -1110,11 +1098,23 @@ body {
         background: rgba(255, 255, 255, .07);
     }
 
+        .app-nav__link:hover i {
+            background: rgba(255, 255, 255, .16);
+            border-color: rgba(255, 255, 255, .24);
+        }
+
     .app-nav__link.active {
         color: #fff;
         background: var(--accent);
         box-shadow: var(--shadow);
     }
+
+        /* On the highlighted (active) item, keep the tile readable on the accent bg. */
+        .app-nav__link.active i {
+            background: rgba(255, 255, 255, .24);
+            border-color: rgba(255, 255, 255, .38);
+            color: #fff;
+        }
 
 .app-nav__divider {
     height: 1px;
@@ -1127,10 +1127,22 @@ body {
     color: #fca5a5;
 }
 
+    .app-nav__link--danger i {
+        background: rgba(220, 53, 69, .16);
+        border-color: rgba(220, 53, 69, .3);
+        color: #fca5a5;
+    }
+
     .app-nav__link--danger:hover {
         color: #fff;
         background: rgba(220, 53, 69, .55);
     }
+
+        .app-nav__link--danger:hover i {
+            background: rgba(220, 53, 69, .35);
+            border-color: rgba(220, 53, 69, .5);
+            color: #fff;
+        }
 
 .app-sidebar__foot {
     padding: .85rem 1.25rem;
@@ -1515,12 +1527,12 @@ body {
 
 /* Keep the midnight (dark) theme readable: views hardcode white cards and
    dark text, which would clash with the themed table colours above. */
-[data-theme="midnight"] .app-content .card.bg-white {
+[data-mode="dark"] .app-content .card.bg-white {
     background: var(--surface) !important;
     border-color: var(--border);
 }
 
-[data-theme="midnight"] .app-content .table .text-dark {
+[data-mode="dark"] .app-content .table .text-dark {
     color: var(--heading) !important;
 }
 
@@ -2386,6 +2398,226 @@ th.actions-col {
     .official-card:hover,
     .committee-card:hover,
     .official-actions .btn:hover {
+        transform: none;
+    }
+}
+
+/* =========================================================================
+   DASHBOARD INTERACTIVITY ENHANCEMENTS  (additive only)
+   Adds hover motion + polish to the Admin & Staff dashboard cards without
+   changing any existing rule. Uses the same theme variables (--accent,
+   --surface, --border, --shadow-lg) so it stays consistent in every theme.
+   ========================================================================= */
+.stat-card {
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+.stat-card__icon {
+    transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+
+    .stat-card:hover .stat-card__icon {
+        transform: scale(1.08) rotate(-4deg);
+        background: var(--accent);
+        color: #fff;
+    }
+
+.stat-card__value {
+    transition: color .2s ease;
+}
+
+    .stat-card:hover .stat-card__value {
+        color: var(--accent);
+    }
+
+/* Anchor-wrapped stat cards (e.g. Unread Messages) should feel clickable. */
+a .stat-card {
+    cursor: pointer;
+}
+
+/* The hero welcome banner also lifts gently on hover for a cohesive feel. */
+.welcome-banner {
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+    .welcome-banner:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+/* Respect users who prefer reduced motion — disable the new movement. */
+@media (prefers-reduced-motion: reduce) {
+    .stat-card:hover,
+    .stat-card:hover .stat-card__icon,
+    .welcome-banner:hover {
+        transform: none;
+    }
+}
+
+/* =========================================================================
+   PUBLIC SERVANTS DIRECTORY GRID  (Home/_PublicServantsGrid)
+   QC-style roster: uniform circular-avatar cards, themed with the site
+   palette so it works in light/dark and every colour theme.
+   ========================================================================= */
+.servants-section {
+    margin: 0 0 2.5rem;
+}
+
+.servants-heading {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.servants-heading__title {
+    font-weight: 800;
+    letter-spacing: .02em;
+    color: var(--heading);
+    text-transform: uppercase;
+    font-size: clamp(1.35rem, 2.6vw, 2rem);
+    margin: 0;
+}
+
+.servants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.1rem;
+}
+
+/* Fixed 3-per-row variant (Barangay Officials). Falls back to 2, then 1,
+   on narrower screens. */
+.servants-grid--3 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 992px) {
+    .servants-grid--3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .servants-grid--3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.servant-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: .25rem;
+    padding: 1.4rem 1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: 3px solid var(--accent);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    font: inherit;
+}
+
+    .servant-card:hover,
+    .servant-card:focus-visible {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        outline: none;
+    }
+
+.servant-card__avatar {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: .85rem;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+    transition: transform .2s ease;
+}
+
+/* Alternate the avatar circle colour for visual rhythm (like the QC roster). */
+.servants-grid .servant-card:nth-child(even) .servant-card__avatar {
+    background: var(--brand-soft);
+}
+
+.servant-card:hover .servant-card__avatar {
+    transform: scale(1.05);
+}
+
+.servant-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.servant-card__initials {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1;
+}
+
+.servant-card__name {
+    font-weight: 700;
+    color: var(--heading);
+    font-size: .98rem;
+    line-height: 1.25;
+    margin-top: .1rem;
+}
+
+.servant-card__pos {
+    color: var(--body-text);
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.servant-card__committee {
+    color: var(--muted);
+    font-size: .74rem;
+    margin-top: .15rem;
+}
+
+/* Ex-Officio member label (e.g., SK Chairperson on the Barangay council). */
+.servant-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    margin-top: .35rem;
+    padding: .15rem .55rem;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+}
+
+/* Highlight the leader (Punong Barangay / SK Chairperson). */
+.servant-card--lead {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+}
+
+    .servant-card--lead .servant-card__avatar {
+        background: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 5px var(--accent);
+    }
+
+@media (prefers-reduced-motion: reduce) {
+    .servant-card:hover,
+    .servant-card:focus-visible,
+    .servant-card:hover .servant-card__avatar {
         transform: none;
     }
 }

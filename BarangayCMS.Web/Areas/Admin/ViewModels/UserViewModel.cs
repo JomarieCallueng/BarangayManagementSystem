@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BarangayCMS.Web.Validation;
 
 namespace BarangayCMS.Web.Areas.Admin.Models
 {
@@ -7,10 +8,12 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         public string Id { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Ang pangalan (First Name) ay kinakailangan.")]
+        [PersonName]
         [Display(Name = "Unang Pangalan")]
         public string FirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Ang apelyido (Last Name) ay kinakailangan.")]
+        [PersonName]
         [Display(Name = "Apelyido")]
         public string LastName { get; set; } = string.Empty;
 

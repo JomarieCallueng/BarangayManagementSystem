@@ -47,7 +47,18 @@ namespace BarangayCMS.Web.Controllers
                 return View();
             }
 
-            var ok = await _contactMessages.SubmitAsync(ContactNumber, Message);
+            // 🔒 Backend enforcement: PH mobile must be exactly 11 digits (09XXXXXXXXX).
+            if (!BarangayCMS.Web.Validation.PhilippineMobileAttribute.IsValidMobile(ContactNumber))
+            {
+                var loc = HttpContext.RequestServices
+                    .GetService(typeof(Microsoft.Extensions.Localization.IStringLocalizer<SharedResource>))
+                    as Microsoft.Extensions.Localization.IStringLocalizer<SharedResource>;
+                ModelState.AddModelError(string.Empty,
+                    loc?["Val.Mobile.Format"].Value ?? "Mobile number must be exactly 11 digits (e.g., 09XXXXXXXXX).");
+                return View();
+            }
+
+            var ok = await _contactMessages.SubmitAsync(ContactNumber.Trim(), Message);
             if (!ok)
             {
                 ModelState.AddModelError(string.Empty, "Nagkaroon ng problema sa pagpapadala. Subukan muli.");

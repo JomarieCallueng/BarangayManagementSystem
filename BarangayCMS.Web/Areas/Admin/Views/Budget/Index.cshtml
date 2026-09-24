@@ -1,285 +1,460 @@
-﻿@model IEnumerable<BarangayCMS.Web.Areas.Admin.Models.BudgetViewModel>
+@model BarangayCMS.Web.Areas.Admin.Models.BudgetTrackerViewModel
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Budget Annual Planner";
-    int selectedYear = ViewBag.SelectedYear ?? DateTime.Now.Year;
+    ViewData["Title"] = "Budget Tracker";
+    int selectedYear = Model.SelectedYear;
 
-    // 💡 Safe parsing mula sa String pabalik sa Decimal
+    // 💡 Safe parsing mula sa String pabalik sa Decimal (annual budget setting)
     decimal totalBarangayBudget = 200000000.00m; // Default Value
-
     if (TempData[$"AnnualBudget_{selectedYear}"] != null &&
         decimal.TryParse(TempData[$"AnnualBudget_{selectedYear}"]?.ToString(), out decimal parsedBudget))
     {
         totalBarangayBudget = parsedBudget;
     }
-
-    // Panatilihin ang TempData sa mga susunod na request
     TempData.Keep($"AnnualBudget_{selectedYear}");
 
-    // Calculations
-    decimal totalAllocated = Model != null ? Model.Sum(b => b.AllocatedAmount) : 0;
-    decimal totalDisbursed = Model != null ? Model.Sum(b => b.UsedAmount) : 0;
+    var funds = Model.FundBudgets;
+    var proj = Model.ProjectBudget;
+
+    // Map the VM's status color to a localized status label (people-facing, translatable).
+    Func<string, string> StatusLabel = color => color switch
+    {
+        "success" => L["Budget.Status.Within"].Value,
+        "warning" => L["Budget.Status.Near"].Value,
+        "dark" => L["Budget.Status.Exhausted"].Value,
+        "danger" => L["Budget.Status.Over"].Value,
+        _ => L["Budget.Status.None"].Value
+    };
+
+    // Fund-planner calculations
+    decimal totalAllocated = funds != null ? funds.Sum(b => b.AllocatedAmount) : 0;
+    decimal totalDisbursed = funds != null ? funds.Sum(b => b.UsedAmount) : 0;
     decimal unallocatedBalance = totalBarangayBudget - totalAllocated;
     var allocatedPct = totalBarangayBudget > 0 ? (totalAllocated / totalBarangayBudget) * 100 : 0;
     var disbursedPct = totalAllocated > 0 ? (totalDisbursed / totalAllocated) * 100 : 0;
 }
 
 <style>
-    /* Matches the Reports page badge sizing for a consistent look. */
-    .trend-badge {
-        font-size: 0.75rem;
-        font-weight: 600;
-        padding: 4px 8px;
-        border-radius: 6px;
+    .budget-page .trend-badge { font-size: .72rem; font-weight: 600; padding: 4px 9px; border-radius: 6px; }
+    .budget-page .progress-thick { height: 14px; border-radius: 8px; }
+
+    /* Stat cards — theme-aware with a soft coloured icon tile */
+    .budget-page .budget-stat {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        box-shadow: var(--shadow); padding: 1.15rem 1.25rem; height: 100%;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .budget-page .budget-stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .budget-page .budget-stat__top { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+    .budget-page .budget-stat__label { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+    .budget-page .budget-stat__value { font-size: clamp(1rem, 1.9vw, 1.35rem); font-weight: 800; color: var(--heading); margin: 0; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .budget-page .budget-stat__value.is-danger { color: #dc3545; }
+    .budget-page .budget-stat__icon { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; font-size: 1.3rem; }
+    .budget-page .budget-stat__icon--brand   { background: var(--accent-soft); color: var(--accent); }
+    .budget-page .budget-stat__icon--info    { background: rgba(37, 99, 235, .12); color: #2563eb; }
+    .budget-page .budget-stat__icon--success { background: rgba(22, 163, 74, .14); color: #16a34a; }
+    .budget-page .budget-stat__icon--danger  { background: rgba(220, 53, 69, .12); color: #dc3545; }
+    .budget-page .budget-stat__foot { margin-top: .7rem; }
+
+    /* Fund-source cards — subtle left accent */
+    .budget-page .budget-fund {
+        background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+        border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.15rem 1.25rem; height: 100%;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .budget-page .budget-fund:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+    /* Consistent square action buttons (replaces the joined "rainbow" btn-group) */
+    .budget-page .budget-actions { display: inline-flex; gap: .35rem; justify-content: center; }
+    .budget-page .budget-actions .btn { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; }
+    .budget-page .budget-actions form { display: inline-flex; margin: 0; }
+
+    .budget-page .fin-card { transition: transform .2s ease, box-shadow .2s ease; }
+    .budget-page .fin-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg) !important; }
+    .budget-page .expense-row { transition: background-color .15s ease; }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .budget-page .budget-stat, .budget-page .budget-fund, .budget-page .fin-card { transition: none; }
+        .budget-page .budget-stat:hover, .budget-page .budget-fund:hover, .budget-page .fin-card:hover { transform: none; }
     }
 </style>
+<div class="budget-page">
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
-        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-cash-coin text-success me-2"></i>Budget Allocation Planner</h2>
-        <p class="text-muted small mb-0">Monitor annual barangay fiscal funds, total allocations, disbursements, and balances.</p>
+        <h2 class="fw-bold text-dark mb-1"><i class="bi bi-cash-coin text-success me-2"></i>@L["Budget.Title"]</h2>
+        <p class="text-muted small mb-0">
+            @L["Budget.Subtitle"]
+        </p>
     </div>
-    <div class="d-flex gap-2">
-        <form method="get" action="/Admin/Budget" class="d-flex align-items-center gap-1">
-            <select name="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 110px;">
-                @for (int y = DateTime.Now.Year + 1; y >= DateTime.Now.Year - 5; y--)
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+        <!-- 🔎 PROJECT FILTER -->
+        <div class="d-flex align-items-center gap-1">
+            <label class="text-muted small fw-semibold mb-0"><i class="bi bi-funnel me-1"></i>@L["Budget.Project"]:</label>
+            <select class="form-select form-select-sm" style="min-width: 210px;"
+                    onchange="if(this.value){window.location.href='/Admin/Budget?projectId='+this.value;}else{window.location.href='/Admin/Budget?year=@selectedYear';}">
+                <option value="">@L["Budget.AllProjects"]</option>
+                @foreach (var p in Model.ProjectOptions)
                 {
-                    <!option value="@y" @(y == selectedYear ? "selected" : "")>FY @y</!option>
+                    <option value="@p.Id" selected="@(Model.SelectedProjectId == p.Id)">@p.DisplayLabel</option>
                 }
             </select>
-        </form>
-
-        <!-- BUTTON PARA MAG-SET NG ANNUAL BUDGET -->
-        <button type="button" class="btn btn-outline-primary shadow-sm fw-semibold btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#setBudgetModal">
-            <i class="bi bi-piggy-bank me-1"></i> Set Annual Budget
-        </button>
-
-        <a href="/Admin/Budget/Create" class="btn btn-success shadow-sm fw-semibold btn-sm d-flex align-items-center">
-            <i class="bi bi-plus-lg me-1"></i> Add Budget Category
-        </a>
-    </div>
-</div>
-
-<!-- Financial Summary Cards (Fixed Layout for Large Numbers) -->
-<div class="row g-3 mb-4">
-    <!-- Total Annual Budget -->
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 bg-white h-100 overflow-hidden">
-            <div class="d-flex align-items-start justify-content-between gap-2">
-                <div style="min-width: 0;">
-                    <h6 class="text-muted small text-uppercase mb-1 text-truncate">Total Annual Budget</h6>
-                    <h3 class="fw-bold text-dark mb-0 text-truncate" title="₱@totalBarangayBudget.ToString("N2")" style="font-size: 1.2rem;">
-                        ₱@totalBarangayBudget.ToString("N2")
-                    </h3>
-                </div>
-                <div class="flex-shrink-0">
-                    <div class="bg-light p-2 rounded text-secondary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="bi bi-bank fs-5"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-2">
-                <span class="badge bg-secondary-subtle text-dark trend-badge"><i class="bi bi-calendar3 me-1"></i>Fiscal Year @selectedYear</span>
-            </div>
         </div>
-    </div>
 
-    <!-- Total Allocated -->
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 bg-white h-100 overflow-hidden">
-            <div class="d-flex align-items-start justify-content-between gap-2">
-                <div style="min-width: 0;">
-                    <h6 class="text-muted small text-uppercase mb-1 text-truncate">Allocated to Programs</h6>
-                    <h3 class="fw-bold text-dark mb-0 text-truncate" title="₱@totalAllocated.ToString("N2")" style="font-size: 1.2rem;">
-                        ₱@totalAllocated.ToString("N2")
-                    </h3>
-                </div>
-                <div class="flex-shrink-0">
-                    <div class="bg-light p-2 rounded text-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="bi bi-diagram-3-fill fs-5"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-2">
-                <span class="badge bg-primary-subtle text-primary trend-badge"><i class="bi bi-pie-chart me-1"></i>@allocatedPct.ToString("N1")% ng budget</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Remaining / Unallocated -->
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 bg-white h-100 overflow-hidden">
-            <div class="d-flex align-items-start justify-content-between gap-2">
-                <div style="min-width: 0;">
-                    <h6 class="text-muted small text-uppercase mb-1 text-truncate">Remaining Budget</h6>
-                    <h3 class="fw-bold mb-0 text-truncate @(unallocatedBalance >= 0 ? "text-dark" : "text-danger")" title="₱@unallocatedBalance.ToString("N2")" style="font-size: 1.2rem;">
-                        ₱@unallocatedBalance.ToString("N2")
-                    </h3>
-                </div>
-                <div class="flex-shrink-0">
-                    <div class="bg-light p-2 rounded @(unallocatedBalance >= 0 ? "text-success" : "text-danger") d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="bi bi-wallet2 fs-5"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-2">
-                @if (unallocatedBalance >= 0)
-                {
-                    <span class="badge bg-success-subtle text-success trend-badge"><i class="bi bi-check-circle me-1"></i>Unallocated balance</span>
-                }
-                else
-                {
-                    <span class="badge bg-danger-subtle text-danger trend-badge"><i class="bi bi-exclamation-triangle me-1"></i>Over-allocated</span>
-                }
-            </div>
-        </div>
-    </div>
-
-    <!-- Total Disbursed -->
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm p-3 bg-white h-100 overflow-hidden">
-            <div class="d-flex align-items-start justify-content-between gap-2">
-                <div style="min-width: 0;">
-                    <h6 class="text-muted small text-uppercase mb-1 text-truncate">Disbursed (Spent)</h6>
-                    <h3 class="fw-bold text-dark mb-0 text-truncate" title="₱@totalDisbursed.ToString("N2")" style="font-size: 1.2rem;">
-                        ₱@totalDisbursed.ToString("N2")
-                    </h3>
-                </div>
-                <div class="flex-shrink-0">
-                    <div class="bg-light p-2 rounded text-danger d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="bi bi-cash-stack fs-5"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-2">
-                <span class="badge bg-danger-subtle text-danger trend-badge"><i class="bi bi-graph-down-arrow me-1"></i>@disbursedPct.ToString("N1")% ng allocated</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Breakdown Summary Per Fund Source -->
-@if (Model != null && Model.Any())
-{
-    <div class="d-flex align-items-center mb-3">
-        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Allocation Summary Per Fund Source</h5>
-        <span class="badge bg-light text-dark small ms-2">Fiscal Year @selectedYear</span>
-    </div>
-    <div class="row g-3 mb-4">
-        @foreach (var group in Model.GroupBy(b => string.IsNullOrEmpty(b.MainFundSource) ? "General Fund" : b.MainFundSource))
+        @if (proj == null)
         {
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-3 bg-white h-100">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="text-muted small text-uppercase mb-1"><i class="bi bi-wallet2 me-1"></i>@group.Key</h6>
-                            <h4 class="fw-bold text-dark mb-0">₱@group.Sum(x => x.AllocatedAmount).ToString("N2")</h4>
-                        </div>
-                        <span class="badge bg-info-subtle text-info trend-badge">@group.Count() program(s)</span>
-                    </div>
-                </div>
-            </div>
+            <form method="get" action="/Admin/Budget" class="d-flex align-items-center gap-1">
+                <select name="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 110px;">
+                    @for (int y = DateTime.Now.Year + 1; y >= DateTime.Now.Year - 5; y--)
+                    {
+                        <!option value="@y" @(y == selectedYear ? "selected" : "")>FY @y</!option>
+                    }
+                </select>
+            </form>
+            <button type="button" class="btn btn-outline-primary shadow-sm fw-semibold btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#setBudgetModal">
+                <i class="bi bi-piggy-bank me-1"></i> @L["Budget.SetAnnual"]
+            </button>
+            <a href="/Admin/Budget/Create" class="btn btn-success shadow-sm fw-semibold btn-sm d-flex align-items-center">
+                <i class="bi bi-plus-lg me-1"></i> @L["Budget.AddCategory"]
+            </a>
         }
+    </div>
+</div>
+
+@if (TempData["ExpenseSuccess"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["ExpenseSuccess"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 
-<!-- Main Budget Table -->
-<div class="d-flex align-items-center mb-3">
-    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-table text-success me-2"></i>Budget Categories &amp; Programs</h5>
-    <span class="badge bg-light text-dark small ms-2">@(Model?.Count() ?? 0) record(s)</span>
-</div>
-<div class="card border-0 shadow-sm rounded p-4">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Fiscal Year</th>
-                    <th>Fund Category & Program</th>
-                    <th>Pinagmulan (Fund Source)</th>
-                    <th class="text-end">Total Allocation</th>
-                    <th class="text-end">Disbursed (Used)</th>
-                    <th class="text-end">Available Balance</th>
-                    <th class="text-center text-nowrap actions-col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    @foreach (var item in Model)
+@* ============================================================
+   MODE A — PROJECT-FILTERED FINANCIAL VIEW
+   ============================================================ *@
+@if (proj != null)
+{
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <div>
+            <a href="/Admin/Budget" class="btn btn-sm btn-light border"><i class="bi bi-arrow-left me-1"></i>@L["Budget.BackToPlanner"]</a>
+            <a href="/Admin/Projects/Details/@proj.ProjectId" class="btn btn-sm btn-outline-info"><i class="bi bi-kanban me-1"></i>@L["Budget.ViewProject"]</a>
+        </div>
+        <a href="/Admin/Budget/AddExpense?projectId=@proj.ProjectId" class="btn btn-success btn-sm shadow-sm fw-semibold">
+            <i class="bi bi-plus-lg me-1"></i>@L["Budget.RecordExpense"]
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded mb-4 fin-card">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                <div>
+                    <h4 class="fw-bold text-dark mb-1">@proj.ProjectName</h4>
+                    <span class="badge bg-secondary-subtle text-dark">@proj.Status</span>
+                    <span class="badge bg-@proj.BudgetStatusColor-subtle text-@proj.BudgetStatusColor border border-@proj.BudgetStatusColor ms-1">
+                        <i class="bi bi-shield-check me-1"></i>@StatusLabel(proj.BudgetStatusColor)
+                    </span>
+                </div>
+            </div>
+
+            @if (!proj.HasBudget)
+            {
+                <div class="alert alert-warning border-0 mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    @L["Budget.NoApprovedBudget"]
+                </div>
+            }
+            else
+            {
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded h-100">
+                            <div class="text-muted small text-uppercase mb-1">@L["Budget.ApprovedBudget"]</div>
+                            <div class="h4 fw-bold text-primary mb-0">₱@proj.ApprovedBudget.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded h-100">
+                            <div class="text-muted small text-uppercase mb-1">@L["Budget.TotalExpenses"]</div>
+                            <div class="h4 fw-bold text-danger mb-0">₱@proj.TotalExpenses.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded h-100">
+                            <div class="text-muted small text-uppercase mb-1">@L["Budget.Remaining"]</div>
+                            <div class="h4 fw-bold @(proj.Remaining >= 0 ? "text-success" : "text-danger") mb-0">₱@proj.Remaining.ToString("N2")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>@L["Budget.Utilization"]</span>
+                    <span class="fw-semibold">@proj.RawPercentUsed.ToString("0.#")% @L["Budget.Used"]</span>
+                </div>
+                <div class="progress progress-thick mb-2">
+                    <div class="progress-bar @proj.ProgressBarColor" role="progressbar"
+                         style="width: @proj.PercentUsed.ToString(System.Globalization.CultureInfo.InvariantCulture)%;"
+                         aria-valuenow="@proj.PercentUsed" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* Category breakdown *@
+    @if (proj.Breakdown.Any())
+    {
+        <div class="row g-3 mb-4">
+            @foreach (var cat in proj.Breakdown)
+            {
+                <div class="col-md-3 col-sm-6">
+                    <div class="card border-0 shadow-sm p-3 h-100 fin-card">
+                        <div class="text-muted small text-uppercase mb-1"><i class="bi bi-tag me-1"></i>@cat.Category</div>
+                        <div class="h5 fw-bold text-dark mb-0">₱@cat.Amount.ToString("N2")</div>
+                        <div class="small text-muted">@cat.Count @L["Budget.Items"]</div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @* Expenses table *@
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-receipt text-success me-2"></i>@L["Budget.FinancialRecords"]</h5>
+        <span class="badge bg-light text-dark small ms-2">@proj.Expenses.Count @L["Budget.Records"]</span>
+    </div>
+    <div class="card border-0 shadow-sm rounded p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>@L["Budget.ColDate"]</th>
+                        <th>@L["Budget.ColCategory"]</th>
+                        <th>@L["Budget.ColDescription"]</th>
+                        <th>@L["Budget.ColLoggedBy"]</th>
+                        <th class="text-end">@L["Budget.ColAmount"]</th>
+                        <th class="text-center actions-col">@L["Common.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (proj.Expenses.Any())
                     {
-                        var remainingBalance = item.AllocatedAmount - item.UsedAmount;
+                        @foreach (var e in proj.Expenses)
+                        {
+                            <tr class="expense-row">
+                                <td class="text-nowrap"><small class="text-muted"><i class="bi bi-calendar3 me-1"></i>@e.ExpenseDate.ToString("MM/dd/yyyy")</small></td>
+                                <td><span class="badge bg-info-subtle text-info-emphasis border border-info">@e.Category</span></td>
+                                <td style="max-width:280px;"><small class="text-truncate d-block">@e.Description</small></td>
+                                <td><small class="text-muted">@e.LoggedBy</small></td>
+                                <td class="text-end fw-semibold text-danger">₱@e.Amount.ToString("N2")</td>
+                                <td class="text-center text-nowrap actions-col">
+                                    <div class="budget-actions">
+                                        <a href="/Admin/Budget/EditExpense/@e.ExpenseId" class="btn btn-outline-primary" title="@L["Common.Edit"]"><i class="bi bi-pencil-square"></i></a>
+                                        <form action="/Admin/Budget/VoidExpense/@e.ExpenseId" method="post" onsubmit="return confirm('@L["Budget.VoidConfirm"]');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger" title="@L["Budget.Void"]"><i class="bi bi-x-circle"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
                         <tr>
-                            <td class="fw-bold text-secondary">FY @item.FiscalYear</td>
-                            <td>
-                                <span class="fw-bold text-dark d-block">@item.Category</span>
-                                <small class="text-muted d-block text-truncate" style="max-width: 250px;">@item.Remarks</small>
-                            </td>
-                            <td>
-                                <span class="badge bg-info-subtle text-info-emphasis border border-info px-2 py-1">
-                                    <i class="bi bi-wallet2 me-1"></i>@(string.IsNullOrEmpty(item.MainFundSource) ? "General Fund" : item.MainFundSource)
-                                </span>
-                            </td>
-                            <td class="text-end fw-semibold text-primary">₱@item.AllocatedAmount.ToString("N2")</td>
-                            <td class="text-end fw-semibold text-danger">₱@item.UsedAmount.ToString("N2")</td>
-                            <td class="text-end fw-bold @(remainingBalance >= 0 ? "text-success" : "text-danger")">
-                                ₱@remainingBalance.ToString("N2")
-                            </td>
-                            <td class="text-center text-nowrap actions-col">
-                                <div class="btn-group btn-group-sm flex-nowrap" role="group">
-                                    <a href="/Admin/Budget/Income/@item.Id" class="btn btn-outline-success" title="Add Funds / Income"><i class="bi bi-plus-circle"></i></a>
-                                    <a href="/Admin/Budget/Expenses/@item.Id" class="btn btn-outline-warning text-dark" title="Disburse / Expense"><i class="bi bi-dash-circle"></i></a>
-                                    <a href="/Admin/Budget/Edit/@item.Id" class="btn btn-outline-primary" title="Edit Category"><i class="bi bi-pencil"></i></a>
-                                    <a href="/Admin/Budget/Delete/@item.Id" class="btn btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
-                                </div>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-receipt display-6 d-block mb-2 opacity-50"></i>
+                                <span>@L["Budget.NoExpenses"]</span>
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
-                            <i class="bi bi-wallet2 display-6 d-block mb-2"></i>
-                            <span>No budget distributions configured for the year @selectedYear.</span>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- MODAL DIALOG PARA SA SET ANNUAL BUDGET -->
-<div class="modal fade" id="setBudgetModal" tabindex="-1" aria-labelledby="setBudgetModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <form action="/Admin/Budget/SetAnnualBudget" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="year" value="@selectedYear" />
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-dark" id="setBudgetModalLabel">
-                        <i class="bi bi-piggy-bank text-primary me-2"></i>Set Total Annual Budget (FY @selectedYear)
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Kabuuang Pondo ng Barangay (Pesos)</label>
-                        <div class="input-group">
-                            <span class="input-group-text">₱</span>
-                            <input type="number" step="0.01" min="0" name="annualBudget" class="form-control form-control-lg fw-bold text-primary" value="@totalBarangayBudget" required />
-                        </div>
-                        <small class="text-muted mt-1 d-block">
-                            Ito ang magiging batayan ng kabuuang pera kung saan mababawas ang bawat program category.
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary fw-bold">Save Annual Budget</button>
-                </div>
-            </form>
+                </tbody>
+            </table>
         </div>
     </div>
+}
+else
+{
+    @* ============================================================
+       MODE B — EXISTING FUND-SOURCE ANNUAL PLANNER
+       ============================================================ *@
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="budget-stat">
+                <div class="budget-stat__top">
+                    <div style="min-width: 0;">
+                        <div class="budget-stat__label">@L["Budget.TotalAnnual"]</div>
+                        <div class="budget-stat__value" title="₱@totalBarangayBudget.ToString("N2")">₱@totalBarangayBudget.ToString("N2")</div>
+                    </div>
+                    <div class="budget-stat__icon budget-stat__icon--brand"><i class="bi bi-bank"></i></div>
+                </div>
+                <div class="budget-stat__foot"><span class="badge bg-secondary-subtle text-dark trend-badge"><i class="bi bi-calendar3 me-1"></i>@L["Budget.FiscalYear"] @selectedYear</span></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="budget-stat">
+                <div class="budget-stat__top">
+                    <div style="min-width: 0;">
+                        <div class="budget-stat__label">@L["Budget.AllocatedToPrograms"]</div>
+                        <div class="budget-stat__value" title="₱@totalAllocated.ToString("N2")">₱@totalAllocated.ToString("N2")</div>
+                    </div>
+                    <div class="budget-stat__icon budget-stat__icon--info"><i class="bi bi-diagram-3-fill"></i></div>
+                </div>
+                <div class="budget-stat__foot"><span class="badge bg-primary-subtle text-primary trend-badge"><i class="bi bi-pie-chart me-1"></i>@allocatedPct.ToString("N1")@L["Budget.PctOfBudget"]</span></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="budget-stat">
+                <div class="budget-stat__top">
+                    <div style="min-width: 0;">
+                        <div class="budget-stat__label">@L["Budget.RemainingBudget"]</div>
+                        <div class="budget-stat__value @(unallocatedBalance >= 0 ? "" : "is-danger")" title="₱@unallocatedBalance.ToString("N2")">₱@unallocatedBalance.ToString("N2")</div>
+                    </div>
+                    <div class="budget-stat__icon @(unallocatedBalance >= 0 ? "budget-stat__icon--success" : "budget-stat__icon--danger")"><i class="bi bi-wallet2"></i></div>
+                </div>
+                <div class="budget-stat__foot">
+                    @if (unallocatedBalance >= 0)
+                    {
+                        <span class="badge bg-success-subtle text-success trend-badge"><i class="bi bi-check-circle me-1"></i>@L["Budget.UnallocatedBalance"]</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger-subtle text-danger trend-badge"><i class="bi bi-exclamation-triangle me-1"></i>@L["Budget.OverAllocated"]</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="budget-stat">
+                <div class="budget-stat__top">
+                    <div style="min-width: 0;">
+                        <div class="budget-stat__label">@L["Budget.Disbursed"]</div>
+                        <div class="budget-stat__value" title="₱@totalDisbursed.ToString("N2")">₱@totalDisbursed.ToString("N2")</div>
+                    </div>
+                    <div class="budget-stat__icon budget-stat__icon--danger"><i class="bi bi-cash-stack"></i></div>
+                </div>
+                <div class="budget-stat__foot"><span class="badge bg-danger-subtle text-danger trend-badge"><i class="bi bi-graph-down-arrow me-1"></i>@disbursedPct.ToString("N1")@L["Budget.PctOfAllocated"]</span></div>
+            </div>
+        </div>
+    </div>
+
+    @if (funds != null && funds.Any())
+    {
+        <div class="d-flex align-items-center mb-3">
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-pie-chart-fill text-primary me-2"></i>@L["Budget.AllocationSummary"]</h5>
+            <span class="badge bg-light text-dark small ms-2">@L["Budget.FiscalYear"] @selectedYear</span>
+        </div>
+        <div class="row g-3 mb-4">
+            @foreach (var group in funds.GroupBy(b => string.IsNullOrEmpty(b.MainFundSource) ? L["Budget.GeneralFund"].Value : b.MainFundSource))
+            {
+                <div class="col-md-4">
+                    <div class="budget-fund">
+                        <div class="d-flex align-items-center justify-content-between gap-2">
+                            <div style="min-width: 0;">
+                                <div class="budget-stat__label"><i class="bi bi-wallet2 me-1"></i>@group.Key</div>
+                                <div class="budget-stat__value">₱@group.Sum(x => x.AllocatedAmount).ToString("N2")</div>
+                            </div>
+                            <span class="badge bg-info-subtle text-info trend-badge">@group.Count() @L["Budget.Programs"]</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="d-flex align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-table text-success me-2"></i>@L["Budget.CategoriesPrograms"]</h5>
+        <span class="badge bg-light text-dark small ms-2">@(funds?.Count() ?? 0) @L["Budget.Records"]</span>
+    </div>
+    <div class="card border-0 shadow-sm rounded p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>@L["Budget.FiscalYear"]</th>
+                        <th>@L["Budget.FundCategoryProgram"]</th>
+                        <th>@L["Budget.FundSource"]</th>
+                        <th class="text-end">@L["Budget.TotalAllocation"]</th>
+                        <th class="text-end">@L["Budget.DisbursedUsed"]</th>
+                        <th class="text-end">@L["Budget.AvailableBalance"]</th>
+                        <th class="text-center text-nowrap actions-col">@L["Common.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (funds != null && funds.Any())
+                    {
+                        @foreach (var item in funds)
+                        {
+                            var remainingBalance = item.AllocatedAmount - item.UsedAmount;
+                            <tr>
+                                <td class="fw-bold text-secondary">FY @item.FiscalYear</td>
+                                <td>
+                                    <span class="fw-bold text-dark d-block">@item.Category</span>
+                                    <small class="text-muted d-block text-truncate" style="max-width: 250px;">@item.Remarks</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info px-2 py-1">
+                                        <i class="bi bi-wallet2 me-1"></i>@(string.IsNullOrEmpty(item.MainFundSource) ? L["Budget.GeneralFund"].Value : item.MainFundSource)
+                                    </span>
+                                </td>
+                                <td class="text-end fw-semibold text-primary">₱@item.AllocatedAmount.ToString("N2")</td>
+                                <td class="text-end fw-semibold text-danger">₱@item.UsedAmount.ToString("N2")</td>
+                                <td class="text-end fw-bold @(remainingBalance >= 0 ? "text-success" : "text-danger")">₱@remainingBalance.ToString("N2")</td>
+                                <td class="text-center text-nowrap actions-col">
+                                    <div class="budget-actions">
+                                        <a href="/Admin/Budget/Income/@item.Id" class="btn btn-outline-success" title="@L["Budget.AddFundsIncome"]"><i class="bi bi-plus-circle"></i></a>
+                                        <a href="/Admin/Budget/Expenses/@item.Id" class="btn btn-outline-warning text-dark" title="@L["Budget.DisburseExpense"]"><i class="bi bi-dash-circle"></i></a>
+                                        <a href="/Admin/Budget/Edit/@item.Id" class="btn btn-outline-primary" title="@L["Budget.EditCategory"]"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="/Admin/Budget/Delete/@item.Id" class="btn btn-outline-danger" title="@L["Common.Delete"]"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-wallet2 display-6 d-block mb-2"></i>
+                                <span>@L["Budget.NoDistributions"] @selectedYear.</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL: SET ANNUAL BUDGET -->
+    <div class="modal fade" id="setBudgetModal" tabindex="-1" aria-labelledby="setBudgetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/Admin/Budget/SetAnnualBudget" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="year" value="@selectedYear" />
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-dark" id="setBudgetModalLabel">
+                            <i class="bi bi-piggy-bank text-primary me-2"></i>@L["Budget.SetAnnualTitle"] (@L["Budget.FiscalYear"] @selectedYear)
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Common.Close"]"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">@L["Budget.TotalFundsLabel"]</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₱</span>
+                                <input type="number" step="0.01" min="0" name="annualBudget" class="form-control form-control-lg fw-bold text-primary" value="@totalBarangayBudget" required />
+                            </div>
+                            <small class="text-muted mt-1 d-block">@L["Budget.SetAnnualHelp"]</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">@L["Common.Cancel"]</button>
+                        <button type="submit" class="btn btn-primary fw-bold">@L["Budget.SaveAnnual"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
 </div>
+@* /.budget-page *@

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BarangayCMS.Entities;
 using BarangayCMS.Web.Areas.Admin.Models;
+using BarangayCMS.Web.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,11 +70,13 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                var firstName = NameFormatter.ToProperName(model.FirstName);
+                var lastName = NameFormatter.ToProperName(model.LastName);
                 var user = new ApplicationUser
                 {
                     UserName = model.Username,
                     Email = model.Email,
-                    FullName = $"{model.FirstName} {model.LastName}".Trim(),
+                    FullName = $"{firstName} {lastName}".Trim(),
                     Role = model.Role ?? "Staff",
                     IsActive = true,
                     DateCreated = DateTime.Now
@@ -160,7 +163,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             }
 
             // 2. Pagdugtungin ang FirstName at LastName para sa FullName property ng ApplicationUser
-            user.FullName = $"{model.FirstName} {model.LastName}".Trim();
+            user.FullName = $"{NameFormatter.ToProperName(model.FirstName)} {NameFormatter.ToProperName(model.LastName)}".Trim();
             user.Email = model.Email;
 
             // I-update din ang Username. Sina-set natin ito dito para tanggapin

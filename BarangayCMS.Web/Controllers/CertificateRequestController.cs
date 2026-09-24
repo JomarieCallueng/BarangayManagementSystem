@@ -12,8 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BarangayCMS.Web.Controllers
 {
-    // Public-facing resident flow: NOT part of the Admin area, so it uses the
-    // public site layout and needs no staff/admin login.
+    
     [Route("CertificateRequest")]
     public class CertificateRequestController : Controller
     {

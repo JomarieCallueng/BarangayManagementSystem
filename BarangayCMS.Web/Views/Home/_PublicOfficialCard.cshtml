@@ -69,13 +69,12 @@
         // nagpapakita ng pekeng komite para sa Captain/Secretary/Treasurer.
         var committee = BarangayCMS.Web.Areas.Admin.Services.OfficialStructure.DisplayCommittee(Model.Position, Model.Committee);
     }
+    @* Public view is people-centered: ipakita LAMANG ang committee kapag may tunay na
+       assignment. Ang "No specific committee" ay ADMIN-only na label — hindi ito
+       ipinapakita sa publiko/residente. *@
     @if (!string.IsNullOrWhiteSpace(committee))
     {
         <div class="official-card__committee"><i class="bi bi-diagram-3-fill me-1"></i>@committee</div>
-    }
-    else
-    {
-        <div class="official-card__committee text-muted"><i class="bi bi-dash-circle me-1"></i>No specific committee</div>
     }
 
     <p class="official-card__desc">@DescribePosition(Model.Position)</p>

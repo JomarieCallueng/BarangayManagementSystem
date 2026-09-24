@@ -14,8 +14,29 @@
     var chair = members.FirstOrDefault(IsChair);
     var kagawads = members.Where(o => o != chair).ToList();
 
+    // Ordering: Chairperson (lead) first, then Secretary + Treasurer side-by-side,
+    // then the remaining SK members.
+    bool IsSecretary(BarangayCMS.Entities.BarangayOfficial o) => (o.Position ?? string.Empty).ToLowerInvariant().Contains("secretary");
+    bool IsTreasurer(BarangayCMS.Entities.BarangayOfficial o) => (o.Position ?? string.Empty).ToLowerInvariant().Contains("treasurer");
+
+    var skSecretary = kagawads.FirstOrDefault(IsSecretary);
+    var skTreasurer = kagawads.FirstOrDefault(IsTreasurer);
+    var skRest = kagawads.Where(o => o != skSecretary && o != skTreasurer).ToList();
+
+    var orderedMembers = new List<BarangayCMS.Entities.BarangayOfficial>();
+    if (chair != null) orderedMembers.Add(chair);
+    if (skSecretary != null) orderedMembers.Add(skSecretary);
+    if (skTreasurer != null) orderedMembers.Add(skTreasurer);
+    orderedMembers.AddRange(skRest);
+
     // ViewData copy na nagmamarka sa featured card (SK Chairperson).
     var featuredData = new ViewDataDictionary(ViewData) { ["Featured"] = true };
+
+    var servantsData = new ViewDataDictionary(ViewData)
+    {
+        ["ServantsTitle"] = "Your SK Public Servants",
+        ["ServantsLeadId"] = chair?.BarangayOfficialId
+    };
 }
 
 <!-- HERO -->
@@ -42,37 +63,8 @@
     }
     else
     {
-        @if (chair != null)
-        {
-            <!-- FEATURED: SK CHAIRPERSON -->
-            <div class="people-section-title mb-3">
-                <span class="people-eyebrow">Pinuno ng Kabataan</span>
-                <h2>SK Chairperson</h2>
-            </div>
-            <partial name="_PublicOfficialCard" model="chair" view-data="featuredData" />
-        }
-
-        @if (kagawads.Any())
-        {
-            <!-- SK KAGAWADS / MEMBERS -->
-            <div class="people-section-title">
-                <span class="people-eyebrow">Mga Kasapi</span>
-                <h2>@(chair != null ? "SK Members" : "Sangguniang Kabataan Members")</h2>
-            </div>
-
-            <div class="row g-4">
-                @foreach (var member in kagawads)
-                {
-                    <div class="col-12 col-sm-6 col-lg-4">
-                        <partial name="_PublicOfficialCard" model="member" />
-                    </div>
-                }
-            </div>
-        }
+        <partial name="_PublicServantsGrid" model="orderedMembers" view-data="servantsData" />
     }
-
-    <!-- SK STANDING COMMITTEES -->
-    <partial name="_SkCommittees" model="members" />
 </div>
 
 <!-- PERSON-SPECIFIC HISTORY MODALS -->

@@ -4,6 +4,7 @@ using BarangayCMS.DAL.Context;
 using BarangayCMS.Entities;
 using BarangayCMS.Web.Areas.Admin.Models;
 using BarangayCMS.Web.Areas.Admin.Services;
+using BarangayCMS.Web.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,7 +83,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             {
                 var official = new BarangayOfficial
                 {
-                    FullName = model.FullName,
+                    FullName = NameFormatter.ToProperName(model.FullName) ?? string.Empty,
                     Position = model.Position,
                     // Role-based committee (server-side final authority).
                     Committee = OfficialStructure.NormalizeCommittee(model.Position, model.Committee),
@@ -154,7 +155,7 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                         official.ProfileImagePath = await SaveUploadAsync(model.ProfileImageFile, "officials");
                     }
 
-                    official.FullName = model.FullName;
+                    official.FullName = NameFormatter.ToProperName(model.FullName) ?? string.Empty;
                     official.Position = model.Position;
                     // I-recalculate ang committee base sa (posibleng bago) na posisyon:
                     // linisin para sa Captain/Sec/Treas, sapilitan para sa SK Chair, atbp.

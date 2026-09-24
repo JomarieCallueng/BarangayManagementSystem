@@ -4,6 +4,40 @@
     var certificates = (Model ?? Enumerable.Empty<BarangayCMS.Entities.CertificateType>()).ToList();
 }
 
+<style>
+    /* ===== FAQ — themed accordion + search (light/dark safe) ===== */
+    .faq-search { max-width: 640px; margin: 0 auto 1.75rem; }
+    .faq-search .input-group {
+        background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+        box-shadow: var(--shadow); overflow: hidden;
+    }
+    .faq-search .form-control, .faq-search .input-group-text { border: 0; background: var(--surface); padding-top: .7rem; padding-bottom: .7rem; }
+    .faq-search .form-control:focus { box-shadow: none; }
+
+    .faq-accordion .accordion-item {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius) !important; margin-bottom: .75rem; overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+    .faq-accordion .accordion-button {
+        background: var(--surface); color: var(--heading); font-weight: 600; border-radius: 0;
+    }
+    .faq-accordion .accordion-button:not(.collapsed) {
+        background: var(--accent-soft); color: var(--accent); box-shadow: none;
+    }
+    .faq-accordion .accordion-button:focus { box-shadow: none; border-color: var(--border); }
+    .faq-accordion .accordion-button::after { transition: transform .2s ease; }
+    .faq-accordion .accordion-body { color: var(--body-text); }
+
+    .faq-empty {
+        text-align: center; color: var(--muted); background: var(--surface-alt);
+        border: 1px dashed var(--border); border-radius: var(--radius); padding: 2rem 1rem;
+    }
+    @@media (prefers-reduced-motion: reduce) {
+        .faq-accordion .accordion-button::after { transition: none; }
+    }
+</style>
+
 <!-- HERO -->
 <section class="people-hero">
     <div class="people-hero__inner">
@@ -17,10 +51,19 @@
 </section>
 
 <div class="container people-wrap py-5" style="max-width: 900px;">
-    <div class="accordion" id="faqAccordion">
+
+    <!-- 🔎 SEARCH -->
+    <div class="faq-search">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="faqSearch" class="form-control" placeholder="Maghanap ng tanong… (e.g. sertipiko, reklamo)" autocomplete="off" aria-label="Search FAQs" />
+        </div>
+    </div>
+
+    <div class="accordion faq-accordion" id="faqAccordion">
 
         <!-- 1. CERTIFICATES (dynamic mula sa DB) -->
-        <div class="accordion-item">
+        <div class="accordion-item" data-faq data-faq-text="paano humiling barangay certificate sertipiko requirements dokumento">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
                     <i class="bi bi-file-earmark-text text-primary me-2"></i> Paano humiling ng barangay certificate?
@@ -70,7 +113,7 @@
         </div>
 
         <!-- 2. STATUS / TRACKING -->
-        <div class="accordion-item">
+        <div class="accordion-item" data-faq data-faq-text="status tracking request pending approved released update">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
                     <i class="bi bi-hourglass-split text-info me-2"></i> Paano ko malalaman ang status ng aking request?
@@ -85,7 +128,7 @@
         </div>
 
         <!-- 3. COMPLAINTS -->
-        <div class="accordion-item">
+        <div class="accordion-item" data-faq data-faq-text="reklamo complaint dispute mediation isyu file a complaint">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
                     <i class="bi bi-chat-left-text text-warning me-2"></i> Paano magsumite ng reklamo (complaint)?
@@ -99,7 +142,7 @@
         </div>
 
         <!-- 4. MESSAGES / NOTIFICATIONS -->
-        <div class="accordion-item">
+        <div class="accordion-item" data-faq data-faq-text="mensahe message contact number emergency alerts inbox">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
                     <i class="bi bi-envelope text-success me-2"></i> Paano magpadala ng mensahe sa barangay?
@@ -113,7 +156,7 @@
         </div>
 
         <!-- 5. DISASTER / EVACUATION -->
-        <div class="accordion-item">
+        <div class="accordion-item" data-faq data-faq-text="disaster evacuation sakuna preparedness center emergency">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
                     <i class="bi bi-exclamation-triangle text-danger me-2"></i> Saan makikita ang disaster at evacuation info?
@@ -127,7 +170,7 @@
         </div>
 
         <!-- 6. CONTACT -->
-        <div class="accordion-item">
+        <div class="accordion-item" data-faq data-faq-text="contact hotline email office hours ugnayan telepono">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
                     <i class="bi bi-telephone text-primary me-2"></i> Paano makikipag-ugnayan sa barangay?
@@ -141,4 +184,33 @@
         </div>
 
     </div>
+
+    <div id="faqNoResults" class="faq-empty d-none mt-3">
+        <i class="bi bi-search d-block mb-2 fs-4"></i>
+        Walang tumugmang tanong sa iyong hinanap.
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var search = document.getElementById('faqSearch');
+            var noResults = document.getElementById('faqNoResults');
+            var items = Array.prototype.slice.call(document.querySelectorAll('[data-faq]'));
+            if (!search) return;
+
+            search.addEventListener('input', function () {
+                var q = this.value.trim().toLowerCase();
+                var visible = 0;
+                items.forEach(function (it) {
+                    var question = (it.querySelector('.accordion-button')?.textContent || '').toLowerCase();
+                    var keywords = (it.getAttribute('data-faq-text') || '').toLowerCase();
+                    var match = !q || question.indexOf(q) !== -1 || keywords.indexOf(q) !== -1;
+                    it.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                noResults.classList.toggle('d-none', visible !== 0);
+            });
+        })();
+    </script>
+}

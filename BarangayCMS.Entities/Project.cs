@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,5 +33,8 @@ namespace BarangayCMS.Entities
 
         public DateTime DateLogged { get; set; }
         public DateTime? LastUpdated { get; set; }
+
+        // 💸 Isang proyekto → maraming itemized na gastos.
+        public ICollection<ProjectExpense> Expenses { get; set; } = new List<ProjectExpense>();
     }
 }

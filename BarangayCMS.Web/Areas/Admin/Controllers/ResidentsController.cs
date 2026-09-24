@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BarangayCMS.DAL.Context;
 using BarangayCMS.Entities;
 using BarangayCMS.Web.Areas.Admin.Models;
+using BarangayCMS.Web.Validation;
 
 namespace BarangayCMS.Web.Areas.Admin.Controllers
 {
@@ -136,13 +137,13 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             {
                 var resident = new Resident
                 {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    MiddleName = model.MiddleName ?? string.Empty,
+                    FirstName = NameFormatter.ToProperName(model.FirstName) ?? string.Empty,
+                    LastName = NameFormatter.ToProperName(model.LastName) ?? string.Empty,
+                    MiddleName = NameFormatter.ToProperName(model.MiddleName) ?? string.Empty,
                     Gender = model.Gender,
                     BirthDate = model.BirthDate,
                     CivilStatus = model.CivilStatus,
-                    ContactNumber = model.ContactNumber ?? string.Empty,
+                    ContactNumber = model.ContactNumber?.Trim() ?? string.Empty,
                     HouseNumber = model.Address ?? string.Empty,
                     SitioPurok = model.Purok ?? string.Empty,
                     IsVoter = model.IsVoter,
@@ -204,13 +205,13 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
                 var resident = await _context.Residents.FindAsync(id);
                 if (resident == null) return NotFound();
 
-                resident.FirstName = model.FirstName;
-                resident.LastName = model.LastName;
-                resident.MiddleName = model.MiddleName ?? string.Empty;
+                resident.FirstName = NameFormatter.ToProperName(model.FirstName) ?? string.Empty;
+                resident.LastName = NameFormatter.ToProperName(model.LastName) ?? string.Empty;
+                resident.MiddleName = NameFormatter.ToProperName(model.MiddleName) ?? string.Empty;
                 resident.Gender = model.Gender;
                 resident.BirthDate = model.BirthDate;
                 resident.CivilStatus = model.CivilStatus;
-                resident.ContactNumber = model.ContactNumber ?? string.Empty;
+                resident.ContactNumber = model.ContactNumber?.Trim() ?? string.Empty;
                 resident.HouseNumber = model.Address ?? string.Empty;
                 resident.SitioPurok = model.Purok ?? string.Empty;
                 resident.IsVoter = model.IsVoter;

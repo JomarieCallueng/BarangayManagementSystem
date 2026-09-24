@@ -5,10 +5,12 @@
     try { adminUnread = await ContactMessageService.GetUnreadCountAsync(); } catch { }
 }
 <!DOCTYPE html>
-<html lang="@System.Globalization.CultureInfo.CurrentUICulture.Name">
+<html lang="@(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("fil") ? "tl" : "en")" translate="no">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* App has its own English/Filipino switch — suppress Chrome's translate prompt. *@
+    <meta name="google" content="notranslate" />
     <title>@ViewData["Title"] - @L["Brand.AdminTitle"]</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -92,11 +94,13 @@
                         }
                     </a>
                     <div class="dropdown">
-                        <button class="btn btn-light btn-sm dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown">
+                        <button class="btn btn-light btn-sm dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                             <i class="bi bi-person-circle me-1"></i> @L["Topbar.Administrator"]
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                             <li><a class="dropdown-item small py-2" href="/Admin/Settings"><i class="bi bi-gear me-2 text-muted"></i>@L["Nav.Settings"]</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <partial name="_AppearanceMenu" />
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item small py-2 text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-power me-2"></i>@L["Nav.Logout"]</a></li>
                         </ul>
@@ -150,14 +154,8 @@
         </div>
     </div>
 
-    @* Floating appearance switcher: Civic Navy / Coastal Teal / Midnight Slate. *@
-    <partial name="~/Views/Shared/_ThemeSwitcher.cshtml" />
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Wire up the floating appearance switcher.
-        if (window.BmsTheme) { window.BmsTheme.initSwitcher(); }
-
         // Highlight the active sidebar link based on the current URL.
         (function () {
             var path = window.location.pathname.toLowerCase().replace(/\/+$/, "");

@@ -7,7 +7,7 @@
     .cat-hero {
         position: relative; overflow: hidden;
         background: var(--hero-bg); color: var(--hero-text);
-        padding: 3.25rem 1rem 3.75rem;
+        padding: 3rem 1rem;
     }
     .cat-hero::after {
         content: ""; position: absolute; top: -45%; right: -8%;
@@ -15,21 +15,26 @@
         background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 70%);
         pointer-events: none;
     }
-    .cat-hero__inner { max-width: 1140px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: center; gap: 1.15rem; flex-wrap: wrap; }
+    .cat-hero__inner {
+        max-width: 1140px; margin: 0 auto; position: relative; z-index: 1;
+        display: flex; align-items: center; gap: 1.15rem; flex-wrap: wrap;
+    }
     .cat-hero__icon {
         flex: 0 0 auto; width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; font-size: 1.8rem;
         background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28);
     }
-    .cat-hero__title { font-weight: 800; font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: 0 0 .35rem; }
-    .cat-hero__sub { color: rgba(255,255,255,.78); max-width: 46rem; margin: 0; }
+    .cat-hero__title { font-weight: 800; font-size: clamp(1.7rem, 3.4vw, 2.5rem); margin: 0 0 .35rem; color: #fff; }
+    .cat-hero__sub { color: rgba(255,255,255,.8); max-width: 46rem; margin: 0; }
 
-    .cat-wrap { max-width: 1140px; margin-top: -2.25rem; position: relative; z-index: 2; }
+    /* Cards sit cleanly BELOW the hero (no negative-margin overlap). */
+    .cat-wrap { max-width: 1140px; padding-top: 2.75rem; }
 
     .cat-card {
         position: relative; height: 100%; overflow: hidden;
+        display: flex; flex-direction: column;
         background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
         box-shadow: var(--shadow); padding: 1.75rem;
-        transition: transform .2s ease, box-shadow .2s ease;
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     }
     .cat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
     .cat-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; }
@@ -47,6 +52,14 @@
     .cat-card__title { font-weight: 800; color: var(--heading); font-size: 1.15rem; margin: 0 0 .5rem; }
     .cat-card__text { color: var(--body-text); font-size: .92rem; line-height: 1.6; margin: 0; }
 
+    /* "Handled by / routed to" tag pinned to the bottom of each card. */
+    .cat-card__route {
+        margin-top: auto; padding-top: 1rem;
+        display: inline-flex; align-items: center; gap: .45rem;
+        font-size: .78rem; font-weight: 700; color: var(--muted);
+    }
+    .cat-card__route i { color: var(--accent); }
+
     .cat-cta {
         display: inline-flex; align-items: center; gap: .55rem;
         padding: .95rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.05rem;
@@ -56,6 +69,7 @@
     .cat-cta:hover { background: var(--accent-hover); color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
     .cat-cta i { transition: transform .18s ease; }
     .cat-cta:hover i { transform: translateX(4px); }
+    .cat-cta__note { display: block; margin-top: .75rem; font-size: .85rem; color: var(--muted); }
 
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
     .reveal.is-in { opacity: 1; transform: none; }
@@ -84,6 +98,7 @@
                 <div class="cat-card__icon"><i class="bi bi-people-fill"></i></div>
                 <h2 class="cat-card__title">Neighborhood Disputes</h2>
                 <p class="cat-card__text">Alitan sa pagitan ng magkakapitbahay gaya ng ingay, boundary issues, o pinsala sa ari-arian na sakop ng Katarungang Pambarangay.</p>
+                <span class="cat-card__route"><i class="bi bi-signpost-2-fill"></i> Katarungang Pambarangay (Lupon)</span>
             </div>
         </div>
 
@@ -93,6 +108,7 @@
                 <div class="cat-card__icon"><i class="bi bi-exclamation-octagon-fill"></i></div>
                 <h2 class="cat-card__title">Peace &amp; Order Violations</h2>
                 <p class="cat-card__text">Mga paglabag sa ordinansa tulad ng curfew, talamak na pagsusugal, ilegal na parke, o gulo sa pampublikong daan.</p>
+                <span class="cat-card__route"><i class="bi bi-shield-fill-check"></i> Barangay Tanod &amp; Peace and Order</span>
             </div>
         </div>
 
@@ -102,6 +118,7 @@
                 <div class="cat-card__icon"><i class="bi bi-tree-fill"></i></div>
                 <h2 class="cat-card__title">Environmental Concerns</h2>
                 <p class="cat-card__text">Ilegal na pagtatapon ng basura, baradong kanal dahil sa kapabayaan, o mga panganib sa kalusugan ng komunidad.</p>
+                <span class="cat-card__route"><i class="bi bi-recycle"></i> Environment &amp; Sanitation Committee</span>
             </div>
         </div>
     </div>
@@ -110,6 +127,7 @@
         <a asp-controller="Complaint" asp-action="Create" class="cat-cta">
             Proceed to File an Official Report <i class="bi bi-arrow-right"></i>
         </a>
+        <span class="cat-cta__note">Not sure which category fits? File the report and the barangay will route it for you.</span>
     </div>
 </div>
 

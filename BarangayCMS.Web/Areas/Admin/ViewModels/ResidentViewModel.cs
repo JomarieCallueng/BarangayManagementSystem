@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using BarangayCMS.Web.Validation;
 
 namespace BarangayCMS.Web.Areas.Admin.Models
 {
@@ -9,15 +10,18 @@ namespace BarangayCMS.Web.Areas.Admin.Models
 
         [Required(ErrorMessage = "Ang Pangalan (First Name) ay kinakailangan.")]
         [MaxLength(100, ErrorMessage = "Hindi pwedeng lumampas sa 100 karakter.")]
+        [PersonName]
         [Display(Name = "First Name")]
         public string FirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Ang Apelyido (Last Name) ay kinakailangan.")]
         [MaxLength(100, ErrorMessage = "Hindi pwedeng lumampas sa 100 karakter.")]
+        [PersonName]
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = string.Empty;
 
         [MaxLength(100, ErrorMessage = "Hindi pwedeng lumampas sa 100 karakter.")]
+        [PersonName]
         [Display(Name = "Middle Name")]
         public string? MiddleName { get; set; }
 
@@ -42,7 +46,7 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         public string Purok { get; set; } = string.Empty;
 
         [Display(Name = "Contact Number")]
-        [Phone(ErrorMessage = "Maling format ng numero.")]
+        [PhilippineMobile]
         [MaxLength(20, ErrorMessage = "Hindi pwedeng lumampas sa 20 karakter.")]
         public string? ContactNumber { get; set; }
 

@@ -24,18 +24,28 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         {
             var projects = await _context.Projects
                 .OrderByDescending(p => p.StartDate)
-                .Select(p => new ProjectViewModel
-                {
-                    Id = p.ProjectId,
-                    ProjectName = p.Title, // Inayos mula ProjectName -> Title
-                    Description = p.Description,
-                    Budget = p.BudgetAllocated, // Inayos mula Budget -> BudgetAllocated
-                    StartDate = p.StartDate,
-                    EndDate = p.EndDate ?? DateTime.MinValue, // Nullable handling para sa ViewModel mo
-                    Status = p.Status
-                }).ToListAsync();
+                .ToListAsync();
 
-            return View(projects);
+            // Isang grouped query lamang para sa lahat ng gastos — iwas N+1.
+            var expenseByProject = await _context.ProjectExpenses
+                .Where(e => !e.IsVoided)
+                .GroupBy(e => e.ProjectId)
+                .Select(g => new { ProjectId = g.Key, Total = g.Sum(x => x.Amount) })
+                .ToDictionaryAsync(x => x.ProjectId, x => x.Total);
+
+            var viewModels = projects.Select(p => new ProjectViewModel
+            {
+                Id = p.ProjectId,
+                ProjectName = p.Title,
+                Description = p.Description,
+                Budget = p.BudgetAllocated,
+                TotalExpenses = expenseByProject.TryGetValue(p.ProjectId, out var t) ? t : 0m,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate ?? DateTime.MinValue,
+                Status = p.Status
+            }).ToList();
+
+            return View(viewModels);
         }
 
         // 2. GET: Admin/Projects/Details/5
@@ -46,15 +56,23 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             var project = await _context.Projects.FindAsync(id.Value);
             if (project == null) return NotFound();
 
-            var viewModel = new ProjectViewModel
+            // Aktibong (hindi na-void) na mga gastos para sa buod ng pananalapi.
+            var expenses = await _context.ProjectExpenses
+                .Where(e => e.ProjectId == project.ProjectId && !e.IsVoided)
+                .ToListAsync();
+
+            var viewModel = new ProjectDetailsViewModel
             {
                 Id = project.ProjectId,
                 ProjectName = project.Title,
                 Description = project.Description,
+                Location = project.Location,
+                Contractor = project.Contractor,
                 Budget = project.BudgetAllocated,
                 StartDate = project.StartDate,
-                EndDate = project.EndDate ?? DateTime.MinValue,
-                Status = project.Status
+                EndDate = project.EndDate,
+                Status = project.Status,
+                Financial = ProjectFinancialBuilder.BuildSummary(project, expenses)
             };
 
             return View(viewModel);
@@ -179,6 +197,10 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
             var project = await _context.Projects.FindAsync(id.Value);
             if (project == null) return NotFound();
 
+            // Ipaalam kung may financial history na ang proyekto (bawal burahin).
+            ViewBag.FinancialRecordCount = await _context.ProjectExpenses
+                .CountAsync(e => e.ProjectId == project.ProjectId);
+
             var viewModel = new ProjectViewModel
             {
                 Id = project.ProjectId,
@@ -195,11 +217,20 @@ namespace BarangayCMS.Web.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var project = await _context.Projects.FindAsync(id);
-            if (project != null)
+            if (project == null) return RedirectToAction(nameof(Index));
+
+            // 🛡️ Delete safety: huwag burahin ang proyektong may financial records.
+            bool hasFinancialRecords = await _context.ProjectExpenses.AnyAsync(e => e.ProjectId == id);
+            if (hasFinancialRecords)
             {
-                _context.Projects.Remove(project);
-                await _context.SaveChangesAsync();
+                TempData["ProjectError"] =
+                    "This project cannot be deleted because it has existing financial records. " +
+                    "Void its expenses first, or keep the project for record-keeping.";
+                return RedirectToAction(nameof(Index));
             }
+
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }

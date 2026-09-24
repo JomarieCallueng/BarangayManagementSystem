@@ -141,7 +141,7 @@
                                         data-purok="@c.SitioPurok" data-capacity="@c.Capacity"
                                         data-occupants="@c.CurrentOccupants" data-contact="@c.ContactNumber"
                                         data-notes="@c.Notes" data-active="@(c.IsActive ? "true" : "false")">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil-square"></i>
                                 </button>
                                 <form action="/Admin/Disaster/ToggleEvacuationCenter" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()

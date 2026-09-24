@@ -17,7 +17,7 @@ namespace BarangayCMS.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -833,6 +833,48 @@ namespace BarangayCMS.DAL.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("BarangayCMS.Entities.ProjectExpense", b =>
+                {
+                    b.Property<int>("ExpenseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExpenseId"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateLogged")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpenseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsVoided")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LoggedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ExpenseId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectExpenses");
+                });
+
             modelBuilder.Entity("BarangayCMS.Entities.ReportLog", b =>
                 {
                     b.Property<int>("ReportLogId")
@@ -1232,6 +1274,17 @@ namespace BarangayCMS.DAL.Migrations
                     b.Navigation("BarangayOfficial");
                 });
 
+            modelBuilder.Entity("BarangayCMS.Entities.ProjectExpense", b =>
+                {
+                    b.HasOne("BarangayCMS.Entities.Project", "Project")
+                        .WithMany("Expenses")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1296,6 +1349,11 @@ namespace BarangayCMS.DAL.Migrations
             modelBuilder.Entity("BarangayCMS.Entities.Committee", b =>
                 {
                     b.Navigation("Assignments");
+                });
+
+            modelBuilder.Entity("BarangayCMS.Entities.Project", b =>
+                {
+                    b.Navigation("Expenses");
                 });
 
             modelBuilder.Entity("BarangayCMS.Entities.Resident", b =>

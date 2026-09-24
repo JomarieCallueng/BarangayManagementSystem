@@ -5,6 +5,7 @@ using BarangayCMS.Areas.Staff.ViewModels;
 using BarangayCMS.BLL.Interfaces;
 using BarangayCMS.DAL.Context;
 using BarangayCMS.DTO;
+using BarangayCMS.Web.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,13 +143,13 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 // data handling sa dalawang portal.
                 var newResidentDto = new ResidentDTO
                 {
-                    FirstName = model.FirstName ?? string.Empty,
-                    LastName = model.LastName ?? string.Empty,
-                    MiddleName = model.MiddleName ?? string.Empty,
+                    FirstName = NameFormatter.ToProperName(model.FirstName) ?? string.Empty,
+                    LastName = NameFormatter.ToProperName(model.LastName) ?? string.Empty,
+                    MiddleName = NameFormatter.ToProperName(model.MiddleName) ?? string.Empty,
                     BirthDate = model.BirthDate,
                     Gender = model.Gender ?? string.Empty,
                     CivilStatus = model.CivilStatus ?? string.Empty,
-                    ContactNumber = model.ContactNumber ?? string.Empty,
+                    ContactNumber = model.ContactNumber?.Trim() ?? string.Empty,
                     HouseNumber = model.Address ?? string.Empty,
                     SitioPurok = model.Purok ?? string.Empty,
                     IsVoter = model.IsVoter,
@@ -222,13 +223,13 @@ namespace BarangayCMS.Areas.Staff.Controllers
                 var updatedDto = new ResidentDTO
                 {
                     Id = model.ResidentId,
-                    FirstName = model.FirstName ?? string.Empty,
-                    LastName = model.LastName ?? string.Empty,
-                    MiddleName = model.MiddleName ?? string.Empty,
+                    FirstName = NameFormatter.ToProperName(model.FirstName) ?? string.Empty,
+                    LastName = NameFormatter.ToProperName(model.LastName) ?? string.Empty,
+                    MiddleName = NameFormatter.ToProperName(model.MiddleName) ?? string.Empty,
                     BirthDate = model.BirthDate,
                     Gender = model.Gender ?? string.Empty,
                     CivilStatus = model.CivilStatus ?? string.Empty,
-                    ContactNumber = model.ContactNumber ?? string.Empty,
+                    ContactNumber = model.ContactNumber?.Trim() ?? string.Empty,
                     // Pareho ng Admin: Address → HouseNumber, Purok → SitioPurok.
                     HouseNumber = model.Address ?? string.Empty,
                     SitioPurok = model.Purok ?? string.Empty,

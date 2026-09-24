@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BarangayCMS.Web.Areas.Admin.Models
 {
@@ -34,5 +35,19 @@ namespace BarangayCMS.Web.Areas.Admin.Models
         [MaxLength(30)]
         [Display(Name = "Kasalukuyang Status")]
         public string Status { get; set; } = "Planned";
+
+        // ── Display-only na financial rollup (para sa Index list). Hindi bahagi ng form submit. ──
+        [Display(Name = "Nagamit / Gastos (PHP)")]
+        public decimal TotalExpenses { get; set; }
+
+        public decimal Remaining => Budget - TotalExpenses;
+
+        public double PercentUsed =>
+            Budget > 0 ? Math.Round(Math.Min((double)(TotalExpenses / Budget) * 100, 100), 1) : 0;
+
+        public double RawPercentUsed =>
+            Budget > 0 ? Math.Round((double)(TotalExpenses / Budget) * 100, 1) : 0;
+
+        public bool HasBudget => Budget > 0;
     }
 }

@@ -114,6 +114,10 @@
   <data name="Help.Subtitle" xml:space="preserve"><value>What each module does and how to use it.</value></data>
   <data name="Help.InfoNote" xml:space="preserve"><value>This guide covers only the modules that actually exist in the current system.</value></data>
   <data name="Help.SearchPlaceholder" xml:space="preserve"><value>Search help topics…</value></data>
+  <data name="Help.BrowseByTopic" xml:space="preserve"><value>Browse by topic</value></data>
+  <data name="Help.ViewGuide" xml:space="preserve"><value>View guide</value></data>
+  <data name="Help.StepsTitle" xml:space="preserve"><value>Step-by-step</value></data>
+  <data name="Help.TipLabel" xml:space="preserve"><value>Tip</value></data>
   <data name="Help.DownloadManual" xml:space="preserve"><value>Download User Manual</value></data>
   <data name="Help.NoResults" xml:space="preserve"><value>No help topics found.</value></data>
   <data name="Help.ClearSearch" xml:space="preserve"><value>Clear search</value></data>
@@ -167,4 +171,105 @@
   <data name="Sms.LabelEmergency" xml:space="preserve"><value>Emergency</value></data>
   <data name="Sms.LabelDate" xml:space="preserve"><value>Date</value></data>
   <data name="Sms.LabelRecipients" xml:space="preserve"><value>Recipients</value></data>
+  <!-- ===== Staff chrome ===== -->
+  <data name="Brand.EncoderPortal" xml:space="preserve"><value>Encoder Portal</value></data>
+  <data name="Topbar.EncoderSession" xml:space="preserve"><value>Encoder Session Active</value></data>
+  <data name="Topbar.StaffEncoder" xml:space="preserve"><value>Staff Encoder</value></data>
+  <data name="Nav.SignOut" xml:space="preserve"><value>Sign Out</value></data>
+  <data name="Logout.StaffMessage" xml:space="preserve"><value>Are you sure you want to log out from the Encoder Portal? Unsaved changes might not be saved.</value></data>
+  <!-- ===== Appearance / Theme ===== -->
+  <data name="Appearance.Title" xml:space="preserve"><value>Appearance</value></data>
+  <data name="Appearance.Mode" xml:space="preserve"><value>Mode</value></data>
+  <data name="Appearance.Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Appearance.Dark" xml:space="preserve"><value>Dark</value></data>
+  <!-- ===== Public navigation / footer ===== -->
+  <data name="Pub.Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Pub.About" xml:space="preserve"><value>About Us</value></data>
+  <data name="Pub.AboutBarangay" xml:space="preserve"><value>About Barangay</value></data>
+  <data name="Pub.Officials" xml:space="preserve"><value>Barangay Officials</value></data>
+  <data name="Pub.SK" xml:space="preserve"><value>SK Officials</value></data>
+  <data name="Pub.Faq" xml:space="preserve"><value>FAQs</value></data>
+  <data name="Pub.Modules" xml:space="preserve"><value>Modules</value></data>
+  <data name="Pub.OnlineServices" xml:space="preserve"><value>Online Services</value></data>
+  <data name="Pub.RequestCertificate" xml:space="preserve"><value>Request Certificate</value></data>
+  <data name="Pub.FileComplaint" xml:space="preserve"><value>File a Complaint</value></data>
+  <data name="Pub.Information" xml:space="preserve"><value>Information</value></data>
+  <data name="Pub.Announcements" xml:space="preserve"><value>Announcements</value></data>
+  <data name="Pub.Disaster" xml:space="preserve"><value>Disaster Preparedness</value></data>
+  <data name="Pub.Evacuation" xml:space="preserve"><value>Evacuation</value></data>
+  <data name="Pub.Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Pub.EmergencyAlerts" xml:space="preserve"><value>Emergency Alerts</value></data>
+  <data name="Pub.Footer.Tagline" xml:space="preserve"><value>A centralized digital platform improving governance, public service delivery, and community welfare.</value></data>
+  <data name="Pub.Footer.QuickLinks" xml:space="preserve"><value>Quick Links</value></data>
+  <data name="Pub.Footer.BarangayAnnouncements" xml:space="preserve"><value>Barangay Announcements</value></data>
+  <data name="Pub.Footer.DisasterResponse" xml:space="preserve"><value>Disaster Response</value></data>
+  <data name="Pub.Footer.EvacuationInfo" xml:space="preserve"><value>Evacuation Information</value></data>
+  <data name="Pub.Footer.StaffLogin" xml:space="preserve"><value>Staff Portal Login</value></data>
+  <data name="Pub.Footer.ContactInfo" xml:space="preserve"><value>Contact Info</value></data>
+  <data name="Pub.Footer.Hours" xml:space="preserve"><value>Mon–Fri, 8:00 AM – 5:00 PM</value></data>
+  <data name="Pub.Footer.Rights" xml:space="preserve"><value>© 2026 Comprehensive Barangay Management and Service System. All Rights Reserved.</value></data>
+  <data name="Common.BackToTop" xml:space="preserve"><value>Back to Top</value></data>
+  <!-- ===== Budget Tracker module ===== -->
+  <data name="Budget.Title" xml:space="preserve"><value>Budget Tracker</value></data>
+  <data name="Budget.Subtitle" xml:space="preserve"><value>Annual fund allocations and financial tracking per project.</value></data>
+  <data name="Budget.Project" xml:space="preserve"><value>Project</value></data>
+  <data name="Budget.AllProjects" xml:space="preserve"><value>All Projects (Fund Planner)</value></data>
+  <data name="Budget.SetAnnual" xml:space="preserve"><value>Set Annual Budget</value></data>
+  <data name="Budget.AddCategory" xml:space="preserve"><value>Add Budget Category</value></data>
+  <data name="Budget.TotalAnnual" xml:space="preserve"><value>Total Annual Budget</value></data>
+  <data name="Budget.FiscalYear" xml:space="preserve"><value>Fiscal Year</value></data>
+  <data name="Budget.AllocatedToPrograms" xml:space="preserve"><value>Allocated to Programs</value></data>
+  <data name="Budget.PctOfBudget" xml:space="preserve"><value>% of budget</value></data>
+  <data name="Budget.RemainingBudget" xml:space="preserve"><value>Remaining Budget</value></data>
+  <data name="Budget.UnallocatedBalance" xml:space="preserve"><value>Unallocated balance</value></data>
+  <data name="Budget.OverAllocated" xml:space="preserve"><value>Over-allocated</value></data>
+  <data name="Budget.Disbursed" xml:space="preserve"><value>Disbursed (Spent)</value></data>
+  <data name="Budget.PctOfAllocated" xml:space="preserve"><value>% of allocated</value></data>
+  <data name="Budget.AllocationSummary" xml:space="preserve"><value>Allocation Summary Per Fund Source</value></data>
+  <data name="Budget.Programs" xml:space="preserve"><value>program(s)</value></data>
+  <data name="Budget.CategoriesPrograms" xml:space="preserve"><value>Budget Categories &amp; Programs</value></data>
+  <data name="Budget.Records" xml:space="preserve"><value>record(s)</value></data>
+  <data name="Budget.FundCategoryProgram" xml:space="preserve"><value>Fund Category &amp; Program</value></data>
+  <data name="Budget.FundSource" xml:space="preserve"><value>Fund Source</value></data>
+  <data name="Budget.TotalAllocation" xml:space="preserve"><value>Total Allocation</value></data>
+  <data name="Budget.DisbursedUsed" xml:space="preserve"><value>Disbursed (Used)</value></data>
+  <data name="Budget.AvailableBalance" xml:space="preserve"><value>Available Balance</value></data>
+  <data name="Common.Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Budget.GeneralFund" xml:space="preserve"><value>General Fund</value></data>
+  <data name="Budget.NoDistributions" xml:space="preserve"><value>No budget distributions configured for the year</value></data>
+  <data name="Budget.AddFundsIncome" xml:space="preserve"><value>Add Funds / Income</value></data>
+  <data name="Budget.DisburseExpense" xml:space="preserve"><value>Disburse / Expense</value></data>
+  <data name="Budget.EditCategory" xml:space="preserve"><value>Edit Category</value></data>
+  <data name="Budget.BackToPlanner" xml:space="preserve"><value>Back to Fund Planner</value></data>
+  <data name="Budget.ViewProject" xml:space="preserve"><value>View Project</value></data>
+  <data name="Budget.RecordExpense" xml:space="preserve"><value>Record Expense</value></data>
+  <data name="Budget.ApprovedBudget" xml:space="preserve"><value>Approved Budget</value></data>
+  <data name="Budget.TotalExpenses" xml:space="preserve"><value>Total Expenses</value></data>
+  <data name="Budget.Remaining" xml:space="preserve"><value>Remaining</value></data>
+  <data name="Budget.Utilization" xml:space="preserve"><value>Budget Utilization</value></data>
+  <data name="Budget.Used" xml:space="preserve"><value>used</value></data>
+  <data name="Budget.NoApprovedBudget" xml:space="preserve"><value>No approved budget has been set for this project yet. Set an Allocated Budget in the project's Edit form to enable budget tracking.</value></data>
+  <data name="Budget.Items" xml:space="preserve"><value>item(s)</value></data>
+  <data name="Budget.FinancialRecords" xml:space="preserve"><value>Expenses / Financial Records</value></data>
+  <data name="Budget.ColDate" xml:space="preserve"><value>Date</value></data>
+  <data name="Budget.ColCategory" xml:space="preserve"><value>Category</value></data>
+  <data name="Budget.ColDescription" xml:space="preserve"><value>Description</value></data>
+  <data name="Budget.ColLoggedBy" xml:space="preserve"><value>Logged By</value></data>
+  <data name="Budget.ColAmount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Budget.NoExpenses" xml:space="preserve"><value>No expenses recorded for this project.</value></data>
+  <data name="Budget.VoidConfirm" xml:space="preserve"><value>Void this expense? It will be removed from totals but kept for records.</value></data>
+  <data name="Budget.Void" xml:space="preserve"><value>Void</value></data>
+  <data name="Budget.SetAnnualTitle" xml:space="preserve"><value>Set Total Annual Budget</value></data>
+  <data name="Budget.TotalFundsLabel" xml:space="preserve"><value>Total Barangay Funds (Pesos)</value></data>
+  <data name="Budget.SetAnnualHelp" xml:space="preserve"><value>This becomes the basis of the total funds from which each program category is deducted.</value></data>
+  <data name="Budget.SaveAnnual" xml:space="preserve"><value>Save Annual Budget</value></data>
+  <data name="Budget.Status.Within" xml:space="preserve"><value>Within Budget</value></data>
+  <data name="Budget.Status.Near" xml:space="preserve"><value>Near Budget Limit</value></data>
+  <data name="Budget.Status.Exhausted" xml:space="preserve"><value>Budget Exhausted</value></data>
+  <data name="Budget.Status.Over" xml:space="preserve"><value>Over Budget</value></data>
+  <data name="Budget.Status.None" xml:space="preserve"><value>No Budget Set</value></data>
+  <!-- ===== Form validation ===== -->
+  <data name="Val.Name.Invalid" xml:space="preserve"><value>Please enter a valid name (letters, spaces, hyphens and apostrophes only).</value></data>
+  <data name="Val.Mobile.Format" xml:space="preserve"><value>Mobile number must be exactly 11 digits (e.g., 09XXXXXXXXX).</value></data>
+  <data name="Val.Mobile.Helper" xml:space="preserve"><value>Enter an 11-digit mobile number (09XXXXXXXXX).</value></data>
 </root>

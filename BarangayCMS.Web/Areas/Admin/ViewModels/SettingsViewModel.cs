@@ -9,7 +9,7 @@ namespace BarangayCMS.Web.Areas.Admin.Models
     {
         [Required(ErrorMessage = "Ang pangalan ng Barangay ay kinakailangan.")]
         [Display(Name = "Official Barangay Name")]
-        public string OfficialBarangayName { get; set; } = "Barangay Poblacion Uno";
+        public string OfficialBarangayName { get; set; } = "Barangay Tatalon";
 
         [Required(ErrorMessage = "Ang pangalan ng Siyudad/Munisipyo ay kinakailangan.")]
         [Display(Name = "Municipality / City")]

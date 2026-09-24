@@ -34,58 +34,63 @@
         <i class="bi bi-check-circle-fill theme-option__check" aria-hidden="true"></i>
     </button>
 
-    <button type="button" class="theme-option" data-preset="coastal" role="radio" aria-checked="false">
+    <button type="button" class="theme-option" data-preset="emerald" role="radio" aria-checked="false">
         <span class="theme-option__swatch" aria-hidden="true">
-            <span style="background:#0f766e"></span>
-            <span style="background:#f59e0b"></span>
-            <span style="background:#fdfcf7"></span>
+            <span style="background:#0c3b2e"></span>
+            <span style="background:#d99a00"></span>
+            <span style="background:#eef3ee"></span>
+        </span>
+        <span>
+            <span class="theme-option__name">Emerald Gold</span>
+            <span class="theme-option__meta">Deep green &middot; warm gold</span>
+        </span>
+        <i class="bi bi-check-circle-fill theme-option__check" aria-hidden="true"></i>
+    </button>
+
+    <button type="button" class="theme-option" data-preset="teal" role="radio" aria-checked="false">
+        <span class="theme-option__swatch" aria-hidden="true">
+            <span style="background:#0f5257"></span>
+            <span style="background:#0d9488"></span>
+            <span style="background:#ecf5f4"></span>
         </span>
         <span>
             <span class="theme-option__name">Coastal Teal</span>
-            <span class="theme-option__meta">Split hero &middot; 2-column cards</span>
+            <span class="theme-option__meta">Calm coastal teal &middot; light</span>
         </span>
         <i class="bi bi-check-circle-fill theme-option__check" aria-hidden="true"></i>
     </button>
 
-    <button type="button" class="theme-option" data-preset="midnight" role="radio" aria-checked="false">
-        <span class="theme-option__swatch" aria-hidden="true">
-            <span style="background:#0b1120"></span>
-            <span style="background:#6366f1"></span>
-            <span style="background:#151d2e"></span>
-        </span>
-        <span>
-            <span class="theme-option__name">Midnight Slate</span>
-            <span class="theme-option__meta">Compact dark &middot; list rows</span>
-        </span>
-        <i class="bi bi-check-circle-fill theme-option__check" aria-hidden="true"></i>
-    </button>
-
-    <button type="button" class="theme-option" data-preset="sage" role="radio" aria-checked="false">
-        <span class="theme-option__swatch" aria-hidden="true">
-            <span style="background:#3d6b52"></span>
-            <span style="background:#4f9e77"></span>
-            <span style="background:#f2f7f3"></span>
-        </span>
-        <span>
-            <span class="theme-option__name">Sage Garden</span>
-            <span class="theme-option__meta">Soft green &middot; light &amp; calm</span>
-        </span>
-        <i class="bi bi-check-circle-fill theme-option__check" aria-hidden="true"></i>
-    </button>
-
-    <button type="button" class="theme-option" data-preset="lilac" role="radio" aria-checked="false">
-        <span class="theme-option__swatch" aria-hidden="true">
-            <span style="background:#5a4fa3"></span>
-            <span style="background:#6d5fc4"></span>
-            <span style="background:#f6f5fb"></span>
-        </span>
-        <span>
-            <span class="theme-option__name">Lilac Mist</span>
-            <span class="theme-option__meta">Gentle lavender &middot; airy</span>
-        </span>
-        <i class="bi bi-check-circle-fill theme-option__check" aria-hidden="true"></i>
-    </button>
+    <p class="theme-panel__title" style="margin-top:.75rem;">Mode</p>
+    <div class="theme-mode" role="radiogroup" aria-label="Light or dark mode">
+        <button type="button" class="theme-mode__btn" data-mode="light" role="radio" aria-checked="true">
+            <i class="bi bi-sun-fill" aria-hidden="true"></i> Light
+        </button>
+        <button type="button" class="theme-mode__btn" data-mode="dark" role="radio" aria-checked="false">
+            <i class="bi bi-moon-stars-fill" aria-hidden="true"></i> Dark
+        </button>
+    </div>
 </div>
+
+<style>
+    .theme-mode { display: flex; gap: .5rem; }
+    .theme-mode__btn {
+        flex: 1 1 0;
+        display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+        padding: .5rem .75rem;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: .5rem;
+        background: var(--surface, #fff);
+        color: var(--body-text, #475569);
+        font-size: .85rem; font-weight: 600; cursor: pointer;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .theme-mode__btn:hover { border-color: var(--accent, #16a34a); }
+    .theme-mode__btn[aria-checked="true"] {
+        background: var(--accent, #16a34a);
+        border-color: var(--accent, #16a34a);
+        color: #fff;
+    }
+</style>
 
 @* The host view is responsible for calling BmsTheme.initSwitcher() in its
    Scripts section — Razor partials cannot define sections themselves. *@

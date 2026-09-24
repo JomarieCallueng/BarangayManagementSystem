@@ -1,0 +1,89 @@
+@*
+    Appearance (theme) picker rendered INSIDE an existing dropdown-menu <ul>.
+    Reuses the global BmsTheme API (theme-switcher.js) — no floating button.
+    Put the parent dropdown toggle in data-bs-auto-close="outside" so picking a
+    theme does not close the menu.
+*@
+<li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size:.65rem;letter-spacing:.5px;"><i class="bi bi-palette me-1"></i>@L["Appearance.Title"]</h6></li>
+@{
+    var presets = new (string Id, string Name, string Color)[]
+    {
+        ("civic", "Civic Navy", "#0d1e3d"),
+        ("emerald", "Emerald Gold", "#0c3b2e"),
+        ("teal", "Coastal Teal", "#0f766e"),
+    };
+}
+@foreach (var p in presets)
+{
+    <li>
+        <button type="button" class="dropdown-item small py-2 d-flex align-items-center gap-2 js-theme-pick" data-preset="@p.Id">
+            <span class="js-theme-dot" style="width:14px;height:14px;border-radius:50%;background:@p.Color;flex:0 0 auto;border:1px solid rgba(0,0,0,.15);"></span>
+            <span>@p.Name</span>
+            <i class="bi bi-check2 ms-auto js-theme-check" aria-hidden="true"></i>
+        </button>
+    </li>
+}
+
+<li><hr class="dropdown-divider my-1"></li>
+<li><h6 class="dropdown-header text-uppercase text-muted fw-bold" style="font-size:.65rem;letter-spacing:.5px;"><i class="bi bi-circle-half me-1"></i>@L["Appearance.Mode"]</h6></li>
+<li class="px-3 pb-2">
+    <div class="btn-group btn-group-sm w-100 js-mode-group" role="group" aria-label="Light or dark mode">
+        <button type="button" class="btn btn-outline-secondary js-mode-pick d-flex align-items-center justify-content-center gap-1" data-mode="light">
+            <i class="bi bi-sun-fill" aria-hidden="true"></i> @L["Appearance.Light"]
+        </button>
+        <button type="button" class="btn btn-outline-secondary js-mode-pick d-flex align-items-center justify-content-center gap-1" data-mode="dark">
+            <i class="bi bi-moon-stars-fill" aria-hidden="true"></i> @L["Appearance.Dark"]
+        </button>
+    </div>
+</li>
+
+<style>
+    .js-theme-pick .js-theme-check { visibility: hidden; color: var(--bs-success, #16a34a); font-size: 1rem; }
+    .js-theme-pick.is-active .js-theme-check { visibility: visible; }
+    .js-theme-pick.is-active { font-weight: 600; }
+    .js-mode-pick.is-mode-active {
+        background: var(--accent, #16a34a);
+        border-color: var(--accent, #16a34a);
+        color: #fff;
+        font-weight: 600;
+    }
+</style>
+<script>
+    (function () {
+        if (window.__appearanceMenuWired) return;
+        window.__appearanceMenuWired = true;
+        function mark() {
+            var cur = (window.BmsTheme && window.BmsTheme.current) ? window.BmsTheme.current() : "civic";
+            document.querySelectorAll(".js-theme-pick").forEach(function (b) {
+                b.classList.toggle("is-active", b.getAttribute("data-preset") === cur);
+            });
+            var mode = (window.BmsTheme && window.BmsTheme.currentMode) ? window.BmsTheme.currentMode() : "light";
+            document.querySelectorAll(".js-mode-pick").forEach(function (b) {
+                b.classList.toggle("is-mode-active", b.getAttribute("data-mode") === mode);
+            });
+        }
+        document.addEventListener("click", function (e) {
+            var themeBtn = e.target.closest(".js-theme-pick");
+            if (themeBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (window.BmsTheme && window.BmsTheme.select) {
+                    window.BmsTheme.select(themeBtn.getAttribute("data-preset"));
+                }
+                mark();
+                return;
+            }
+            var modeBtn = e.target.closest(".js-mode-pick");
+            if (modeBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (window.BmsTheme && window.BmsTheme.setMode) {
+                    window.BmsTheme.setMode(modeBtn.getAttribute("data-mode"));
+                }
+                mark();
+            }
+        });
+        if (document.readyState !== "loading") { mark(); }
+        else { document.addEventListener("DOMContentLoaded", mark); }
+    })();
+</script>

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using BarangayCMS.Web.Validation;
 
 namespace BarangayCMS.Web.Areas.Admin.Models
 {
@@ -9,6 +10,7 @@ namespace BarangayCMS.Web.Areas.Admin.Models
 
         [Required(ErrorMessage = "Ang buong pangalan ay kinakailangan.")]
         [MaxLength(100, ErrorMessage = "Hindi pwedeng lumagpas sa 100 characters ang pangalan.")]
+        [PersonName]
         [Display(Name = "Buong Pangalan")]
         public string FullName { get; set; } = string.Empty;
 

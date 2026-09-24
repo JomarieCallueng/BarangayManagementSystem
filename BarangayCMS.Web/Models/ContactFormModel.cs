@@ -1,13 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BarangayCMS.Web.Validation;
 
 namespace BarangayManagementSystem.Models
 {
     public class ContactFormModel
     {
         [Required(ErrorMessage = "First name is required")]
+        [PersonName]
         public string FirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Last name is required")]
+        [PersonName]
         public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email address is required")]
@@ -15,7 +18,7 @@ namespace BarangayManagementSystem.Models
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Contact number is required")]
-        [RegularExpression(@"^09\d{9}$", ErrorMessage = "Must be a valid format (e.g., 09XXXXXXXXX)")]
+        [PhilippineMobile]
         public string ContactNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Subject is required")]
